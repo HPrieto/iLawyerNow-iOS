@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AD_UNIT_ID_FOR_BANNER_TEST</key>
+	<string>ca-app-pub-3940256099942544/2934735716</string>
+	<key>AD_UNIT_ID_FOR_INTERSTITIAL_TEST</key>
+	<string>ca-app-pub-3940256099942544/4411468910</string>
+	<key>CLIENT_ID</key>
+	<string>152786346312-fupq0qan7tmbitdgm6ub27lut1cbntjj.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.152786346312-fupq0qan7tmbitdgm6ub27lut1cbntjj</string>
+	<key>API_KEY</key>
+	<string>AIzaSyC7OIEVm8bEZEhGA4a1aBIV-_CXa7B_i50</string>
+	<key>GCM_SENDER_ID</key>
+	<string>152786346312</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.hprieto.iLawyerNow</string>
+	<key>PROJECT_ID</key>
+	<string>ilawyernow-7806b</string>
+	<key>STORAGE_BUCKET</key>
+	<string>ilawyernow-7806b.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<true></true>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<false></false>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:152786346312:ios:15682bb1c3271369</string>
+	<key>DATABASE_URL</key>
+	<string>https://ilawyernow-7806b.firebaseio.com</string>
+</dict>
+</plist>
