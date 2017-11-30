@@ -106,7 +106,7 @@ class LoginSignupController: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.tag = 1
-        textField.addTarget(self, action: #selector(memberLoginFieldsValidate), for: .editingChanged)
+        textField.addTarget(self, action: #selector(memberLoginFields), for: .editingChanged)
         return textField
     }()
     let memberLoginPasswordTextField: UITextField = {
@@ -121,7 +121,7 @@ class LoginSignupController: UIViewController {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.tag = 2
-        textField.addTarget(self, action: #selector(memberLoginFieldsValidate), for: .editingChanged)
+        textField.addTarget(self, action: #selector(memberLoginFields), for: .editingChanged)
         return textField
     }()
     let memberSignupView: UIView = {
@@ -182,13 +182,14 @@ class LoginSignupController: UIViewController {
     }()
     let memberSignupNameView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.red
+        view.backgroundColor = UIColor.clear
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     let memberSignupNameLabel: UILabel = {
         let label = UILabel()
         label.text = "What's your name?"
+        label.textAlignment = .center
         label.font = UIFont(name: "AvenirNext-Regular", size: 30)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -229,31 +230,27 @@ class LoginSignupController: UIViewController {
         self.view.endEditing(true)
     }
     @objc func memberRightNavButtonClicked() {
-        if self.memberNavbarItems.title == "Done" {
+        print("member right navbutton clicked...")
+        if self.memberNavbarItems.rightBarButtonItem?.title == "Done" {
             if self.memberViewButton.titleLabel?.text == "Login" {
                 print("Member signed up...")
-                self.signupMember()
+                
             } else if self.memberViewButton.titleLabel?.text == "Signup" {
                 print("Member logged in...")
-                self.signedIn()
+                
             }
-        } else if self.memberNavbarItems.title == "Next" {
-            
+        } else if self.memberNavbarItems.rightBarButtonItem?.title == "Next" {
+            print("Email to name...")
+            self.memberSignupEmailToName()
         }
     }
     @objc func memberViewButtonClicked() {
         if self.memberViewButton.titleLabel?.text == "Signup" {
-            self.memberViewButton.setTitle("Login", for: .normal)
-            self.memberNavbarItems.rightBarButtonItem?.title = "Next"
-            self.memberNavbarItems.rightBarButtonItem?.isEnabled = true
-            self.memberNavbarItems.title = "Signup"
             self.memberLoginToSignupView()
-        } else {
-            self.memberViewButton.setTitle("Signup", for: .normal)
-            self.memberNavbarItems.rightBarButtonItem?.title = "Done"
-            self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
-            self.memberNavbarItems.title = "Login"
+        } else if self.memberViewButton.titleLabel?.text == "Login" {
             self.memberSignupToLoginView()
+        } else if self.memberViewButton.titleLabel?.text == "Back" {
+            self.memberSignupNameToEmail()
         }
     }
     /* Fields for member signup: email, password, phone, first name, last name */
@@ -280,7 +277,7 @@ class LoginSignupController: UIViewController {
             }
         }
     }
-    @objc func memberLoginFieldsValidate(textField: UITextField) {
+    @objc func memberLoginFields(textField: UITextField) {
         if let textFieldValue = textField.text {
             switch (textField.tag) {
             case 1:
@@ -293,6 +290,13 @@ class LoginSignupController: UIViewController {
                 print("Unknown: \(textFieldValue)")
             }
         }
+    }
+    /* Member Field Validation methods */
+    func validMemberSignupFields() -> Bool {
+        return true
+    }
+    func validMemberLoginFields() -> Bool {
+        return true
     }
     /* Member Signup/Login methods */
     func signupMember() {
@@ -508,8 +512,6 @@ class LoginSignupController: UIViewController {
     }
     @objc func attorneyRightNavButtonClicked() {
         if self.attorneyNavbarItems.rightBarButtonItem?.title == "Next" {
-            self.attorneyNavbarItems.rightBarButtonItem?.title = "Done"
-            self.attorneyViewButton.setTitle("Back", for: .normal)
             self.attorneySignupEmailToName()
         } else if attorneyNavbarItems.rightBarButtonItem?.title == "Done" {
             if self.attorneyViewButton.titleLabel?.text == "Back" {
@@ -667,11 +669,26 @@ class LoginSignupController: UIViewController {
         self.memberSignupPasswordTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
         // MemberSignupView Component constraints
+        self.memberSignupNameView.widthAnchor.constraint(equalTo: self.memberView.widthAnchor).isActive = true
         self.memberSignupNameView.topAnchor.constraint(equalTo: self.memberNavbar.bottomAnchor).isActive = true
         self.memberSignupNameView.bottomAnchor.constraint(equalTo: self.memberViewButton.topAnchor).isActive = true
         self.memberSignupNameViewLeftAnchor = self.memberSignupNameView.leftAnchor.constraint(equalTo: self.memberView.rightAnchor)
         self.memberSignupNameViewRightAnchor = self.memberSignupNameView.rightAnchor.constraint(equalTo: self.memberView.rightAnchor)
         self.memberSignupNameViewLeftAnchor?.isActive = true
+        
+        self.memberSignupNameLabel.topAnchor.constraint(equalTo: self.memberNavbar.bottomAnchor, constant: 50).isActive = true
+        self.memberSignupNameLabel.leftAnchor.constraint(equalTo: self.memberSignupNameView.leftAnchor).isActive = true
+        self.memberSignupNameLabel.rightAnchor.constraint(equalTo: self.memberSignupNameView.rightAnchor).isActive = true
+        
+        self.memberSignupFirstNameTextField.topAnchor.constraint(equalTo: self.memberSignupNameLabel.bottomAnchor, constant: 50).isActive = true
+        self.memberSignupFirstNameTextField.leftAnchor.constraint(equalTo: self.memberSignupNameView.leftAnchor).isActive = true
+        self.memberSignupFirstNameTextField.rightAnchor.constraint(equalTo: self.memberSignupNameView.rightAnchor).isActive = true
+        self.memberSignupFirstNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        self.memberSignupLastNameTextField.topAnchor.constraint(equalTo: self.memberSignupFirstNameTextField.bottomAnchor, constant: 1).isActive = true
+        self.memberSignupLastNameTextField.leftAnchor.constraint(equalTo: self.memberSignupNameView.leftAnchor).isActive = true
+        self.memberSignupLastNameTextField.rightAnchor.constraint(equalTo: self.memberSignupNameView.rightAnchor).isActive = true
+        self.memberSignupLastNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
     /* Animates the alpha changes in memberview */
     func animateMemberViewShow() {
@@ -699,6 +716,10 @@ class LoginSignupController: UIViewController {
     /* Animates margin changes in memberview */
     func memberLoginToSignupView() {
         self.view.endEditing(true)
+        self.memberViewButton.setTitle("Login", for: .normal)
+        self.memberNavbarItems.rightBarButtonItem?.title = "Next"
+        self.memberNavbarItems.rightBarButtonItem?.isEnabled = true
+        self.memberNavbarItems.title = "Create an Account"
         UIView.animate(withDuration: self.GRADUAL, animations: {
             self.memberLoginView.alpha = self.DISAPPEAR
             self.memberSignupViewLeftAnchor?.isActive = false
@@ -710,6 +731,10 @@ class LoginSignupController: UIViewController {
     }
     func memberSignupToLoginView() {
         self.view.endEditing(true)
+        self.memberViewButton.setTitle("Signup", for: .normal)
+        self.memberNavbarItems.rightBarButtonItem?.title = "Done"
+        self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
+        self.memberNavbarItems.title = "Login"
         UIView.animate(withDuration: self.GRADUAL, animations: {
             self.memberLoginView.alpha = self.APPEAR
             self.memberSignupViewLeftAnchor?.isActive = true
@@ -717,6 +742,34 @@ class LoginSignupController: UIViewController {
             self.view.layoutIfNeeded()
         }) { (true) in
             self.memberLoginEmailTextField.becomeFirstResponder()
+        }
+    }
+    func memberSignupEmailToName() {
+        self.view.endEditing(true)
+        self.memberNavbarItems.rightBarButtonItem?.title = "Done"
+        self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
+        self.memberViewButton.setTitle("Back", for: .normal)
+        UIView.animate(withDuration: self.GRADUAL, animations: {
+            self.memberSignupView.alpha = self.DISAPPEAR
+            self.memberSignupNameViewLeftAnchor?.isActive = false
+            self.memberSignupNameViewRightAnchor?.isActive = true
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            self.memberSignupFirstNameTextField.becomeFirstResponder()
+        }
+    }
+    func memberSignupNameToEmail() {
+        self.view.endEditing(true)
+        self.memberNavbarItems.rightBarButtonItem?.title = "Next"
+        self.memberNavbarItems.rightBarButtonItem?.isEnabled = true
+        self.memberViewButton.setTitle("Login", for: .normal)
+        UIView.animate(withDuration: self.GRADUAL, animations: {
+            self.memberSignupView.alpha = self.APPEAR
+            self.memberSignupNameViewLeftAnchor?.isActive = true
+            self.memberSignupNameViewRightAnchor?.isActive = false
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            self.memberSignupEmailTextField.becomeFirstResponder()
         }
     }
     /* MemberView Constraint Variables */
@@ -897,6 +950,7 @@ class LoginSignupController: UIViewController {
     }
     func attorneySignupEmailToName() {
         self.view.endEditing(true)
+        self.attorneyViewButton.setTitle("Back", for: .normal)
         self.attorneyNavbarItems.rightBarButtonItem?.title = "Done"
         self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
         UIView.animate(withDuration: self.GRADUAL, animations: {
