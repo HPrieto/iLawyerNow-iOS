@@ -35,10 +35,7 @@ class MapController: UIViewController, MKMapViewDelegate, CLLocationManagerDeleg
         let button = UIButton()
         button.setImage(#imageLiteral(resourceName: "my_location_white"), for: .normal)
         button.alpha = 0
-        button.backgroundColor = UIColor.blue
-        button.layer.cornerRadius = 16
-        button.layer.borderColor = UIColor.white.cgColor
-        button.layer.borderWidth = 1
+        button.backgroundColor = UIColor.clear
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(MapController.myLocationButtonClicked), for: .touchUpInside)
         return button
@@ -225,8 +222,8 @@ class MapController: UIViewController, MKMapViewDelegate, CLLocationManagerDeleg
         self.map.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         self.map.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         // MyLocation button constraints
-        self.myLocationButton.heightAnchor.constraint(equalToConstant: 32).isActive = true
-        self.myLocationButton.widthAnchor.constraint(equalToConstant: 32).isActive = true
+        self.myLocationButton.heightAnchor.constraint(equalToConstant: 64).isActive = true
+        self.myLocationButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
         self.myLocationButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -80).isActive = true
         self.myLocationButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -45).isActive = true
     }

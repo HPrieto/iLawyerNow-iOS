@@ -23,6 +23,8 @@ class ProfileTableViewController: UITableViewController {
     @objc func handleAddPhotoButtonClick() {
         print("Adding photo...")
         self.view.endEditing(true)
+        let picker = UIImagePickerController()
+        present(picker, animated: true, completion: nil)
     }
     @objc func rightBarButtonItemClicked() {
         print("Next Button Clicked")
