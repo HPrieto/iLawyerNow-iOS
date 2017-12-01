@@ -65,7 +65,8 @@ class LoginSignupController: UIViewController {
         let navItems = UINavigationItem()
         navItems.title = "Login"
         navItems.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.stop, target: self, action: #selector(memberLeftNavItemClicked))
-        navItems.rightBarButtonItem = UIBarButtonItem(title: "Next", style: UIBarButtonItemStyle.plain, target: self, action: #selector(memberRightNavButtonClicked))
+        navItems.rightBarButtonItem = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(memberRightNavButtonClicked))
+        navItems.rightBarButtonItem?.isEnabled = false
         return navItems
     }()
     let memberViewButton: UIButton = {
@@ -176,7 +177,6 @@ class LoginSignupController: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.leftViewMode = UITextFieldViewMode.always
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.tag = 3
         textField.addTarget(self, action: #selector(memberSignupFields), for: .editingChanged)
         return textField
     }()
@@ -205,8 +205,7 @@ class LoginSignupController: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.tag = 4
-        textField.addTarget(self, action: #selector(memberSignupFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(memberSignupNameFields), for: .editingChanged)
         return textField
     }()
     let memberSignupLastNameTextField: UITextField = {
@@ -220,8 +219,7 @@ class LoginSignupController: UIViewController {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.translatesAutoresizingMaskIntoConstraints = false
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.tag = 5
-        textField.addTarget(self, action: #selector(memberSignupFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(memberSignupNameFields), for: .editingChanged)
         return textField
     }()
     /* MemberView Actions */
@@ -234,10 +232,13 @@ class LoginSignupController: UIViewController {
         if self.memberNavbarItems.rightBarButtonItem?.title == "Done" {
             if self.memberViewButton.titleLabel?.text == "Login" {
                 print("Member signed up...")
-                
             } else if self.memberViewButton.titleLabel?.text == "Signup" {
                 print("Member logged in...")
-                
+                // self.signupMember()
+                self.signedIn()
+            } else if self.memberViewButton.titleLabel?.text == "Back" {
+//                self.signupMember()
+                self.signedIn()
             }
         } else if self.memberNavbarItems.rightBarButtonItem?.title == "Next" {
             print("Email to name...")
@@ -255,48 +256,121 @@ class LoginSignupController: UIViewController {
     }
     /* Fields for member signup: email, password, phone, first name, last name */
     @objc func memberSignupFields(textField: UITextField) {
-        if let textFieldValue = textField.text {
-            switch (textField.tag) {
-            case 1:
-                print("Signup Email: \(textFieldValue)")
-                return
-            case 2:
-                print("Signup Phone: \(textFieldValue)")
-                return
-            case 3:
-                print("Signup Password: \(textFieldValue)")
-                return
-            case 4:
-                print("Signup First Name: \(textFieldValue)")
-                return
-            case 5:
-                print("Signup Last Name: \(textFieldValue)")
-                return
-            default:
-                print("Signup Unknown")
+        // Check for valid signup member email, phone and password
+        if let email = self.memberSignupEmailTextField.text,
+           let phone = self.memberSignupPhoneTextField.text,
+           let password = self.memberSignupPasswordTextField.text {
+            if !self.validEmail(email: email) {
+                print("Invalid email")
+                self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else if !self.validPhoneNumber(phoneNumber: phone) {
+                print("Invalid phone")
+                self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else if !self.validPassword(password: password) {
+                print("Invalid password")
+                self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else {
+                print("All email fields are valid!")
+                self.memberNavbarItems.rightBarButtonItem?.isEnabled = true
+            }
+        }
+    }
+    @objc func memberSignupNameFields(textField: UITextField) {
+        // Check for valid member firstname, lastname
+        if let firstName = self.memberSignupFirstNameTextField.text,
+            let lastName = self.memberSignupLastNameTextField.text {
+            if !self.validName(name: firstName) {
+                print("Invalid First Name")
+                self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else if !self.validName(name: lastName) {
+                print("Invalid Last Name")
+                self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else {
+                print("All name fields are valid!")
+                self.memberNavbarItems.rightBarButtonItem?.isEnabled = true
             }
         }
     }
     @objc func memberLoginFields(textField: UITextField) {
-        if let textFieldValue = textField.text {
-            switch (textField.tag) {
-            case 1:
-                print("Login Email: \(textFieldValue)")
-                return
-            case 2:
-                print("Login Password: \(textFieldValue)")
-                return
-            default:
-                print("Unknown: \(textFieldValue)")
+        // Check for valid login member email, and password
+        if let email = self.memberLoginEmailTextField.text,
+            let password = self.memberLoginPasswordTextField.text {
+            if !self.validEmail(email: email) {
+                print("Invalid email")
+                self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
+            }  else if !self.validPassword(password: password) {
+                print("Invalid password")
+                self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else {
+                print("All email fields are valid!")
+                self.memberNavbarItems.rightBarButtonItem?.isEnabled = true
             }
         }
     }
     /* Member Field Validation methods */
-    func validMemberSignupFields() -> Bool {
-        return true
+    func validEmail(email: String) -> Bool {
+        var returnValue = true
+        let emailRegEx = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
+        do {
+            let regex = try NSRegularExpression(pattern: emailRegEx)
+            let nsString = email as NSString
+            let results = regex.matches(in: email, range: NSRange(location: 0, length: nsString.length))
+            if results.count == 0 {
+                returnValue = false
+            }
+        } catch let error as NSError {
+            print("invalid regex: \(error.localizedDescription)")
+            returnValue = false
+        }
+        return  returnValue
     }
-    func validMemberLoginFields() -> Bool {
-        return true
+    func validPassword(password: String) -> Bool {
+        var returnValue = true
+        let passwordRegEx = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*()-_=+{}|?>.<,:;~`’]{6,}$"
+        do {
+            let regex = try NSRegularExpression(pattern: passwordRegEx)
+            let nsString = password as NSString
+            let results = regex.matches(in: password, range: NSRange(location: 0, length: nsString.length))
+            if results.count == 0 {
+                returnValue = false
+            }
+        } catch let error as NSError {
+            print("invalid regex: \(error.localizedDescription)")
+            returnValue = false
+        }
+        return  returnValue
+    }
+    func validPhoneNumber(phoneNumber: String) -> Bool {
+        var returnValue = true
+        let phoneRegEx = "(?:(\\+\\d\\d\\s+)?((?:\\(\\d\\d\\)|\\d\\d)\\s+)?)(\\d{4,5}\\-?\\d{4})"
+        do {
+            let regex = try NSRegularExpression(pattern: phoneRegEx)
+            let nsString = phoneNumber as NSString
+            let results = regex.matches(in: phoneNumber, range: NSRange(location: 0, length: nsString.length))
+            if results.count == 0 {
+                returnValue = false
+            }
+        } catch let error as NSError {
+            print("invalid regex: \(error.localizedDescription)")
+            returnValue = false
+        }
+        return  returnValue
+    }
+    func validName(name: String) -> Bool {
+        var returnValue = true
+        let nameRegEx = "^[0-9a-zA-Z\\_]{2,18}$"
+        do {
+            let regex = try NSRegularExpression(pattern: nameRegEx)
+            let nsString = name as NSString
+            let results = regex.matches(in: name, range: NSRange(location: 0, length: nsString.length))
+            if results.count == 0 {
+                returnValue = false
+            }
+        } catch let error as NSError {
+            print("invalid regex: \(error.localizedDescription)")
+            returnValue = false
+        }
+        return  returnValue
     }
     /* Member Signup/Login methods */
     func signupMember() {
@@ -310,7 +384,14 @@ class LoginSignupController: UIViewController {
                 return
             }
             // Member has signed up.
-            self.signedIn()
+            guard let memberFirstName = self.memberSignupFirstNameTextField.text, let memberLastName = self.memberSignupLastNameTextField.text, let memberPhoneNumber = self.memberSignupPhoneTextField.text else {
+                print("Invalid member firstname, lastname or phone number")
+                return
+            }
+            let newMember = ["email":memberEmail,
+                             "phone":memberPhoneNumber,
+                             "firstName":memberFirstName,
+                             "lastName":memberLastName]
         })
     }
     /* AttorneyView Components */
@@ -513,6 +594,7 @@ class LoginSignupController: UIViewController {
     @objc func attorneyRightNavButtonClicked() {
         if self.attorneyNavbarItems.rightBarButtonItem?.title == "Next" {
             self.attorneySignupEmailToName()
+            self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
         } else if attorneyNavbarItems.rightBarButtonItem?.title == "Done" {
             if self.attorneyViewButton.titleLabel?.text == "Back" {
                 print("Signed up...")
@@ -718,7 +800,7 @@ class LoginSignupController: UIViewController {
         self.view.endEditing(true)
         self.memberViewButton.setTitle("Login", for: .normal)
         self.memberNavbarItems.rightBarButtonItem?.title = "Next"
-        self.memberNavbarItems.rightBarButtonItem?.isEnabled = true
+        self.memberNavbarItems.rightBarButtonItem?.isEnabled = false
         self.memberNavbarItems.title = "Create an Account"
         UIView.animate(withDuration: self.GRADUAL, animations: {
             self.memberLoginView.alpha = self.DISAPPEAR
@@ -761,7 +843,6 @@ class LoginSignupController: UIViewController {
     func memberSignupNameToEmail() {
         self.view.endEditing(true)
         self.memberNavbarItems.rightBarButtonItem?.title = "Next"
-        self.memberNavbarItems.rightBarButtonItem?.isEnabled = true
         self.memberViewButton.setTitle("Login", for: .normal)
         UIView.animate(withDuration: self.GRADUAL, animations: {
             self.memberSignupView.alpha = self.APPEAR

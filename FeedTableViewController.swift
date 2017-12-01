@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class FeedTableViewController: UITableViewController {
     /* Global Variables */
@@ -15,6 +16,16 @@ class FeedTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initFeed()
+        self.checkForUser()
+    }
+    func checkForUser() {
+        if let user = FIRAuth.auth()?.currentUser {
+            if let email = user.email {
+                print("user email: \(email)")
+            }
+        } else {
+            self.navigationController?.pushViewController(LoginSignupController(), animated: false)
+        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
