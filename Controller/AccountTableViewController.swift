@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class AccountTableViewController: UITableViewController {
     
@@ -30,6 +31,11 @@ class AccountTableViewController: UITableViewController {
         } else if row == 1 && section == 1 {
             self.navigationController?.pushViewController(PaymentCardViewController(), animated: true)
         } else if row == 0 && section == 4 {
+            do {
+                try FIRAuth.auth()?.signOut()
+            } catch let logoutError {
+                print(logoutError)
+            }
             self.navigationController?.pushViewController(LoginSignupController(), animated: false)
         }
         print(row, section)

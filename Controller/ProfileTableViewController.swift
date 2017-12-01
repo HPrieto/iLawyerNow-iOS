@@ -16,6 +16,13 @@ class ProfileTableViewController: UITableViewController {
         super.viewDidLoad()
         // Set NavigationBarButton Items
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(rightBarButtonItemClicked))
+        self.addPhotoButton.isEnabled = true
+        self.addPhotoButton.isUserInteractionEnabled = true
+        self.addPhotoButton.addTarget(self, action: #selector(handleAddPhotoButtonClick), for: .touchUpInside)
+    }
+    @objc func handleAddPhotoButtonClick() {
+        print("Adding photo...")
+        self.view.endEditing(true)
     }
     @objc func rightBarButtonItemClicked() {
         print("Next Button Clicked")
@@ -47,5 +54,8 @@ class ProfileTableViewController: UITableViewController {
         let shape         = CAShapeLayer()
         shape.path        = buttonMaskPath.cgPath
         button.layer.mask = shape
+    }
+    override func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+        self.view.endEditing(true)
     }
 }

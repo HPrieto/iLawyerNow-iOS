@@ -16,20 +16,32 @@ class FeedTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initFeed()
-        self.checkForUser()
-    }
-    func checkForUser() {
-        if let user = FIRAuth.auth()?.currentUser {
-            if let email = user.email {
-                print("user email: \(email)")
-            }
-        } else {
-            self.navigationController?.pushViewController(LoginSignupController(), animated: false)
-        }
+        self.checkIfUserIsLoggedIn()
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
+    }
+    /* Handle user login status */
+    func checkIfUserIsLoggedIn() {
+        if FIRAuth.auth()?.currentUser?.uid == nil {
+            perform(#selector(handleLogout), with: nil, afterDelay: 0)
+        } else {
+            let uid = FIRAuth.auth()?.currentUser?.uid
+            FIRDatabase.database().reference().child("Users").child(uid!).observe(.value, with: { (snapshot) in
+                if let dictionary = snapshot.value as? [String:Any] {
+                    self.navigationItem.title = dictionary["firstName"] as? String
+                }
+            })
+        }
+    }
+    @objc func handleLogout() {
+        do {
+            try FIRAuth.auth()?.signOut()
+        } catch let logoutError {
+            print(logoutError)
+        }
+        self.navigationController?.pushViewController(LoginSignupController(), animated: false)
     }
     /* Init TableViewController */
     func initFeed() {
@@ -40,7 +52,8 @@ class FeedTableViewController: UITableViewController {
     }
     /* Create a new messaging thread */
     @objc func composeMessage() {
-        self.navigationController?.pushViewController(ConversationThreadController(), animated: true)
+        let newMessageController = UINavigationController(rootViewController: NewMessageController())
+        present(newMessageController, animated: true, completion: nil)
     }
     /* Number of Rows in section */
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
