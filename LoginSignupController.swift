@@ -234,11 +234,9 @@ class LoginSignupController: UIViewController {
                 print("Member signed up...")
             } else if self.memberViewButton.titleLabel?.text == "Signup" {
                 print("Member logged in...")
-                // self.signupMember()
-                self.signedIn()
+                self.popThisView()
             } else if self.memberViewButton.titleLabel?.text == "Back" {
-//                self.signupMember()
-                self.signedIn()
+                self.popThisView()
             }
         } else if self.memberNavbarItems.rightBarButtonItem?.title == "Next" {
             print("Email to name...")
@@ -309,60 +307,26 @@ class LoginSignupController: UIViewController {
     }
     /* Member Field Validation methods */
     func validEmail(email: String) -> Bool {
-        var returnValue = true
-        let emailRegEx = "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}"
-        do {
-            let regex = try NSRegularExpression(pattern: emailRegEx)
-            let nsString = email as NSString
-            let results = regex.matches(in: email, range: NSRange(location: 0, length: nsString.length))
-            if results.count == 0 {
-                returnValue = false
-            }
-        } catch let error as NSError {
-            print("invalid regex: \(error.localizedDescription)")
-            returnValue = false
-        }
-        return  returnValue
+        return self.regexValidation(string: email, regEx: "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}")
     }
     func validPassword(password: String) -> Bool {
-        var returnValue = true
-        let passwordRegEx = "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*()-_=+{}|?>.<,:;~`’]{6,}$"
-        do {
-            let regex = try NSRegularExpression(pattern: passwordRegEx)
-            let nsString = password as NSString
-            let results = regex.matches(in: password, range: NSRange(location: 0, length: nsString.length))
-            if results.count == 0 {
-                returnValue = false
-            }
-        } catch let error as NSError {
-            print("invalid regex: \(error.localizedDescription)")
-            returnValue = false
-        }
-        return  returnValue
+        return self.regexValidation(string: password, regEx: "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*()-_=+{}|?>.<,:;~`’]{6,}$")
     }
     func validPhoneNumber(phoneNumber: String) -> Bool {
-        var returnValue = true
-        let phoneRegEx = "(?:(\\+\\d\\d\\s+)?((?:\\(\\d\\d\\)|\\d\\d)\\s+)?)(\\d{4,5}\\-?\\d{4})"
-        do {
-            let regex = try NSRegularExpression(pattern: phoneRegEx)
-            let nsString = phoneNumber as NSString
-            let results = regex.matches(in: phoneNumber, range: NSRange(location: 0, length: nsString.length))
-            if results.count == 0 {
-                returnValue = false
-            }
-        } catch let error as NSError {
-            print("invalid regex: \(error.localizedDescription)")
-            returnValue = false
-        }
-        return  returnValue
+        return self.regexValidation(string: phoneNumber, regEx: "(?:(\\+\\d\\d\\s+)?((?:\\(\\d\\d\\)|\\d\\d)\\s+)?)(\\d{4,5}\\-?\\d{4})")
     }
     func validName(name: String) -> Bool {
+        return self.regexValidation(string: name, regEx: "^[0-9a-zA-Z\\_]{2,18}$")
+    }
+    func validateBar(bar: String) -> Bool {
+        return self.regexValidation(string: bar, regEx: "(?:(\\+\\d\\d\\s+)?((?:\\(\\d\\d\\)|\\d\\d)\\s+)?)(\\d{4,5}\\-?\\d{4})")
+    }
+    func regexValidation(string: String, regEx: String) -> Bool {
         var returnValue = true
-        let nameRegEx = "^[0-9a-zA-Z\\_]{2,18}$"
         do {
-            let regex = try NSRegularExpression(pattern: nameRegEx)
-            let nsString = name as NSString
-            let results = regex.matches(in: name, range: NSRange(location: 0, length: nsString.length))
+            let regex = try NSRegularExpression(pattern: regEx)
+            let nsString = string as NSString
+            let results = regex.matches(in: string, range: NSRange(location: 0, length: nsString.length))
             if results.count == 0 {
                 returnValue = false
             }
@@ -392,6 +356,15 @@ class LoginSignupController: UIViewController {
                              "phone":memberPhoneNumber,
                              "firstName":memberFirstName,
                              "lastName":memberLastName]
+        })
+    }
+    func loginMember() {
+        guard let memberEmail = self.memberLoginEmailTextField.text, let memberPassword = self.memberLoginPasswordTextField.text else {
+            print("Invalid member login email or password is invalid.")
+            return
+        }
+        FIRAuth.auth()?.signIn(withEmail: memberEmail, password: memberPassword, completion: { (user, error) in
+            
         })
     }
     /* AttorneyView Components */
@@ -455,6 +428,7 @@ class LoginSignupController: UIViewController {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyLoginFields), for: .editingChanged)
         return textField
     }()
     let attorneyLoginPasswordTextField: UITextField = {
@@ -468,6 +442,7 @@ class LoginSignupController: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.leftViewMode = UITextFieldViewMode.always
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyLoginFields), for: .editingChanged)
         return textField
     }()
     let attorneySignupView: UIView = {
@@ -493,6 +468,7 @@ class LoginSignupController: UIViewController {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneySignupFields), for: .editingChanged)
         return textField
     }()
     let attorneySignupPhoneTextField: UITextField = {
@@ -505,6 +481,7 @@ class LoginSignupController: UIViewController {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneySignupFields), for: .editingChanged)
         return textField
     }()
     let attorneySignupPasswordTextField: UITextField = {
@@ -518,6 +495,7 @@ class LoginSignupController: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.leftViewMode = UITextFieldViewMode.always
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneySignupFields), for: .editingChanged)
         return textField
     }()
     let attorneySignupNameView: UIView = {
@@ -543,6 +521,7 @@ class LoginSignupController: UIViewController {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneySignupNameFields), for: .editingChanged)
         return textField
     }()
     let attorneySignupLastNameTextField: UITextField = {
@@ -555,6 +534,7 @@ class LoginSignupController: UIViewController {
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.leftViewMode = UITextFieldViewMode.always
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneySignupNameFields), for: .editingChanged)
         return textField
     }()
     let attorneySignupBarNumberTextField: UITextField = {
@@ -567,22 +547,16 @@ class LoginSignupController: UIViewController {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
         textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneySignupNameFields), for: .editingChanged)
         return textField
     }()
     /* AttorneyView Actions */
     @objc func attorneyViewButtonClicked() {
         if self.attorneyViewButton.titleLabel?.text == "Signup" {
-            self.attorneyViewButton.setTitle("Login", for: .normal)
-            self.attorneyNavbarItems.title = "Create an Account"
             self.attorneyLoginToSignupView()
         } else if self.attorneyViewButton.titleLabel?.text == "Login" {
-            self.attorneyViewButton.setTitle("Signup", for: .normal)
-            self.attorneyNavbarItems.title = "Login"
             self.attorneySignupToLoginView()
         } else if self.attorneyViewButton.titleLabel?.text == "Back" {
-            self.attorneyViewButton.setTitle("Login", for: .normal)
-            self.attorneyNavbarItems.rightBarButtonItem?.title = "Next"
-            self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = true
             self.attorneySignupNameToEmail()
         }
     }
@@ -598,15 +572,74 @@ class LoginSignupController: UIViewController {
         } else if attorneyNavbarItems.rightBarButtonItem?.title == "Done" {
             if self.attorneyViewButton.titleLabel?.text == "Back" {
                 print("Signed up...")
+                self.popThisView()
             } else if self.attorneyViewButton.titleLabel?.text == "Signup" {
                 print("Logged in...")
+                self.popThisView()
             }
         }
     }
-    func signedIn() {
+    func popThisView() {
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         self.tabBarController?.tabBar.isHidden = false
         self.navigationController?.popViewController(animated: false)
+    }
+    /* Fields for member signup: email, password, phone, first name, last name */
+    @objc func attorneySignupFields(textField: UITextField) {
+        // Check for valid signup member email, phone and password
+        if let email = self.attorneySignupEmailTextField.text,
+           let phone = self.attorneySignupPhoneTextField.text,
+           let password = self.attorneySignupPasswordTextField.text {
+            if !self.validEmail(email: email) {
+                print("Invalid email")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else if !self.validPhoneNumber(phoneNumber: phone) {
+                print("Invalid phone")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else if !self.validPassword(password: password) {
+                print("Invalid password")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else {
+                print("All email fields are valid!")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = true
+            }
+        }
+    }
+    @objc func attorneySignupNameFields(textField: UITextField) {
+        // Check for valid member firstname, lastname
+        if let firstName = self.attorneySignupFirstNameTextField.text,
+           let lastName  = self.attorneySignupLastNameTextField.text,
+           let barNumber = self.attorneySignupBarNumberTextField.text {
+            if !self.validName(name: firstName) {
+                print("Invalid First Name")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else if !self.validName(name: lastName) {
+                print("Invalid Last Name")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else if !self.validateBar(bar: barNumber) {
+                print("Invalid Bar Number")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else {
+                print("All name fields are valid!")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = true
+            }
+        }
+    }
+    @objc func attorneyLoginFields(textField: UITextField) {
+        // Check for valid login member email, and password
+        if let email = self.attorneyLoginEmailTextField.text,
+           let password = self.attorneyLoginPasswordTextField.text {
+            if !self.validEmail(email: email) {
+                print("Invalid email")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
+            }  else if !self.validPassword(password: password) {
+                print("Invalid password")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
+            } else {
+                print("All email fields are valid!")
+                self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = true
+            }
+        }
     }
     /* Controller Lifecycle Methods */
     override func viewDidLoad() {
@@ -1005,8 +1038,10 @@ class LoginSignupController: UIViewController {
     /* Animates margin changes in memberview */
     func attorneyLoginToSignupView() {
         self.view.endEditing(true)
+        self.attorneyViewButton.setTitle("Login", for: .normal)
+        self.attorneyNavbarItems.title = "Create an Account"
         self.attorneyNavbarItems.rightBarButtonItem?.title = "Next"
-        self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = true
+        self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
         UIView.animate(withDuration: self.GRADUAL, animations: {
             self.attorneyLoginView.alpha = self.DISAPPEAR
             self.attorneySignupViewLeftAnchor?.isActive = true
@@ -1018,6 +1053,8 @@ class LoginSignupController: UIViewController {
     }
     func attorneySignupToLoginView() {
         self.view.endEditing(true)
+        self.attorneyViewButton.setTitle("Signup", for: .normal)
+        self.attorneyNavbarItems.title = "Login"
         self.attorneyNavbarItems.rightBarButtonItem?.title = "Done"
         self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
         UIView.animate(withDuration: self.GRADUAL, animations: {
@@ -1045,8 +1082,9 @@ class LoginSignupController: UIViewController {
     }
     func attorneySignupNameToEmail() {
         self.view.endEditing(true)
+        self.attorneyViewButton.setTitle("Login", for: .normal)
         self.attorneyNavbarItems.rightBarButtonItem?.title = "Next"
-        self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = true
+        self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
         UIView.animate(withDuration: self.GRADUAL, animations: {
             self.attorneySignupView.alpha = self.APPEAR
             self.attorneySignupNameViewLeftAnchor?.isActive = false
