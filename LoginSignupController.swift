@@ -20,7 +20,7 @@ class LoginSignupController: UIViewController {
     let SLOWLY:Double = 0.75
     let VERYSLOW:Double = 1.0
     let INVIEW:CGFloat = 0.0
-    var OFFVIEW = CGFloat() // not a constant but whatevs
+    var OFFVIEW = CGFloat() // not a constant but whatevs, initialized in viewdidload
     /* DirectoryView Components */
     let ilawyerImage: UIImageView = {
         let imageView = UIImageView()
@@ -1013,6 +1013,7 @@ class LoginSignupController: UIViewController {
     /* Animates the alpha changes in attorneyview */
     func animateAttorneyViewShow() {
         self.attorneyViewButton.setTitle("Signup", for: .normal)
+        self.attorneyNavbarItems.title = "Login"
         self.attorneyNavbarItems.rightBarButtonItem?.title = "Done"
         self.attorneyNavbarItems.rightBarButtonItem?.isEnabled = false
         self.attorneyLoginView.alpha = 1
