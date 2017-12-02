@@ -24,6 +24,8 @@ class ProfileTableViewController: UITableViewController {
         // Set NavigationBarButton Items
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(rightBarButtonItemClicked))
         self.navigationItem.rightBarButtonItem?.isEnabled = false
+        self.addPhotoButton.layer.masksToBounds = true
+        self.addPhotoButton.layer.cornerRadius = self.addPhotoButton.bounds.width / 2
         self.addPhotoButton.isEnabled = true
         self.addPhotoButton.isUserInteractionEnabled = true
         self.addPhotoButton.addTarget(self, action: #selector(handleAddPhotoButtonClick), for: .touchUpInside)
@@ -50,7 +52,7 @@ class ProfileTableViewController: UITableViewController {
     func getUserProfile() {
         if let user = FIRAuth.auth()?.currentUser {
             self.emailLabel.text = user.email
-            FIRDatabase.database().reference().child("Users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String:Any] {
                     let firstName = dictionary["firstName"] as! String
                     let lastName  = dictionary["lastName"] as! String

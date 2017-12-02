@@ -20,7 +20,7 @@ class AccountTableViewController: UITableViewController {
     }
     func getUserProfileName() {
         if let user = FIRAuth.auth()?.currentUser {
-            FIRDatabase.database().reference().child("Users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String:Any] {
                     // Get user's first name
                     if let firstName = dictionary["firstName"] as? String {

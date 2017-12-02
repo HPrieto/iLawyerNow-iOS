@@ -28,7 +28,7 @@ class FeedTableViewController: UITableViewController {
             perform(#selector(handleLogout), with: nil, afterDelay: 0)
         } else {
             let uid = FIRAuth.auth()?.currentUser?.uid
-            FIRDatabase.database().reference().child("Users").child(uid!).observe(.value, with: { (snapshot) in
+            FIRDatabase.database().reference().child("users").child(uid!).observe(.value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String:Any] {
                     guard let firstName = dictionary["firstName"] as? String else {
                         return
