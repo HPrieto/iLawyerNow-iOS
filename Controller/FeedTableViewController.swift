@@ -30,7 +30,10 @@ class FeedTableViewController: UITableViewController {
             let uid = FIRAuth.auth()?.currentUser?.uid
             FIRDatabase.database().reference().child("Users").child(uid!).observe(.value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String:Any] {
-                    self.navigationItem.title = dictionary["firstName"] as? String
+                    guard let firstName = dictionary["firstName"] as? String else {
+                        return
+                    }
+                    self.navigationItem.title = "\(firstName)'s feed"
                 }
             })
         }

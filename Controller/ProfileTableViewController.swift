@@ -7,28 +7,71 @@
 //
 
 import UIKit
+import Firebase
 
 class ProfileTableViewController: UITableViewController {
     /* UI Components */
     @IBOutlet weak var addPhotoButton: UIButton!
+    @IBOutlet weak var fullNameLabel: UILabel!
+    @IBOutlet weak var emailLabel: UILabel!
+    @IBOutlet weak var streetAddressField: UITextField!
+    @IBOutlet weak var cityField: UITextField!
+    @IBOutlet weak var stateField: UITextField!
+    @IBOutlet weak var zipCodeField: UITextField!
     /* ProfileTableViewController LifeCycle */
     override func viewDidLoad() {
         super.viewDidLoad()
         // Set NavigationBarButton Items
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(rightBarButtonItemClicked))
+        self.navigationItem.rightBarButtonItem?.isEnabled = false
         self.addPhotoButton.isEnabled = true
         self.addPhotoButton.isUserInteractionEnabled = true
         self.addPhotoButton.addTarget(self, action: #selector(handleAddPhotoButtonClick), for: .touchUpInside)
+        self.getUserProfile()
+        self.addTextFieldHandlers()
     }
-    @objc func handleAddPhotoButtonClick() {
-        print("Adding photo...")
-        self.view.endEditing(true)
-        let picker = UIImagePickerController()
-        present(picker, animated: true, completion: nil)
+    /* Sets the selector handlers for uitextfields */
+    func addTextFieldHandlers() {
+        self.streetAddressField.addTarget(self, action: #selector(handleStreet), for: .editingChanged)
+        self.cityField.addTarget(self, action: #selector(handleCity), for: .editingChanged)
+        self.stateField.addTarget(self, action: #selector(handleState), for: .editingChanged)
+        self.zipCodeField.addTarget(self, action: #selector(handleZip), for: .editingChanged)
     }
-    @objc func rightBarButtonItemClicked() {
-        print("Next Button Clicked")
-        self.navigationController?.popViewController(animated: true)
+    /* Saves updated address to database */
+    func updateUserProfile() {
+        guard let user = FIRAuth.auth()?.currentUser else {
+            return
+        }
+        print("Street: \(self.streetAddressField.text)")
+        print("City  : \(self.cityField.text)")
+        print("State : \(self.stateField.text)")
+        print("Zip   : \(self.zipCodeField.text)")
+    }
+    func getUserProfile() {
+        if let user = FIRAuth.auth()?.currentUser {
+            self.emailLabel.text = user.email
+            FIRDatabase.database().reference().child("Users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                if let dictionary = snapshot.value as? [String:Any] {
+                    let firstName = dictionary["firstName"] as! String
+                    let lastName  = dictionary["lastName"] as! String
+                    self.fullNameLabel.text = "\(firstName) \(lastName)"
+                    if let street = dictionary["street"] as? String {
+                        self.streetAddressField.text = street
+                    }
+                    if let city = dictionary["city"] as? String {
+                        self.cityField.text = city
+                    }
+                    if let state = dictionary["state"] as? String {
+                        self.stateField.text = state
+                    }
+                    if let zip = dictionary["zip"] as? String {
+                        self.zipCodeField.text = zip
+                    }
+                }
+            })
+        } else {
+            
+        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

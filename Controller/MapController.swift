@@ -222,10 +222,10 @@ class MapController: UIViewController, MKMapViewDelegate, CLLocationManagerDeleg
         self.map.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
         self.map.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
         // MyLocation button constraints
-        self.myLocationButton.heightAnchor.constraint(equalToConstant: 64).isActive = true
-        self.myLocationButton.widthAnchor.constraint(equalToConstant: 64).isActive = true
+        self.myLocationButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.myLocationButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
         self.myLocationButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor, constant: -80).isActive = true
-        self.myLocationButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -45).isActive = true
+        self.myLocationButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -25).isActive = true
     }
     /* Map Component Animations */
     func animateMyLocationButtonDisappear() {

@@ -11,9 +11,29 @@ import Firebase
 
 class AccountTableViewController: UITableViewController {
     
+    @IBOutlet weak var profileNameLabel: UILabel!
+    @IBOutlet weak var profileNameImage: UIImageView!
     /* AccountTableViewController LifeCycle Methods */
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.getUserProfileName()
+    }
+    func getUserProfileName() {
+        if let user = FIRAuth.auth()?.currentUser {
+            FIRDatabase.database().reference().child("Users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+                if let dictionary = snapshot.value as? [String:Any] {
+                    // Get user's first name
+                    if let firstName = dictionary["firstName"] as? String {
+                        self.profileNameLabel.text = firstName
+                    } else {
+                        self.profileNameLabel.text = "Edit Profile"
+                    }
+                    // Get user's profile image
+                }
+            })
+        } else {
+            self.profileNameLabel.text = "Edit Profile"
+        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
