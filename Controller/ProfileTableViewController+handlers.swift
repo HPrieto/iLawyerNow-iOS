@@ -21,7 +21,6 @@ extension ProfileTableViewController: UIImagePickerControllerDelegate, UINavigat
     }
     
     /* Called when user picks an image from UIImagePickerController */
-    var selectedImageFromPicker: UIImage?
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         
         // Get either edited image or full sized image

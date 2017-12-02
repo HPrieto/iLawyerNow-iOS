@@ -18,6 +18,7 @@ class ProfileTableViewController: UITableViewController {
     @IBOutlet weak var cityField: UITextField!
     @IBOutlet weak var stateField: UITextField!
     @IBOutlet weak var zipCodeField: UITextField!
+    var selectedImageFromPicker: UIImage?
     /* ProfileTableViewController LifeCycle */
     override func viewDidLoad() {
         super.viewDidLoad()

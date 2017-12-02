@@ -55,7 +55,7 @@ extension ProfileTableViewController {
     }
     
     func getImageFromURL(url: URL) -> UIImage {
-        var image = UIImage(contentsOfFile: #imageLiteral(resourceName: "profile_icon"))
+        var image = UIImage(contentsOfFile: "")
         URLSession.shared.dataTask(with: url) { (data, response, error) in
             if error != nil {
                 print(error.debugDescription)
@@ -67,6 +67,6 @@ extension ProfileTableViewController {
                 }
             }
         }
-        return image
+        return image!
     }
 }
