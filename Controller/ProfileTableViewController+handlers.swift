@@ -21,8 +21,8 @@ extension ProfileTableViewController: UIImagePickerControllerDelegate, UINavigat
     }
     
     /* Called when user picks an image from UIImagePickerController */
+    var selectedImageFromPicker: UIImage?
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        var selectedImageFromPicker: UIImage?
         
         // Get either edited image or full sized image
         if let editedImage = info["UIImagePickerControllerEditedImage"] as? UIImage {
@@ -36,43 +36,6 @@ extension ProfileTableViewController: UIImagePickerControllerDelegate, UINavigat
         }
         
         dismiss(animated: true, completion: nil)
-    }
-    
-    func uploadImageToDatabase(image: UIImage) {
-        let imageName = NSUUID().uuidString
-        let storageRef = FIRStorage.storage().reference().child("profile_images").child("\(imageName).png")
-        if let uploadData = UIImagePNGRepresentation(image) {
-            storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
-                if error != nil {
-                    print(error.debugDescription)
-                    return
-                }
-                guard let user = FIRAuth.auth()?.currentUser else {
-                    return
-                }
-                if let imageURL = metadata?.downloadURL()?.absoluteString {
-                    var profileInfo = [String:Any]()
-                    profileInfo["imageURL"] = imageURL
-                    if let street = self.streetAddressField.text {
-                        profileInfo["street"] = street
-                    }
-                    if let city = self.cityField.text {
-                        profileInfo["city"] = city
-                    }
-                    if let state = self.stateField.text {
-                        profileInfo["state"] = state
-                    }
-                    if let zip = self.zipCodeField.text {
-                        profileInfo["zip"] = zip
-                    }
-                    self.saveProfile(uid: user.uid, data: profileInfo)
-                }
-            })
-        }
-    }
-    
-    func saveProfile(uid: String, data: [String: Any]) {
-        FIRDatabase.database().reference().child("users").setValue(data, forKey: uid)
     }
     
     /* Called when user cancels picking an image from UIImagePickerController */
