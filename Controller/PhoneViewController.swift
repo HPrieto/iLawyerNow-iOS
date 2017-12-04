@@ -45,16 +45,7 @@ class PhoneViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
-    /* UIComponent Listeners */
-    @objc func phoneNumberChanging(_ textField: UITextField) {
-        if let count = textField.text?.count {
-            if (count > 6 && count < 11) {
-                self.navigationItem.rightBarButtonItem?.isEnabled = true
-            } else {
-                self.navigationItem.rightBarButtonItem?.isEnabled = false
-            }
-        }
-    }
+    
     /* UIViewController LifeCycle */
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -66,11 +57,9 @@ class PhoneViewController: UIViewController {
         self.navigationItem.rightBarButtonItem?.isEnabled = false
         self.phoneField.becomeFirstResponder()
         self.phoneField.addTarget(self, action: #selector(phoneNumberChanging(_:)), for: .editingChanged)
+        self.setPhoneNumber()
     }
-    /* Right Bar Button Item Action: Save Phone Number to database */
-    @objc func savePhoneNumber() {
-        self.navigationController?.popViewController(animated: true)
-    }
+    
     /* Add UIComponents to view */
     func addComponentsToView() {
         self.view.addSubview(self.phoneView)
@@ -79,6 +68,7 @@ class PhoneViewController: UIViewController {
         self.view.addSubview(self.label1)
         self.view.backgroundColor = UIColor.groupTableViewBackground
     }
+    
     /* Set UIComponent Anchors */
     func setComponentAnchors() {
         // Set CardView Anchors
