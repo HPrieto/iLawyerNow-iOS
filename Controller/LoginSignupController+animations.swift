@@ -111,9 +111,11 @@ extension LoginSignupController {
         self.animateAttorneyViewAlpha(alpha: self.DISAPPEAR, animationDuration: self.INSTANT)
         self.animateAttorneyViewAlpha(alpha: self.APPEAR, animationDuration: self.RAPID)
     }
+    
     func animateAttorneyViewHide() {
         self.animateAttorneyViewAlpha(alpha: self.DISAPPEAR, animationDuration: self.RAPID)
     }
+    
     func animateAttorneyViewAlpha(alpha:CGFloat,animationDuration:Double) {
         UIView.animate(withDuration: animationDuration, animations: {
             self.attorneyView.alpha = alpha
@@ -123,6 +125,7 @@ extension LoginSignupController {
             }
         }
     }
+    
     /* Animates margin changes in memberview */
     func attorneyLoginToSignupView() {
         self.view.endEditing(true)
@@ -139,6 +142,7 @@ extension LoginSignupController {
             self.attorneySignupEmailTextField.becomeFirstResponder()
         }
     }
+    
     func attorneySignupToLoginView() {
         self.view.endEditing(true)
         self.attorneyViewButton.setTitle("Signup", for: .normal)
@@ -154,6 +158,7 @@ extension LoginSignupController {
             self.attorneyLoginEmailTextField.becomeFirstResponder()
         }
     }
+    
     func attorneySignupEmailToName() {
         self.view.endEditing(true)
         self.attorneyViewButton.setTitle("Back", for: .normal)
@@ -168,6 +173,7 @@ extension LoginSignupController {
             self.attorneySignupFirstNameTextField.becomeFirstResponder()
         }
     }
+    
     func attorneySignupNameToEmail() {
         self.view.endEditing(true)
         self.attorneyViewButton.setTitle("Login", for: .normal)

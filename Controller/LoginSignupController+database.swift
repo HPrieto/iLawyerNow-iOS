@@ -105,6 +105,7 @@ extension LoginSignupController {
             self.popThisView()
         })
     }
+    
     func loginMember() {
         guard let memberEmail = self.memberLoginEmailTextField.text, let memberPassword = self.memberLoginPasswordTextField.text else {
             print("Invalid member login email or password is invalid.")

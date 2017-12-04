@@ -16,6 +16,7 @@ class ContactsCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         self.setupViews()
     }
+    
     /* Cell Components */
     let profileImage:UIImageView = {
         let imageView = UIImageView()
@@ -24,6 +25,7 @@ class ContactsCell: UITableViewCell {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
+    
     let nameLabel:UILabel = {
         let label = UILabel()
         label.text = "Heriberto Prieto"
@@ -31,6 +33,7 @@ class ContactsCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     let addressLabel:UILabel = {
         let label = UILabel()
         label.text = "Fontana, CA"
@@ -39,6 +42,7 @@ class ContactsCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     /* Add subviews and set margins */
     func setupViews() {
         separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
@@ -57,6 +61,7 @@ class ContactsCell: UITableViewCell {
         addressLabel.leftAnchor.constraint(equalTo: profileImage.rightAnchor, constant: 10).isActive = true
         addressLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor).isActive = true
     }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

@@ -10,6 +10,7 @@ import UIKit
 import Firebase
 
 class LoginSignupController: UIViewController {
+    
     /* Global Constants */
     let TEAL = UIColor(r: 19, g: 136, b: 143)
     let DISAPPEAR:CGFloat = 0.0
@@ -21,6 +22,7 @@ class LoginSignupController: UIViewController {
     let VERYSLOW:Double = 1.0
     let INVIEW:CGFloat = 0.0
     var OFFVIEW = CGFloat() // not a constant but whatevs, initialized in viewdidload
+    
     /* DirectoryView Components */
     let ilawyerImage: UIImageView = {
         let imageView = UIImageView()
@@ -28,6 +30,7 @@ class LoginSignupController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
+    
     let memberButton: UIButton = {
         let button = UIButton()
         button.setTitle("Member", for: .normal)
@@ -37,6 +40,7 @@ class LoginSignupController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
     let attorneyButton: UIButton = {
         let button = UIButton()
         button.setTitle("Attorney", for: .normal)
@@ -46,6 +50,7 @@ class LoginSignupController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
+    
     /* MemberView Components */
     let memberView: UIView = {
         let view = UIView()
@@ -54,6 +59,7 @@ class LoginSignupController: UIViewController {
         view.alpha = 0
         return view
     }()
+    
     let memberNavbar: UINavigationBar = {
         let navbar = UINavigationBar()
         navbar.barStyle = .default
@@ -61,6 +67,7 @@ class LoginSignupController: UIViewController {
         navbar.translatesAutoresizingMaskIntoConstraints = false
         return navbar
     }()
+    
     let memberNavbarItems: UINavigationItem = {
         let navItems = UINavigationItem()
         navItems.title = "Login"
@@ -69,6 +76,7 @@ class LoginSignupController: UIViewController {
         navItems.rightBarButtonItem?.isEnabled = false
         return navItems
     }()
+    
     let memberViewButton: UIButton = {
         let button = UIButton()
         button.setTitle("Signup", for: .normal)
@@ -83,12 +91,14 @@ class LoginSignupController: UIViewController {
         button.addTarget(self, action: #selector(memberViewButtonClicked), for: .touchUpInside)
         return button
     }()
+    
     let memberLoginView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.clear
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     let memberLoginLabel: UILabel = {
         let label = UILabel()
         label.text = "Member"
@@ -96,6 +106,7 @@ class LoginSignupController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     let memberLoginEmailTextField: UITextField = {
         let textField = UITextField()
         textField.autocorrectionType = .no
@@ -110,6 +121,7 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(memberLoginFields), for: .editingChanged)
         return textField
     }()
+    
     let memberLoginPasswordTextField: UITextField = {
         let textField = UITextField()
         textField.autocorrectionType = .no
@@ -125,12 +137,14 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(memberLoginFields), for: .editingChanged)
         return textField
     }()
+    
     let memberSignupView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.clear
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     let memberSignupLabel: UILabel = {
         let label = UILabel()
         label.text = "What's your email?"
@@ -138,6 +152,7 @@ class LoginSignupController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     let memberSignupEmailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email Address"
@@ -152,6 +167,7 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(memberSignupFields), for: .editingChanged)
         return textField
     }()
+    
     let memberSignupPhoneTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Phone Number"
@@ -166,6 +182,7 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(memberSignupFields), for: .editingChanged)
         return textField
     }()
+    
     let memberSignupPasswordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
@@ -180,12 +197,14 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(memberSignupFields), for: .editingChanged)
         return textField
     }()
+    
     let memberSignupNameView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.clear
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     let memberSignupNameLabel: UILabel = {
         let label = UILabel()
         label.text = "What's your name?"
@@ -194,6 +213,7 @@ class LoginSignupController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     let memberSignupFirstNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "First Name"
@@ -208,6 +228,7 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(memberSignupNameFields), for: .editingChanged)
         return textField
     }()
+    
     let memberSignupLastNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Last Name"
@@ -264,12 +285,14 @@ class LoginSignupController: UIViewController {
         button.addTarget(self, action: #selector(attorneyViewButtonClicked), for: .touchUpInside)
         return button
     }()
+    
     let attorneyLoginView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.clear
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     let attorneyLoginLabel: UILabel = {
         let label = UILabel()
         label.text = "Attorney"
@@ -277,6 +300,7 @@ class LoginSignupController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     let attorneyLoginEmailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email Address"
@@ -290,6 +314,7 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(attorneyLoginFields), for: .editingChanged)
         return textField
     }()
+    
     let attorneyLoginPasswordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
@@ -304,12 +329,14 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(attorneyLoginFields), for: .editingChanged)
         return textField
     }()
+    
     let attorneySignupView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.clear
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     let attorneySignupLabel: UILabel = {
         let label = UILabel()
         label.text = "What's your email?"
@@ -317,6 +344,7 @@ class LoginSignupController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     let attorneySignupEmailTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Email Address"
@@ -330,6 +358,7 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(attorneySignupFields), for: .editingChanged)
         return textField
     }()
+    
     let attorneySignupPhoneTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Phone Number"
@@ -343,6 +372,7 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(attorneySignupFields), for: .editingChanged)
         return textField
     }()
+    
     let attorneySignupPasswordTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Password"
@@ -357,12 +387,14 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(attorneySignupFields), for: .editingChanged)
         return textField
     }()
+    
     let attorneySignupNameView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.clear
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     let attorneySignupNameLabel: UILabel = {
         let label = UILabel()
         label.text = "What's your name?"
@@ -370,6 +402,7 @@ class LoginSignupController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     let attorneySignupFirstNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "First Name"
@@ -383,6 +416,7 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(attorneySignupNameFields), for: .editingChanged)
         return textField
     }()
+    
     let attorneySignupLastNameTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Last Name"
@@ -396,6 +430,7 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(attorneySignupNameFields), for: .editingChanged)
         return textField
     }()
+    
     let attorneySignupBarNumberTextField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "Bar Number"
@@ -409,6 +444,7 @@ class LoginSignupController: UIViewController {
         textField.addTarget(self, action: #selector(attorneySignupNameFields), for: .editingChanged)
         return textField
     }()
+    
     func popThisView() {
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         self.tabBarController?.tabBar.isHidden = false
@@ -428,6 +464,7 @@ class LoginSignupController: UIViewController {
         self.initializeMemberView()
         self.initializeAttorneyView()
     }
+    
     /* Initialize View */
     func initializeView() {
         // Add buttons to view
@@ -453,6 +490,7 @@ class LoginSignupController: UIViewController {
         self.memberButton.heightAnchor.constraint(equalToConstant: 80).isActive = true
         self.memberButton.widthAnchor.constraint(equalToConstant: self.view.bounds.width/2).isActive = true
     }
+    
     /* MemberView Constraint Variables */
     var memberSignupViewLeftAnchor: NSLayoutConstraint?
     var memberSignupViewRightAnchor: NSLayoutConstraint?
@@ -572,6 +610,7 @@ class LoginSignupController: UIViewController {
         self.memberSignupLastNameTextField.rightAnchor.constraint(equalTo: self.memberSignupNameView.rightAnchor).isActive = true
         self.memberSignupLastNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
+    
     /* MemberView Constraint Variables */
     var attorneySignupViewLeftAnchor: NSLayoutConstraint?
     var attorneySignupViewRightAnchor: NSLayoutConstraint?
@@ -696,22 +735,28 @@ class LoginSignupController: UIViewController {
         self.attorneySignupBarNumberTextField.rightAnchor.constraint(equalTo: self.attorneySignupNameView.rightAnchor).isActive = true
         self.attorneySignupBarNumberTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
+    
     /* Member Field Validation methods */
     func validEmail(email: String) -> Bool {
         return self.regexValidation(string: email, regEx: "[A-Z0-9a-z.-_]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,3}")
     }
+    
     func validPassword(password: String) -> Bool {
         return self.regexValidation(string: password, regEx: "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z!@#$%^&*()-_=+{}|?>.<,:;~`’]{6,}$")
     }
+    
     func validPhoneNumber(phoneNumber: String) -> Bool {
         return self.regexValidation(string: phoneNumber, regEx: "(?:(\\+\\d\\d\\s+)?((?:\\(\\d\\d\\)|\\d\\d)\\s+)?)(\\d{4,5}\\-?\\d{4})")
     }
+    
     func validName(name: String) -> Bool {
         return self.regexValidation(string: name, regEx: "^[0-9a-zA-Z\\_]{2,18}$")
     }
+    
     func validateBar(bar: String) -> Bool {
         return self.regexValidation(string: bar, regEx: "(?:(\\+\\d\\d\\s+)?((?:\\(\\d\\d\\)|\\d\\d)\\s+)?)(\\d{4,5}\\-?\\d{4})")
     }
+    
     func regexValidation(string: String, regEx: String) -> Bool {
         var returnValue = true
         do {
@@ -727,10 +772,12 @@ class LoginSignupController: UIViewController {
         }
         return  returnValue
     }
+    
     /* UI Manip */
     override var prefersStatusBarHidden: Bool {
         return true
     }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
     }

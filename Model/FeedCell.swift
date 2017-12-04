@@ -21,7 +21,7 @@ class FeedCell: UITableViewCell {
     let usernameLabel: UILabel = {
         let label = UILabel()
         label.text = "Heriberto Prieto"
-        label.font = UIFont(name: "AvenirNext-DemiBold", size: 18)
+        label.font = UIFont(name: "AvenirNext-DemiBold", size: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -29,7 +29,7 @@ class FeedCell: UITableViewCell {
     let timestampLabel: UILabel = {
         let label = UILabel()
         label.text = "10h"
-        label.font = UIFont(name: "AvenirNext-Medium", size: 18)
+        label.font = UIFont(name: "AvenirNext-Medium", size: 16)
         label.textColor = UIColor.lightGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
