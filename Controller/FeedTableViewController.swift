@@ -29,30 +29,6 @@ class FeedTableViewController: UITableViewController {
         super.viewWillAppear(animated)
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
     }
-    /* Handle user login status */
-    func checkIfUserIsLoggedIn() {
-        if FIRAuth.auth()?.currentUser?.uid == nil {
-            perform(#selector(handleLogout), with: nil, afterDelay: 0)
-        } else {
-            let uid = FIRAuth.auth()?.currentUser?.uid
-            FIRDatabase.database().reference().child("users").child(uid!).observe(.value, with: { (snapshot) in
-                if let dictionary = snapshot.value as? [String:AnyObject] {
-                    guard let firstName = dictionary["firstName"] as? String else {
-                        return
-                    }
-                    self.navigationItem.title = "\(firstName)'s feed"
-                }
-            })
-        }
-    }
-    @objc func handleLogout() {
-        do {
-            try FIRAuth.auth()?.signOut()
-        } catch let logoutError {
-            print(logoutError)
-        }
-        self.navigationController?.pushViewController(LoginSignupController(), animated: false)
-    }
     
     /* Init TableViewController */
     func initFeed() {
@@ -60,12 +36,6 @@ class FeedTableViewController: UITableViewController {
         self.navigationItem.title = "Home"
         self.navigationItem.rightBarButtonItem? = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(composeMessage))
         self.navigationItem.rightBarButtonItem?.tintColor = UIColor(r: 19, g: 136, b: 143)
-    }
-    
-    /* Create a new messaging thread */
-    @objc func composeMessage() {
-        let newMessageController = UINavigationController(rootViewController: NewMessageController())
-        present(newMessageController, animated: true, completion: nil)
     }
     
     /* Number of Rows in section */
