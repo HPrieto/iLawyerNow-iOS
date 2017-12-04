@@ -13,6 +13,7 @@ extension LoginSignupController {
     @objc func attorneyLogin() {
         self.animateAttorneyViewShow()
     }
+    
     @objc func memberLogin() {
         self.animateMemberViewShow()
     }
@@ -22,6 +23,7 @@ extension LoginSignupController {
         self.animateMemberViewHide()
         self.view.endEditing(true)
     }
+    
     @objc func memberRightNavButtonClicked() {
         print("member right navbutton clicked...")
         if self.memberNavbarItems.rightBarButtonItem?.title == "Done" {
@@ -38,6 +40,7 @@ extension LoginSignupController {
             self.memberSignupEmailToName()
         }
     }
+    
     @objc func memberViewButtonClicked() {
         if self.memberViewButton.titleLabel?.text == "Signup" {
             self.memberLoginToSignupView()
@@ -47,6 +50,7 @@ extension LoginSignupController {
             self.memberSignupNameToEmail()
         }
     }
+    
     /* Fields for member signup: email, password, phone, first name, last name */
     @objc func memberSignupFields(textField: UITextField) {
         // Check for valid signup member email, phone and password
@@ -68,6 +72,7 @@ extension LoginSignupController {
             }
         }
     }
+    
     @objc func memberSignupNameFields(textField: UITextField) {
         // Check for valid member firstname, lastname
         if let firstName = self.memberSignupFirstNameTextField.text,
@@ -84,6 +89,7 @@ extension LoginSignupController {
             }
         }
     }
+    
     @objc func memberLoginFields(textField: UITextField) {
         // Check for valid login member email, and password
         if let email = self.memberLoginEmailTextField.text,
@@ -122,6 +128,7 @@ extension LoginSignupController {
             }
         }
     }
+    
     @objc func attorneySignupNameFields(textField: UITextField) {
         // Check for valid member firstname, lastname
         if let firstName = self.attorneySignupFirstNameTextField.text,
@@ -142,6 +149,7 @@ extension LoginSignupController {
             }
         }
     }
+    
     @objc func attorneyLoginFields(textField: UITextField) {
         // Check for valid login member email, and password
         if let email = self.attorneyLoginEmailTextField.text,
@@ -169,11 +177,13 @@ extension LoginSignupController {
             self.attorneySignupNameToEmail()
         }
     }
+    
     @objc func attorneyLeftNavItemClicked() {
         print("attorney left navitem clicked")
         self.animateAttorneyViewHide()
         self.view.endEditing(true)
     }
+    
     @objc func attorneyRightNavButtonClicked() {
         if self.attorneyNavbarItems.rightBarButtonItem?.title == "Next" {
             self.attorneySignupEmailToName()

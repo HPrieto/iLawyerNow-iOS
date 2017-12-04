@@ -20,9 +20,11 @@ extension LoginSignupController {
         self.animateMemberViewAlpha(alpha: self.DISAPPEAR, animationDuration: self.INSTANT)
         self.animateMemberViewAlpha(alpha: self.APPEAR, animationDuration: self.RAPID)
     }
+    
     func animateMemberViewHide() {
         self.animateMemberViewAlpha(alpha: self.DISAPPEAR, animationDuration: self.RAPID)
     }
+    
     func animateMemberViewAlpha(alpha:CGFloat,animationDuration:Double) {
         UIView.animate(withDuration: animationDuration, animations: {
             self.memberView.alpha = alpha
@@ -32,6 +34,7 @@ extension LoginSignupController {
             }
         }
     }
+    
     /* Animates margin changes in memberview */
     func memberLoginToSignupView() {
         self.view.endEditing(true)
@@ -48,6 +51,7 @@ extension LoginSignupController {
             self.memberSignupEmailTextField.becomeFirstResponder()
         }
     }
+    
     func memberSignupToLoginView() {
         self.view.endEditing(true)
         self.memberViewButton.setTitle("Signup", for: .normal)
@@ -63,6 +67,7 @@ extension LoginSignupController {
             self.memberLoginEmailTextField.becomeFirstResponder()
         }
     }
+    
     func memberSignupEmailToName() {
         self.view.endEditing(true)
         self.memberNavbarItems.rightBarButtonItem?.title = "Done"
@@ -77,6 +82,7 @@ extension LoginSignupController {
             self.memberSignupFirstNameTextField.becomeFirstResponder()
         }
     }
+    
     func memberSignupNameToEmail() {
         self.view.endEditing(true)
         self.memberNavbarItems.rightBarButtonItem?.title = "Next"
