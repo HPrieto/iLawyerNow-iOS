@@ -16,29 +16,12 @@ class AccountTableViewController: UITableViewController {
     /* AccountTableViewController LifeCycle Methods */
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.getUserProfileName()
-    }
-    func getUserProfileName() {
-        if let user = FIRAuth.auth()?.currentUser {
-            FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                if let dictionary = snapshot.value as? [String:Any] {
-                    // Get user's first name
-                    if let firstName = dictionary["firstName"] as? String {
-                        self.profileNameLabel.text = firstName
-                    } else {
-                        self.profileNameLabel.text = "Edit Profile"
-                    }
-                    // Get user's profile image
-                }
-            })
-        } else {
-            self.profileNameLabel.text = "Edit Profile"
-        }
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("AccountTableViewController viewWillAppear")
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
+        self.setUserProfileName()
     }
     /* Get section being selected */
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

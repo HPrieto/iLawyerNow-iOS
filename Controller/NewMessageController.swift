@@ -20,7 +20,7 @@ class NewMessageController: UITableViewController {
     }
     func fetchUser() {
         FIRDatabase.database().reference().child("users").observe(.childAdded) { (snapshot) in
-            if let dictionary = snapshot.value as? [String:Any] {
+            if let dictionary = snapshot.value as? [String:AnyObject] {
                 let user = User()
                 user.firstName = dictionary["firstName"] as? String
                 user.email = dictionary["email"] as? String

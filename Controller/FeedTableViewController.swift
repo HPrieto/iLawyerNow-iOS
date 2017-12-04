@@ -10,7 +10,12 @@ import UIKit
 import Firebase
 
 let dummyData = ["Leonor","Pedro","Heriberto","Karina","Jessica"]
-
+let dummyComment = ["I just got into an accident, what can I do?",
+                    "My son was just arrested for posession, what can I do?",
+                    "My husband beat me, what can I do?",
+                    "Can I go to jail for driving under the influence?",
+                    "My babydaddy is not paying his childsupport, what can I do?"]
+let dummy_images = ["dummy_image0","dummy_image1","dummy_image2","dummy_image3","dummy_image4"]
 class FeedTableViewController: UITableViewController {
     /* Global Variables */
     var CELLID = "cellId"
@@ -31,7 +36,7 @@ class FeedTableViewController: UITableViewController {
         } else {
             let uid = FIRAuth.auth()?.currentUser?.uid
             FIRDatabase.database().reference().child("users").child(uid!).observe(.value, with: { (snapshot) in
-                if let dictionary = snapshot.value as? [String:Any] {
+                if let dictionary = snapshot.value as? [String:AnyObject] {
                     guard let firstName = dictionary["firstName"] as? String else {
                         return
                     }
@@ -70,7 +75,7 @@ class FeedTableViewController: UITableViewController {
     
     /* TableRow Heights */
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 200
+        return 120
     }
     
     /* User tapped on tableview cell */
@@ -81,7 +86,9 @@ class FeedTableViewController: UITableViewController {
     /* TableRow Cell View */
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.CELLID, for: indexPath) as! FeedCell
+        cell.profileImageView.image = UIImage(named: "\(dummy_images[indexPath.row]).jpeg")
         cell.usernameLabel.text = dummyData[indexPath.row]
+        cell.postTextView.text = dummyComment[indexPath.row]
         return cell
     }
 }
