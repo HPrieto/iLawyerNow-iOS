@@ -35,47 +35,18 @@ class ProfileTableViewController: UITableViewController {
     }
     /* Sets the selector handlers for uitextfields */
     func addTextFieldHandlers() {
-        self.streetAddressField.addTarget(self, action: #selector(handleStreet), for: .editingChanged)
-        self.cityField.addTarget(self, action: #selector(handleCity), for: .editingChanged)
-        self.stateField.addTarget(self, action: #selector(handleState), for: .editingChanged)
-        self.zipCodeField.addTarget(self, action: #selector(handleZip), for: .editingChanged)
+        self.streetAddressField.addTarget(self, action: #selector(handleFields), for: .editingChanged)
+        self.cityField.addTarget(self, action: #selector(handleFields), for: .editingChanged)
+        self.stateField.addTarget(self, action: #selector(handleFields), for: .editingChanged)
+        self.zipCodeField.addTarget(self, action: #selector(handleFields), for: .editingChanged)
     }
     /* Saves updated address to database */
     func updateUserProfile() {
         guard let user = FIRAuth.auth()?.currentUser else {
             return
         }
-        print("Street: \(self.streetAddressField.text)")
-        print("City  : \(self.cityField.text)")
-        print("State : \(self.stateField.text)")
-        print("Zip   : \(self.zipCodeField.text)")
     }
-    func getUserProfile() {
-        if let user = FIRAuth.auth()?.currentUser {
-            self.emailLabel.text = user.email
-            FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                if let dictionary = snapshot.value as? [String:Any] {
-                    let firstName = dictionary["firstName"] as! String
-                    let lastName  = dictionary["lastName"] as! String
-                    self.fullNameLabel.text = "\(firstName) \(lastName)"
-                    if let street = dictionary["street"] as? String {
-                        self.streetAddressField.text = street
-                    }
-                    if let city = dictionary["city"] as? String {
-                        self.cityField.text = city
-                    }
-                    if let state = dictionary["state"] as? String {
-                        self.stateField.text = state
-                    }
-                    if let zip = dictionary["zip"] as? String {
-                        self.zipCodeField.text = zip
-                    }
-                }
-            })
-        } else {
-            
-        }
-    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("ProfileTableViewController viewWillAppear")

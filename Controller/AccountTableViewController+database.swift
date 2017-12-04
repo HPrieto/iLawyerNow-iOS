@@ -22,10 +22,30 @@ extension AccountTableViewController {
                         self.profileNameLabel.text = "Edit Profile"
                     }
                     // Get user's profile image
+                    if let imageURL = dictionary["imageURL"] as? String {
+                        print("ImageView url: \(imageURL)")
+                        self.setImageFromURL(urlString: imageURL)
+                    }
                 }
             })
         } else {
             self.profileNameLabel.text = "Edit Profile"
+        }
+    }
+    
+    /* Gets and sets image from urlstring */
+    func setImageFromURL(urlString: String) {
+        print("Setting image from url...")
+        print(urlString)
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        DispatchQueue.main.async {
+            let data = try? Data(contentsOf: url)
+            if let imageData = data {
+                let image = UIImage(data: imageData)
+                self.profileNameImage.image = image
+            }
         }
     }
 }

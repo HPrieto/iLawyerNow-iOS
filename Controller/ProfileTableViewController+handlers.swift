@@ -33,7 +33,7 @@ extension ProfileTableViewController: UIImagePickerControllerDelegate, UINavigat
         if let selectedImage = selectedImageFromPicker {
             self.addPhotoButton.setImage(selectedImage, for: .normal)
         }
-        
+        self.navigationItem.rightBarButtonItem?.isEnabled = true
         dismiss(animated: true, completion: nil)
     }
     
@@ -46,48 +46,44 @@ extension ProfileTableViewController: UIImagePickerControllerDelegate, UINavigat
     /* Right NavigationButton Handler */
     @objc func rightBarButtonItemClicked() {
         print("Next Button Clicked")
-        self.navigationController?.popViewController(animated: true)
+        self.updateProfile()
+    }
+    
+    // Checks for valid input fields
+    func validFields() -> Bool {
+        if let street = self.streetAddressField.text {
+            if street.underestimatedCount > 30 {
+                print("Invalid street: \(street)")
+                return false
+            }
+        }
+        if let city = self.cityField.text {
+            if !self.regexValidation(string: city, regEx: "([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)")
+                && city.underestimatedCount != 0 {
+                print("Invalid city: \(city)")
+                return false
+            }
+        }
+        if let state = self.stateField.text {
+            if !self.regexValidation(string: state, regEx: "([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)")
+                && state.underestimatedCount != 0 {
+                print("Invalid street: \(state)")
+                return false
+            }
+        }
+        if let zip = self.zipCodeField.text {
+            if !CharacterSet.decimalDigits.isSuperset(of: CharacterSet(charactersIn: zip))
+                && zip.underestimatedCount != 0 {
+                print("Invalid zip: \(zip)")
+                return false
+            }
+        }
+        return true
     }
     
     /* UITextField handlers for street, city, state, zip */
-    @objc func handleStreet(textField: UITextField) {
-        guard let street = self.streetAddressField.text else {
-            return
-        }
-        if self.regexValidation(string: street, regEx: "") {
-            self.navigationItem.rightBarButtonItem?.isEnabled = true
-        } else {
-            self.navigationItem.rightBarButtonItem?.isEnabled = false
-        }
-    }
-    
-    @objc func handleCity(textField: UITextField) {
-        guard let city = self.cityField.text else {
-            return
-        }
-        if self.regexValidation(string: city, regEx: "([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)") {
-            self.navigationItem.rightBarButtonItem?.isEnabled = true
-        } else {
-            self.navigationItem.rightBarButtonItem?.isEnabled = false
-        }
-    }
-    
-    @objc func handleState(textField: UITextField) {
-        guard let state = self.stateField.text else {
-            return
-        }
-        if self.regexValidation(string: state, regEx: "([a-zA-Z]+|[a-zA-Z]+\\s[a-zA-Z]+)") {
-            self.navigationItem.rightBarButtonItem?.isEnabled = true
-        } else {
-            self.navigationItem.rightBarButtonItem?.isEnabled = false
-        }
-    }
-    
-    @objc func handleZip(textField: UITextField) {
-        guard let zip = self.zipCodeField.text else {
-            return
-        }
-        if self.regexValidation(string: zip, regEx: "(?:(\\+\\d\\d\\s+)?((?:\\(\\d\\d\\)|\\d\\d)\\s+)?)(\\d{4,5}\\-?\\d{4})") {
+    @objc func handleFields() {
+        if self.validFields() {
             self.navigationItem.rightBarButtonItem?.isEnabled = true
         } else {
             self.navigationItem.rightBarButtonItem?.isEnabled = false

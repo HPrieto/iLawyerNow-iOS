@@ -16,6 +16,8 @@ class AccountTableViewController: UITableViewController {
     /* AccountTableViewController LifeCycle Methods */
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.profileNameImage.layer.masksToBounds = true
+        self.profileNameImage.layer.cornerRadius = self.profileNameImage.bounds.width / 2
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
