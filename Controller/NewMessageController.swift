@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import Firebase
 
 class NewMessageController: UITableViewController {
     let cellId = "cellId"
@@ -18,20 +17,6 @@ class NewMessageController: UITableViewController {
         tableView.register(NewMessageCell.self, forCellReuseIdentifier: cellId)
         fetchUser()
     }
-    func fetchUser() {
-        FIRDatabase.database().reference().child("users").observe(.childAdded) { (snapshot) in
-            if let dictionary = snapshot.value as? [String:AnyObject] {
-                let user = User()
-                user.firstName = dictionary["firstName"] as? String
-                user.email = dictionary["email"] as? String
-                self.users.append(user)
-                
-            }
-        }
-    }
-    @objc func handleCancel() {
-        dismiss(animated: true, completion: nil)
-    }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
@@ -41,15 +26,5 @@ class NewMessageController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath)
         
         return cell
-    }
-}
-
-class NewMessageCell:UITableViewCell {
-    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-        super.init(style: .subtitle, reuseIdentifier: reuseIdentifier)
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

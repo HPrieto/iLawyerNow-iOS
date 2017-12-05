@@ -25,6 +25,7 @@ class FeedTableViewController: UITableViewController {
         self.initFeed()
         self.checkIfUserIsLoggedIn()
     }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
@@ -53,6 +54,7 @@ class FeedTableViewController: UITableViewController {
         let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
         self.navigationController?.pushViewController(chatLogController, animated: true)
     }
+    
     /* TableRow Cell View */
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.CELLID, for: indexPath) as! FeedCell
