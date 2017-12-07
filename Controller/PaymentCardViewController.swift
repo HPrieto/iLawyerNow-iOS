@@ -11,6 +11,7 @@ import UIKit
 class PaymentCardViewController: UIViewController {
     /* Global Constants */
     let CREDITCARDREGEX = "^(?:4[0-9]{12}(?:[0-9]{3})?|[25][1-7][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\\d{3})\\d{11})$"
+    
     /* UIComponents */
     let cardView: UIView = {
         let newView = UIView()
@@ -21,6 +22,7 @@ class PaymentCardViewController: UIViewController {
         newView.layer.cornerRadius = 5
         return newView
     }()
+    
     let cardField: UITextField = {
         let field = UITextField()
         field.translatesAutoresizingMaskIntoConstraints = false
@@ -29,12 +31,14 @@ class PaymentCardViewController: UIViewController {
         field.font = UIFont(name: "AvenirNext-Regular", size: 18)
         return field
     }()
+    
     let cardImage: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.image = #imageLiteral(resourceName: "credit_card_back_icon")
         return imageView
     }()
+    
     let label1: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -44,6 +48,7 @@ class PaymentCardViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
+    
     let label2: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -53,6 +58,7 @@ class PaymentCardViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
+    
     let label3: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -62,16 +68,7 @@ class PaymentCardViewController: UIViewController {
         label.textAlignment = .center
         return label
     }()
-    /* UIComponent Listeners */
-    @objc func cardNumberChanging(_ textField: UITextField) {
-        if let count = textField.text?.count {
-            if (count == 16) {
-                self.navigationItem.rightBarButtonItem?.isEnabled = true
-            } else {
-                self.navigationItem.rightBarButtonItem?.isEnabled = false
-            }
-        }
-    }
+    
     /* UIViewController LifeCycle */
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -82,16 +79,15 @@ class PaymentCardViewController: UIViewController {
         // Create NavigationBar Button Items
         self.navigationItem.title = "Payment Card"
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(saveCardNumber))
+        self.navigationItem.rightBarButtonItem?.isEnabled = false
         self.navigationItem.leftBarButtonItem?.action = #selector(goBack)
     }
-    /* Right Bar Button Item Action: Go Back once changes are done */
-    @objc func saveCardNumber() {
-        self.navigationController?.popViewController(animated: true)
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        self.setCardNumber()
     }
-    /* Left Bar Button Item Action: Go Back */
-    @objc func goBack() {
-        self.navigationController?.popViewController(animated: true)
-    }
+    
     /* Add UIComponents to view */
     func addComponentsToView() {
         self.view.addSubview(self.cardView)
@@ -102,6 +98,7 @@ class PaymentCardViewController: UIViewController {
         self.view.addSubview(self.label3)
         self.view.backgroundColor = UIColor.groupTableViewBackground
     }
+    
     /* Set UIComponent Anchors */
     func setComponentAnchors() {
         // Set CardView Anchors

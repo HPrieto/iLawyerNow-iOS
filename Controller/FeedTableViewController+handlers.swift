@@ -12,7 +12,5 @@ extension FeedTableViewController {
     
     /* Create a new messaging thread */
     @objc func composeMessage() {
-        let newMessageController = UINavigationController(rootViewController: NewMessageController())
-        present(newMessageController, animated: true, completion: nil)
     }
 }

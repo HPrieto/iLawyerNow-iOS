@@ -15,10 +15,13 @@ extension ProfileTableViewController {
         if let user = FIRAuth.auth()?.currentUser {
             self.emailLabel.text = user.email
             FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
-                if let dictionary = snapshot.value as? [String:Any] {
-                    let firstName = dictionary["firstName"] as! String
-                    let lastName  = dictionary["lastName"] as! String
-                    self.fullNameLabel.text = "\(firstName) \(lastName)"
+                if let dictionary = snapshot.value as? [String:AnyObject] {
+                    if let firstName = dictionary["firstName"],
+                        let lastName  = dictionary["lastName"] {
+                        self.fullNameLabel.text = "\(firstName) \(lastName)"
+                    } else {
+                        self.fullNameLabel.text = "User"
+                    }
                     if let imageUrl = dictionary["imageURL"] as? String {
                         print("There is a url")
                         self.setImageFromURL(urlString: imageUrl)
