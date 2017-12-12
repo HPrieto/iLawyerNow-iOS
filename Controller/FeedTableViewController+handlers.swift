@@ -12,5 +12,8 @@ extension FeedTableViewController {
     
     /* Create a new messaging thread */
     @objc func composeMessage() {
+        let newChatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        let navigationChatLogController = UINavigationController(rootViewController: newChatLogController)
+        self.present(navigationChatLogController, animated: true, completion: nil)
     }
 }

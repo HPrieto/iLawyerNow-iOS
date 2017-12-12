@@ -31,12 +31,17 @@ class FeedTableViewController: UITableViewController {
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
+    
     /* Init TableViewController */
+    let greyBubbleColor = UIColor(r: 19, g: 136, b: 143)
     func initFeed() {
         self.tableView.register(FeedCell.self, forCellReuseIdentifier: self.CELLID)
         self.navigationItem.title = "Home"
         self.navigationItem.rightBarButtonItem? = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(composeMessage))
-        self.navigationItem.rightBarButtonItem?.tintColor = UIColor(r: 19, g: 136, b: 143)
+        self.navigationItem.rightBarButtonItem?.tintColor = self.greyBubbleColor
     }
     
     /* Number of Rows in section */
