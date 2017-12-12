@@ -1,5 +1,5 @@
 //
-//  ChatLogController+database.swift
+//  NewMessageController+database.swift
 //  iLawyerNow
 //
 //  Created by Heriberto Prieto on 12/7/17.
@@ -9,9 +9,9 @@
 import UIKit
 import Firebase
 
-extension ChatLogController {
+extension NewMessageController {
     func observeMessages() {
-        print("ChatLog Observing Messages...")
+        print("NewMessage Observing Messages...")
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {
             return
         }
@@ -51,3 +51,4 @@ extension ChatLogController {
         }
     }
 }
+
