@@ -16,7 +16,8 @@ extension NewMessageController {
     
     /* Handler for when user wants to send message */
     @objc func handleSend() {
-        self.sendMessage()
+//        self.sendMessage()
+        self.dismiss(animated: true, completion: nil)
     }
     
     /* Called when keyboard is displayed */

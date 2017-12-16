@@ -34,9 +34,13 @@ class LoginSignupController: UIViewController {
     let memberButton: UIButton = {
         let button = UIButton()
         button.setTitle("Member", for: .normal)
-        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 25)
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 20)
         button.titleLabel?.textColor = UIColor.white
         button.backgroundColor = UIColor.clear
+        button.layer.borderColor = UIColor.white.cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 25
+        button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -44,11 +48,26 @@ class LoginSignupController: UIViewController {
     let attorneyButton: UIButton = {
         let button = UIButton()
         button.setTitle("Attorney", for: .normal)
-        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 25)
-        button.titleLabel?.textColor = UIColor.white
-        button.backgroundColor = UIColor.clear
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 20)
+        button.titleLabel?.textColor = UIColor(r: 19, g: 136, b: 143)
+        button.backgroundColor = UIColor.white
+        button.layer.borderColor = UIColor.white.cgColor
+        button.layer.borderWidth = 1
+        button.layer.cornerRadius = 25
+        button.layer.masksToBounds = true
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
+    }()
+    
+    let welcomeLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Welcome \nto iLawyerNow."
+        label.font = UIFont(name: "AvenirNext-Regular", size: 32)
+        label.textColor = UIColor.white
+        label.backgroundColor = UIColor.clear
+        label.numberOfLines = 2
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
     }()
     
     /* MemberView Components */
@@ -469,26 +488,33 @@ class LoginSignupController: UIViewController {
     func initializeView() {
         // Add buttons to view
         self.view.addSubview(self.ilawyerImage)
+        self.view.addSubview(self.welcomeLabel)
         self.view.addSubview(self.attorneyButton)
         self.view.addSubview(self.memberButton)
+        
         // Add button actions
         self.attorneyButton.addTarget(self, action: #selector(attorneyLogin), for: .touchUpInside)
         self.memberButton.addTarget(self, action: #selector(memberLogin), for: .touchUpInside)
+        
+        // Add Welcome Label Margins
+        self.welcomeLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        self.welcomeLabel.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 25).isActive = true
+        self.welcomeLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width).isActive = true
         // ilawyer imageview constraints
-        self.ilawyerImage.centerXAnchor.constraint(equalTo: self.view.centerXAnchor).isActive = true
-        self.ilawyerImage.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 150).isActive = true
-        self.ilawyerImage.widthAnchor.constraint(equalToConstant: 100).isActive = true
-        self.ilawyerImage.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        self.ilawyerImage.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 25).isActive = true
+        self.ilawyerImage.bottomAnchor.constraint(equalTo: self.welcomeLabel.topAnchor, constant: -50).isActive = true
+        self.ilawyerImage.widthAnchor.constraint(equalToConstant: 70).isActive = true
+        self.ilawyerImage.heightAnchor.constraint(equalToConstant: 70).isActive = true
         // attorney button constraints left
-        self.attorneyButton.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-        self.attorneyButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        self.attorneyButton.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        self.attorneyButton.widthAnchor.constraint(equalToConstant: self.view.bounds.width/2).isActive = true
+        self.attorneyButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 25).isActive = true
+        self.attorneyButton.topAnchor.constraint(equalTo: self.welcomeLabel.bottomAnchor, constant: 50).isActive = true
+        self.attorneyButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneyButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
         // member button constraints right
-        self.memberButton.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-        self.memberButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
-        self.memberButton.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        self.memberButton.widthAnchor.constraint(equalToConstant: self.view.bounds.width/2).isActive = true
+        self.memberButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 25).isActive = true
+        self.memberButton.topAnchor.constraint(equalTo: self.attorneyButton.bottomAnchor, constant: 10).isActive = true
+        self.memberButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.memberButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
     }
     
     /* MemberView Constraint Variables */
