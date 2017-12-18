@@ -12,7 +12,7 @@ import Firebase
 extension LoginSignupController {
     /* Attorney Signup/Login methods */
     func signupAttorney() {
-        guard let attorneyEmail = self.attorneySignupEmailTextField.text, let attorneyPassword = self.attorneySignupPasswordTextField.text else {
+        /*guard let attorneyEmail = self.attorneySignupEmailTextField.text, let attorneyPassword = self.attorneySignupPasswordTextField.text else {
             print("Invalid attorney email and password fields on signup")
             return
         }
@@ -48,27 +48,12 @@ extension LoginSignupController {
                 print("New attorney '\(attorneyFirstName)' saved to database successfully.")
             })
             self.popThisView()
-        })
-    }
-    
-    func loginAttorney() {
-        guard let attorneyEmail = self.attorneyLoginEmailTextField.text, let attorneyPassword = self.attorneyLoginPasswordTextField.text else {
-            print("Invalid attorney login email or password is invalid.")
-            return
-        }
-        FIRAuth.auth()?.signIn(withEmail: attorneyEmail, password: attorneyPassword, completion: { (user, error) in
-            if error != nil {
-                print(error.debugDescription)
-                return
-            }
-            print("Attorney with email '\(attorneyEmail)' has logged in.")
-            self.popThisView()
-        })
+        })*/
     }
     
     /* Member Signup/Login methods */
     func signupMember() {
-        guard let memberEmail = self.memberSignupEmailTextField.text, let memberPassword = self.memberSignupPasswordTextField.text else {
+        /*guard let memberEmail = self.memberSignupEmailTextField.text, let memberPassword = self.memberSignupPasswordTextField.text else {
             print("Invalid member email and password fields on signup")
             return
         }
@@ -103,21 +88,21 @@ extension LoginSignupController {
                 print("New member '\(memberFirstName)' saved to database successfully.")
             })
             self.popThisView()
-        })
+        })*/
     }
     
-    func loginMember() {
-        guard let memberEmail = self.memberLoginEmailTextField.text, let memberPassword = self.memberLoginPasswordTextField.text else {
+    func loginUser() {
+        /*guard let email = self.loginEmailTextField.text, let password = self.loginPasswordTextField.text else {
             print("Invalid member login email or password is invalid.")
             return
         }
-        FIRAuth.auth()?.signIn(withEmail: memberEmail, password: memberPassword, completion: { (user, error) in
+        FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
             if error != nil {
                 print(error.debugDescription)
                 return
             }
-            print("Member with email '\(memberEmail)' has logged in.")
+            print("Member with email '\(email)' has logged in.")
             self.popThisView()
-        })
+        })*/
     }
 }

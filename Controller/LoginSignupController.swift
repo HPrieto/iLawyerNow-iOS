@@ -9,22 +9,61 @@
 import UIKit
 import Firebase
 
-class LoginSignupController: UIViewController {
+class LoginSignupController: UIViewController, UIScrollViewDelegate {
     
     /* Global Constants */
     let TEAL = UIColor(r: 19, g: 136, b: 143)
     let DISAPPEAR:CGFloat = 0.0
     let APPEAR:CGFloat = 1.0
     let INSTANT:Double = 0.0
-    let RAPID:Double = 0.25
+    let RAPID:Double = 0.40
     let GRADUAL:Double = 0.5
     let SLOWLY:Double = 0.75
     let VERYSLOW:Double = 1.0
     let INVIEW:CGFloat = 0.0
     var OFFVIEW = CGFloat() // not a constant but whatevs, initialized in viewdidload
     
+    /* AttorneyView Margin Variables */
+    var attorneySignupNameScrollViewHeightAnchor: NSLayoutConstraint?
+    var attorneySignupEmailScrollViewHeightAnchor: NSLayoutConstraint?
+    var attorneySignupNameScrollViewLeftAnchor: NSLayoutConstraint?
+    var attorneySignupEmailScrollViewLeftAnchor: NSLayoutConstraint?
+    
+    /* MemberView Margin Variables */
+    var memberSignupNameScrollViewHeightAnchor: NSLayoutConstraint?
+    var memberSignupEmailScrollViewHeightAnchor: NSLayoutConstraint?
+    var memberSignupNameScrollViewLeftAnchor: NSLayoutConstraint?
+    
     /* DirectoryView Components */
-    let ilawyerImage: UIImageView = {
+    let welcomeNavbar: UINavigationBar = {
+        let navbar = UINavigationBar()
+        navbar.barStyle = .default
+        navbar.barTintColor = UIColor.clear
+        navbar.backgroundColor = UIColor.clear
+        navbar.tintColor = UIColor.white
+        navbar.isTranslucent = true
+        navbar.isOpaque = false
+        navbar.setBackgroundImage(UIImage(), for: .default)
+        navbar.shadowImage = UIImage()
+        navbar.translatesAutoresizingMaskIntoConstraints = false
+        return navbar
+    }()
+    
+    let welcomeNavbarItems: UINavigationItem = {
+        let navItems = UINavigationItem()
+        navItems.rightBarButtonItem = UIBarButtonItem(title: "Login", style: UIBarButtonItemStyle.plain, target: self, action: #selector(welcomeNavbarRightButtonClicked))
+        navItems.rightBarButtonItem?.setTitleTextAttributes([NSAttributedStringKey.font: UIFont(name: "AvenirNext-Medium", size: 16)!], for: .normal)
+        return navItems
+    }()
+    
+    let welcomeView: UIScrollView = {
+        let view = UIScrollView()
+        view.backgroundColor = UIColor.clear
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let ilawyerIcon: UIImageView = {
         let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "ilawyer_home_icon")
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -41,6 +80,7 @@ class LoginSignupController: UIViewController {
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 25
         button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(memberButtonClicked), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -49,12 +89,13 @@ class LoginSignupController: UIViewController {
         let button = UIButton()
         button.setTitle("Attorney", for: .normal)
         button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 20)
-        button.titleLabel?.textColor = UIColor(r: 19, g: 136, b: 143)
+        button.setTitleColor(UIColor(red:0.38, green:0.26, blue:0.52, alpha:1.0), for: .normal)
         button.backgroundColor = UIColor.white
         button.layer.borderColor = UIColor.white.cgColor
         button.layer.borderWidth = 1
         button.layer.cornerRadius = 25
         button.layer.masksToBounds = true
+        button.addTarget(self, action: #selector(attorneyButtonClicked), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
@@ -62,406 +103,382 @@ class LoginSignupController: UIViewController {
     let welcomeLabel: UILabel = {
         let label = UILabel()
         label.text = "Welcome \nto iLawyerNow."
-        label.font = UIFont(name: "AvenirNext-Regular", size: 32)
-        label.textColor = UIColor.white
+        label.font = UIFont(name: "AvenirNext-Regular", size: 30)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.90)
         label.backgroundColor = UIColor.clear
         label.numberOfLines = 2
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    /* MemberView Components */
-    let memberView: UIView = {
+    /* Login Components */
+    let loginView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.groupTableViewBackground
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.alpha = 0
+        view.backgroundColor = UIColor.clear
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    let memberNavbar: UINavigationBar = {
+    let loginScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.bounces = true
+        scrollView.isUserInteractionEnabled = true
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.tintColor = UIColor.white
+        scrollView.isScrollEnabled = true
+        scrollView.backgroundColor = UIColor.clear
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    let loginNavbar: UINavigationBar = {
         let navbar = UINavigationBar()
         navbar.barStyle = .default
-        navbar.tintColor = UIColor(r: 19, g: 136, b: 143)
+        navbar.barTintColor = UIColor.clear
+        navbar.backgroundColor = UIColor.clear
+        navbar.tintColor = UIColor.white
+        navbar.isTranslucent = true
+        navbar.isOpaque = false
+        navbar.setBackgroundImage(UIImage(), for: .default)
+        navbar.shadowImage = UIImage()
         navbar.translatesAutoresizingMaskIntoConstraints = false
         return navbar
     }()
     
-    let memberNavbarItems: UINavigationItem = {
+    let loginNavbarItems: UINavigationItem = {
         let navItems = UINavigationItem()
-        navItems.title = "Login"
-        navItems.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.stop, target: self, action: #selector(memberLeftNavItemClicked))
-        navItems.rightBarButtonItem = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(memberRightNavButtonClicked))
-        navItems.rightBarButtonItem?.isEnabled = false
+        navItems.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "left_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(loginNavbarLeftButtonClicked))
+        navItems.rightBarButtonItem = UIBarButtonItem(title: "Forgot Password", style: UIBarButtonItemStyle.plain, target: self, action: #selector(loginNavbarRightButtonClicked))
+        navItems.rightBarButtonItem?.setTitleTextAttributes([NSAttributedStringKey.font: UIFont(name: "AvenirNext-Medium", size: 16)!], for: .normal)
         return navItems
     }()
     
-    let memberViewButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Signup", for: .normal)
-        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 20)
-        button.setTitleColor(UIColor.black, for: .normal)
-        button.backgroundColor = UIColor.clear
-        button.layer.borderWidth = 2
-        button.layer.cornerRadius = 0
-        button.layer.masksToBounds = true
-        button.layer.borderColor = UIColor.black.cgColor
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(memberViewButtonClicked), for: .touchUpInside)
-        return button
-    }()
-    
-    let memberLoginView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.clear
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    let memberLoginLabel: UILabel = {
+    let loginLabel: UILabel = {
         let label = UILabel()
-        label.text = "Member"
-        label.font = UIFont(name: "AvenirNext-Regular", size: 30)
+        label.text = "Login"
+        label.textColor = UIColor.white
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Regular", size: 35)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    let memberLoginEmailTextField: UITextField = {
+    let loginEmailTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "EMAIL ADDRESS"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let loginPasswordTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "PASSWORD"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let loginEmailTextField: UITextField = {
         let textField = UITextField()
         textField.autocorrectionType = .no
-        textField.placeholder = "Email Address"
-        textField.backgroundColor = UIColor.white
+        textField.backgroundColor = UIColor.clear
         textField.keyboardType = UIKeyboardType.emailAddress
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
         textField.leftViewMode = UITextFieldViewMode.always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.tag = 1
-        textField.addTarget(self, action: #selector(memberLoginFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(loginFields), for: .editingChanged)
         return textField
     }()
     
-    let memberLoginPasswordTextField: UITextField = {
+    let loginPasswordTextField: UITextField = {
         let textField = UITextField()
         textField.autocorrectionType = .no
-        textField.placeholder = "Password"
         textField.isSecureTextEntry = true
-        textField.backgroundColor = UIColor.white
+        textField.backgroundColor = UIColor.clear
         textField.keyboardType = UIKeyboardType.alphabet
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
         textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.tag = 2
-        textField.addTarget(self, action: #selector(memberLoginFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(loginFields), for: .editingChanged)
         return textField
     }()
     
-    let memberSignupView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.clear
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    let memberSignupLabel: UILabel = {
-        let label = UILabel()
-        label.text = "What's your email?"
-        label.font = UIFont(name: "AvenirNext-Regular", size: 30)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    let memberSignupEmailTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Email Address"
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.emailAddress
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.tag = 1
-        textField.addTarget(self, action: #selector(memberSignupFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let memberSignupPhoneTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Phone Number"
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.phonePad
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.tag = 2
-        textField.addTarget(self, action: #selector(memberSignupFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let memberSignupPasswordTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Password"
-        textField.autocorrectionType = .no
-        textField.isSecureTextEntry = true
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.emailAddress
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(memberSignupFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let memberSignupNameView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.clear
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    let memberSignupNameLabel: UILabel = {
-        let label = UILabel()
-        label.text = "What's your name?"
-        label.textAlignment = .center
-        label.font = UIFont(name: "AvenirNext-Regular", size: 30)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    let memberSignupFirstNameTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "First Name"
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.emailAddress
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(memberSignupNameFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let memberSignupLastNameTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Last Name"
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.emailAddress
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(memberSignupNameFields), for: .editingChanged)
-        return textField
-    }()
-    
-    /* AttorneyView Components */
+    /* AttorneyView Margins */
     let attorneyView: UIView = {
         let view = UIView()
-        view.backgroundColor = UIColor.groupTableViewBackground
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.alpha = 0
+        view.backgroundColor = UIColor.clear
+        view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+    
+    let attorneyNameScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.bounces = true
+        scrollView.isUserInteractionEnabled = true
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.tintColor = UIColor.white
+        scrollView.isScrollEnabled = true
+        scrollView.backgroundColor = UIColor.clear
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
     }()
     
     let attorneyNavbar: UINavigationBar = {
         let navbar = UINavigationBar()
         navbar.barStyle = .default
-        navbar.tintColor = UIColor(r: 19, g: 136, b: 143)
+        navbar.barTintColor = UIColor.clear
+        navbar.backgroundColor = UIColor.clear
+        navbar.tintColor = UIColor.white
+        navbar.isTranslucent = true
+        navbar.isOpaque = false
+        navbar.setBackgroundImage(UIImage(), for: .default)
+        navbar.shadowImage = UIImage()
         navbar.translatesAutoresizingMaskIntoConstraints = false
         return navbar
     }()
     
     let attorneyNavbarItems: UINavigationItem = {
         let navItems = UINavigationItem()
-        navItems.title = "Login"
-        navItems.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: UIBarButtonSystemItem.stop, target: self, action: #selector(attorneyLeftNavItemClicked))
-        navItems.rightBarButtonItem = UIBarButtonItem(title: "Done", style: UIBarButtonItemStyle.plain, target: self, action: #selector(attorneyRightNavButtonClicked))
-        navItems.rightBarButtonItem?.isEnabled = false
+        navItems.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "left_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(attorneyNavbarLeftButtonClicked))
         return navItems
     }()
     
-    let attorneyViewButton: UIButton = {
+    let attorneyNameLabel: UILabel = {
+        let label = UILabel()
+        label.text = "What's your name?"
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Regular", size: 32)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let attorneyFirstNameTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "FIRST NAME"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let attorneyLastNameTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "LAST NAME"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let attorneyPhoneTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "PHONE NUMBER"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let attorneyFirstNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.emailAddress
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    let attorneyLastNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.isSecureTextEntry = true
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.alphabet
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    let attorneyPhoneTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.isSecureTextEntry = true
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.phonePad
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    /* Attorney Email Components */
+    let attorneyEmailScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.bounces = true
+        scrollView.isUserInteractionEnabled = true
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.tintColor = UIColor.white
+        scrollView.isScrollEnabled = true
+        scrollView.backgroundColor = UIColor.clear
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    let attorneyEmailLabel: UILabel = {
+        let label = UILabel()
+        label.text = "And, your email?"
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Regular", size: 32)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let attorneyEmailTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "EMAIL"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let attorneyPasswordTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "PASSWORD"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let attorneyBarTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "BAR NUMBER"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let attorneyEmailTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.emailAddress
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    let attorneyPasswordTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.isSecureTextEntry = true
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.alphabet
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    let attorneyBarTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.isSecureTextEntry = true
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.numberPad
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    var attorneyNameToEmailButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Signup", for: UIControlState.normal)
-        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 20)
-        button.setTitleColor(UIColor.black, for: .normal)
-        button.backgroundColor = UIColor.clear
-        button.layer.borderWidth = 2
-        button.layer.cornerRadius = 0
+        button.backgroundColor = UIColor.white
+        button.contentMode = .scaleAspectFit
         button.layer.masksToBounds = true
-        button.layer.borderColor = UIColor.black.cgColor
-        button.clearsContextBeforeDrawing = false
+        button.layer.cornerRadius = 25
+        button.layer.borderWidth = 10
+        button.layer.borderColor = UIColor.white.cgColor
+        button.setImage(UIImage(named: "right_arrow_purple"), for: .normal)
+        button.addTarget(self, action: #selector(attorneyNameToEmailButtonClicked), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(attorneyViewButtonClicked), for: .touchUpInside)
         return button
     }()
     
-    let attorneyLoginView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.clear
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
+    var attorneySignupButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = UIColor.white
+        button.contentMode = .scaleAspectFit
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 25
+        button.setImage(UIImage(named: "right_arrow_purple"), for: .normal)
+        button.addTarget(self, action: #selector(attorneySignupButtonClicked), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
-    let attorneyLoginLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Attorney"
-        label.font = UIFont(name: "AvenirNext-Regular", size: 30)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    let attorneyLoginEmailTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Email Address"
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.emailAddress
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneyLoginFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let attorneyLoginPasswordTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Password"
-        textField.autocorrectionType = .no
-        textField.isSecureTextEntry = true
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.alphabet
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneyLoginFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let attorneySignupView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.clear
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    let attorneySignupLabel: UILabel = {
-        let label = UILabel()
-        label.text = "What's your email?"
-        label.font = UIFont(name: "AvenirNext-Regular", size: 30)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    let attorneySignupEmailTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Email Address"
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.emailAddress
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneySignupFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let attorneySignupPhoneTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Phone Number"
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.phonePad
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneySignupFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let attorneySignupPasswordTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Password"
-        textField.autocorrectionType = .no
-        textField.isSecureTextEntry = true
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.emailAddress
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneySignupFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let attorneySignupNameView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.clear
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
-    let attorneySignupNameLabel: UILabel = {
-        let label = UILabel()
-        label.text = "What's your name?"
-        label.font = UIFont(name: "AvenirNext-Regular", size: 30)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    let attorneySignupFirstNameTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "First Name"
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.emailAddress
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneySignupNameFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let attorneySignupLastNameTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Last Name"
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.emailAddress
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneySignupNameFields), for: .editingChanged)
-        return textField
-    }()
-    
-    let attorneySignupBarNumberTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Bar Number"
-        textField.autocorrectionType = .no
-        textField.backgroundColor = UIColor.white
-        textField.keyboardType = UIKeyboardType.phonePad
-        textField.font = UIFont(name: "AvenirNext-Medium", size: 18)
-        textField.leftViewMode = UITextFieldViewMode.always
-        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 75, height: 50))
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneySignupNameFields), for: .editingChanged)
-        return textField
+    var loginButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = UIColor.white
+        button.contentMode = .scaleAspectFit
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 25
+        button.setImage(UIImage(named: "right_arrow_purple"), for: .normal)
+        button.addTarget(self, action: #selector(loginButtonClicked), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
     
     func popThisView() {
@@ -475,292 +492,313 @@ class LoginSignupController: UIViewController {
         super.viewDidLoad()
         self.navigationController?.setNavigationBarHidden(true, animated: false)
         self.tabBarController?.tabBar.isHidden = true
-        self.view.backgroundColor = self.TEAL
         self.OFFVIEW = self.view.bounds.width
-        self.memberNavbar.setItems([self.memberNavbarItems], animated: true)
-        self.attorneyNavbar.setItems([self.attorneyNavbarItems], animated: true)
+        self.setGradientBackground()
+        self.welcomeNavbar.setItems([self.welcomeNavbarItems], animated: false)
+        self.loginNavbar.setItems([self.loginNavbarItems], animated: false)
+        self.attorneyNavbar.setItems([self.attorneyNavbarItems], animated: false)
         self.initializeView()
+        self.initializeLoginView()
         self.initializeMemberView()
         self.initializeAttorneyView()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    func setGradientBackground() {
+        //let colorTop =  UIColor(red:0.04, green:0.13, blue:0.25, alpha:1.0).cgColor
+        let colorTop = UIColor(red:0.38, green:0.26, blue:0.52, alpha:1.0).cgColor
+        //let colorBottom = UIColor(red:0.33, green:0.47, blue:0.58, alpha:1.0).cgColor
+        let colorBottom = UIColor(red:0.32, green:0.39, blue:0.58, alpha:1.0).cgColor
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.colors = [ colorTop, colorBottom]
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+        gradientLayer.endPoint = CGPoint(x: 1, y: 1)
+        gradientLayer.frame = self.view.bounds
+        
+        self.view.layer.addSublayer(gradientLayer)
     }
     
     /* Initialize View */
     func initializeView() {
+        self.view.addSubview(self.welcomeView)
+        
         // Add buttons to view
-        self.view.addSubview(self.ilawyerImage)
-        self.view.addSubview(self.welcomeLabel)
-        self.view.addSubview(self.attorneyButton)
-        self.view.addSubview(self.memberButton)
+        self.welcomeView.addSubview(self.welcomeNavbar)
+        self.welcomeView.addSubview(self.ilawyerIcon)
+        self.welcomeView.addSubview(self.welcomeLabel)
+        self.welcomeView.addSubview(self.memberButton)
+        self.welcomeView.addSubview(self.attorneyButton)
         
-        // Add button actions
-        self.attorneyButton.addTarget(self, action: #selector(attorneyLogin), for: .touchUpInside)
-        self.memberButton.addTarget(self, action: #selector(memberLogin), for: .touchUpInside)
+        // Welcome View Margins
+        self.welcomeView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.welcomeView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.welcomeView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+        self.welcomeView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
         
-        // Add Welcome Label Margins
-        self.welcomeLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
-        self.welcomeLabel.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 25).isActive = true
-        self.welcomeLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width).isActive = true
-        // ilawyer imageview constraints
-        self.ilawyerImage.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 25).isActive = true
-        self.ilawyerImage.bottomAnchor.constraint(equalTo: self.welcomeLabel.topAnchor, constant: -50).isActive = true
-        self.ilawyerImage.widthAnchor.constraint(equalToConstant: 70).isActive = true
-        self.ilawyerImage.heightAnchor.constraint(equalToConstant: 70).isActive = true
-        // attorney button constraints left
-        self.attorneyButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 25).isActive = true
+        // Welcome Navbar Margins
+        self.welcomeNavbar.topAnchor.constraint(equalTo: self.welcomeView.topAnchor).isActive = true
+        self.welcomeNavbar.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.welcomeNavbar.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        
+        // iLawyerIcon Margins
+        self.ilawyerIcon.bottomAnchor.constraint(equalTo: self.welcomeLabel.topAnchor, constant: -50).isActive = true
+        self.ilawyerIcon.leftAnchor.constraint(equalTo: self.welcomeView.leftAnchor, constant: 20).isActive = true
+        self.ilawyerIcon.widthAnchor.constraint(equalToConstant: 60).isActive = true
+        self.ilawyerIcon.heightAnchor.constraint(equalToConstant: 60).isActive = true
+        
+        // Welcome Label Margins
+        self.welcomeLabel.bottomAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        self.welcomeLabel.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
+        self.welcomeLabel.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        
+        // Welcome Attorney Button Margin
         self.attorneyButton.topAnchor.constraint(equalTo: self.welcomeLabel.bottomAnchor, constant: 50).isActive = true
-        self.attorneyButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
         self.attorneyButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
-        // member button constraints right
-        self.memberButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 25).isActive = true
-        self.memberButton.topAnchor.constraint(equalTo: self.attorneyButton.bottomAnchor, constant: 10).isActive = true
-        self.memberButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneyButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        self.attorneyButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        // Welcome Member Button Margin
+        self.memberButton.topAnchor.constraint(equalTo: self.attorneyButton.bottomAnchor, constant: 15).isActive = true
         self.memberButton.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
+        self.memberButton.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        self.memberButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
     
-    /* MemberView Constraint Variables */
-    var memberSignupViewLeftAnchor: NSLayoutConstraint?
-    var memberSignupViewRightAnchor: NSLayoutConstraint?
-    var memberSignupNameViewLeftAnchor: NSLayoutConstraint?
-    var memberSignupNameViewRightAnchor: NSLayoutConstraint?
-    /* Initialize MemberViewComponents */
-    func initializeMemberView() {
-        // Add SubViews to View
-        self.view.addSubview(self.memberView)
+    var loginScrollViewHeightAnchor: NSLayoutConstraint?
+    func initializeLoginView() {
+        self.view.addSubview(self.loginView)
+        self.loginView.addSubview(self.loginNavbar)
+        self.loginView.addSubview(self.loginScrollView)
+        self.loginScrollView.addSubview(self.loginLabel)
+        self.loginScrollView.addSubview(self.loginEmailTextFieldLabel)
+        self.loginScrollView.addSubview(self.loginEmailTextField)
+        self.loginScrollView.addSubview(self.loginPasswordTextFieldLabel)
+        self.loginScrollView.addSubview(self.loginPasswordTextField)
+        self.loginView.addSubview(self.loginButton)
         
-        // Add SubViews to memberview
-        self.memberView.addSubview(self.memberNavbar)
-        self.memberView.addSubview(self.memberViewButton)
-        self.memberView.addSubview(self.memberLoginView)
-        self.memberView.addSubview(self.memberSignupView)
-        self.memberView.addSubview(self.memberSignupNameView)
+        // LoginView Margins
+        self.loginView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.loginView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.loginView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+        self.loginView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
         
-        // Add Subviews to memberloginview
-        self.memberLoginView.addSubview(self.memberLoginLabel)
-        self.memberLoginView.addSubview(self.memberLoginPasswordTextField)
-        self.memberLoginView.addSubview(self.memberLoginEmailTextField)
+        // Navbar Margins
+        self.loginNavbar.leftAnchor.constraint(equalTo: self.loginView.leftAnchor).isActive = true
+        self.loginNavbar.rightAnchor.constraint(equalTo: self.loginView.rightAnchor).isActive = true
+        self.loginNavbar.topAnchor.constraint(equalTo: self.loginView.topAnchor, constant: 20).isActive = true
         
-        // Add Subviews to membersignupview
-        self.memberSignupView.addSubview(self.memberSignupLabel)
-        self.memberSignupView.addSubview(self.memberSignupEmailTextField)
-        self.memberSignupView.addSubview(self.memberSignupPhoneTextField)
-        self.memberSignupView.addSubview(self.memberSignupPasswordTextField)
+        // LoginScrollView Margins
+        self.loginScrollView.leftAnchor.constraint(equalTo: self.loginView.leftAnchor).isActive = true
+        self.loginScrollView.rightAnchor.constraint(equalTo: self.loginView.rightAnchor).isActive = true
+        self.loginScrollView.topAnchor.constraint(equalTo: self.loginView.topAnchor, constant: 60).isActive = true
+        self.loginScrollViewHeightAnchor = self.loginScrollView.heightAnchor.constraint(equalToConstant: self.view.bounds.height)
+        self.loginScrollViewHeightAnchor?.isActive = true
+        self.loginScrollView.delegate = self
+        self.loginScrollView.contentSize = CGSize(width: self.view.bounds.width, height: 450)
         
-        // Add Subviews to membersignupnameview
-        self.memberSignupNameView.addSubview(self.memberSignupNameLabel)
-        self.memberSignupNameView.addSubview(self.memberSignupFirstNameTextField)
-        self.memberSignupNameView.addSubview(self.memberSignupLastNameTextField)
+        // Login Label Margins
+        self.loginLabel.topAnchor.constraint(equalTo: self.loginScrollView.bottomAnchor, constant: 40).isActive = true
+        self.loginLabel.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        self.loginLabel.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
         
-        // Constraints
-        self.memberView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-        self.memberView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
-        self.memberView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
-        self.memberView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        // Login Email Label Margins
+        self.loginEmailTextFieldLabel.topAnchor.constraint(equalTo: self.loginLabel.bottomAnchor, constant: 40).isActive = true
+        self.loginEmailTextFieldLabel.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        self.loginEmailTextFieldLabel.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
         
-        // navbar constraints
-        self.memberNavbar.leftAnchor.constraint(equalTo: self.memberView.leftAnchor).isActive = true
-        self.memberNavbar.rightAnchor.constraint(equalTo: self.memberView.rightAnchor).isActive = true
-        self.memberNavbar.topAnchor.constraint(equalTo: self.memberView.topAnchor).isActive = true
+        // Login Email Textfield Margins
+        self.loginEmailTextField.topAnchor.constraint(equalTo: self.loginEmailTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.loginEmailTextField.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        self.loginEmailTextField.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
+        self.loginEmailTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
-        // MemberView bottom button
-        self.memberViewButton.bottomAnchor.constraint(equalTo: self.memberView.bottomAnchor, constant: -50).isActive = true
-        self.memberViewButton.centerXAnchor.constraint(equalTo: self.memberView.centerXAnchor).isActive = true
-        self.memberViewButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        self.memberViewButton.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        // Login Password Label Margins
+        self.loginPasswordTextFieldLabel.topAnchor.constraint(equalTo: self.loginEmailTextField.bottomAnchor, constant: 10).isActive = true
+        self.loginPasswordTextFieldLabel.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        self.loginPasswordTextFieldLabel.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
         
-        // MemberViewLogin Constraints
-        self.memberLoginView.topAnchor.constraint(equalTo: self.memberNavbar.bottomAnchor).isActive = true
-        self.memberLoginView.bottomAnchor.constraint(equalTo: self.memberViewButton.topAnchor).isActive = true
-        self.memberLoginView.widthAnchor.constraint(equalToConstant: self.view.bounds.width).isActive = true
-        self.memberLoginView.rightAnchor.constraint(equalTo: self.memberView.rightAnchor).isActive = true
+        // Login Password Textfield Margins
+        self.loginPasswordTextField.topAnchor.constraint(equalTo: self.loginPasswordTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.loginPasswordTextField.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        self.loginPasswordTextField.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
+        self.loginPasswordTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
         
-        // MemberViewLogin Component Constraints
-        self.memberLoginLabel.topAnchor.constraint(equalTo: self.memberLoginView.topAnchor, constant: 50).isActive = true
-        self.memberLoginLabel.centerXAnchor.constraint(equalTo: self.memberLoginView.centerXAnchor).isActive = true
-        
-        self.memberLoginEmailTextField.topAnchor.constraint(equalTo: self.memberLoginLabel.bottomAnchor, constant: 50).isActive = true
-        self.memberLoginEmailTextField.leftAnchor.constraint(equalTo: self.memberLoginView.leftAnchor).isActive = true
-        self.memberLoginEmailTextField.rightAnchor.constraint(equalTo: self.memberLoginView.rightAnchor).isActive = true
-        self.memberLoginEmailTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        self.memberLoginPasswordTextField.topAnchor.constraint(equalTo: self.memberLoginEmailTextField.bottomAnchor, constant: 1).isActive = true
-        self.memberLoginPasswordTextField.leftAnchor.constraint(equalTo: self.memberLoginView.leftAnchor).isActive = true
-        self.memberLoginPasswordTextField.rightAnchor.constraint(equalTo: self.memberLoginView.rightAnchor).isActive = true
-        self.memberLoginPasswordTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        // MemberViewSignup Constraints
-        self.memberSignupView.topAnchor.constraint(equalTo: self.memberNavbar.bottomAnchor).isActive = true
-        self.memberSignupView.bottomAnchor.constraint(equalTo: self.memberViewButton.topAnchor).isActive = true
-        self.memberSignupView.widthAnchor.constraint(equalToConstant: self.view.bounds.width).isActive = true
-        self.memberSignupViewRightAnchor = self.memberSignupView.rightAnchor.constraint(equalTo: self.memberView.rightAnchor)
-        self.memberSignupViewLeftAnchor = self.memberSignupView.leftAnchor.constraint(equalTo: self.memberView.rightAnchor)
-        self.memberSignupViewLeftAnchor?.isActive = true
-        
-        // MemberViewSignup Component Constraints
-        self.memberSignupLabel.topAnchor.constraint(equalTo: self.memberSignupView.topAnchor, constant: 50).isActive = true
-        self.memberSignupLabel.centerXAnchor.constraint(equalTo: self.memberSignupView.centerXAnchor).isActive = true
-        
-        self.memberSignupEmailTextField.topAnchor.constraint(equalTo: self.memberSignupLabel.bottomAnchor, constant: 50).isActive = true
-        self.memberSignupEmailTextField.leftAnchor.constraint(equalTo: self.memberSignupView.leftAnchor).isActive = true
-        self.memberSignupEmailTextField.rightAnchor.constraint(equalTo: self.memberSignupView.rightAnchor).isActive = true
-        self.memberSignupEmailTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        self.memberSignupPhoneTextField.topAnchor.constraint(equalTo: self.memberSignupEmailTextField.bottomAnchor, constant: 1).isActive = true
-        self.memberSignupPhoneTextField.leftAnchor.constraint(equalTo: self.memberSignupView.leftAnchor).isActive = true
-        self.memberSignupPhoneTextField.rightAnchor.constraint(equalTo: self.memberSignupView.rightAnchor).isActive = true
-        self.memberSignupPhoneTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        self.memberSignupPasswordTextField.topAnchor.constraint(equalTo: self.memberSignupPhoneTextField.bottomAnchor, constant: 1).isActive = true
-        self.memberSignupPasswordTextField.leftAnchor.constraint(equalTo: self.memberSignupView.leftAnchor).isActive = true
-        self.memberSignupPasswordTextField.rightAnchor.constraint(equalTo: self.memberSignupView.rightAnchor).isActive = true
-        self.memberSignupPasswordTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        // MemberSignupView Component constraints
-        self.memberSignupNameView.widthAnchor.constraint(equalTo: self.memberView.widthAnchor).isActive = true
-        self.memberSignupNameView.topAnchor.constraint(equalTo: self.memberNavbar.bottomAnchor).isActive = true
-        self.memberSignupNameView.bottomAnchor.constraint(equalTo: self.memberViewButton.topAnchor).isActive = true
-        self.memberSignupNameViewLeftAnchor = self.memberSignupNameView.leftAnchor.constraint(equalTo: self.memberView.rightAnchor)
-        self.memberSignupNameViewRightAnchor = self.memberSignupNameView.rightAnchor.constraint(equalTo: self.memberView.rightAnchor)
-        self.memberSignupNameViewLeftAnchor?.isActive = true
-        
-        self.memberSignupNameLabel.topAnchor.constraint(equalTo: self.memberNavbar.bottomAnchor, constant: 50).isActive = true
-        self.memberSignupNameLabel.leftAnchor.constraint(equalTo: self.memberSignupNameView.leftAnchor).isActive = true
-        self.memberSignupNameLabel.rightAnchor.constraint(equalTo: self.memberSignupNameView.rightAnchor).isActive = true
-        
-        self.memberSignupFirstNameTextField.topAnchor.constraint(equalTo: self.memberSignupNameLabel.bottomAnchor, constant: 50).isActive = true
-        self.memberSignupFirstNameTextField.leftAnchor.constraint(equalTo: self.memberSignupNameView.leftAnchor).isActive = true
-        self.memberSignupFirstNameTextField.rightAnchor.constraint(equalTo: self.memberSignupNameView.rightAnchor).isActive = true
-        self.memberSignupFirstNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        self.memberSignupLastNameTextField.topAnchor.constraint(equalTo: self.memberSignupFirstNameTextField.bottomAnchor, constant: 1).isActive = true
-        self.memberSignupLastNameTextField.leftAnchor.constraint(equalTo: self.memberSignupNameView.leftAnchor).isActive = true
-        self.memberSignupLastNameTextField.rightAnchor.constraint(equalTo: self.memberSignupNameView.rightAnchor).isActive = true
-        self.memberSignupLastNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        // Login Button
+        self.loginButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.loginButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        self.loginButtonBottomMargin = self.loginButton.bottomAnchor.constraint(equalTo: self.loginView.bottomAnchor, constant: -25)
+        self.loginButtonBottomMargin?.isActive = true
+        self.loginButton.rightAnchor.constraint(equalTo: self.loginView.rightAnchor, constant: -20).isActive = true
     }
     
-    /* MemberView Constraint Variables */
-    var attorneySignupViewLeftAnchor: NSLayoutConstraint?
-    var attorneySignupViewRightAnchor: NSLayoutConstraint?
-    var attorneySignupNameViewLeftAnchor: NSLayoutConstraint?
-    var attorneySignupNameViewRightAnchor: NSLayoutConstraint?
-    /* Initialize MemberViewComponents */
+    var loginButtonBottomMargin: NSLayoutConstraint?
+    
+    /*
+     var attorneySignupNameScrollViewHeightAnchor: NSLayoutConstraint?
+     var attorneySignupEmailScrollViewHeightAnchor: NSLayoutConstraint?
+     var attorneySignupNameScrollViewLeftAnchor: NSLayoutConstraint?
+    */
     func initializeAttorneyView() {
         // Add SubViews to View
         self.view.addSubview(self.attorneyView)
-        
-        // Add SubViews to attorneyview
         self.attorneyView.addSubview(self.attorneyNavbar)
-        self.attorneyView.addSubview(self.attorneyViewButton)
-        self.attorneyView.addSubview(self.attorneyLoginView)
-        self.attorneyView.addSubview(self.attorneySignupView)
         
-        // Add Subviews to attorneyloginview
-        self.attorneyLoginView.addSubview(self.attorneyLoginLabel)
-        self.attorneyLoginView.addSubview(self.attorneyLoginPasswordTextField)
-        self.attorneyLoginView.addSubview(self.attorneyLoginEmailTextField)
+        // Attorney NameView
+        self.attorneyView.addSubview(self.attorneyNameScrollView)
+        self.attorneyNameScrollView.addSubview(self.attorneyNameLabel)
+        self.attorneyNameScrollView.addSubview(self.attorneyFirstNameTextFieldLabel)
+        self.attorneyNameScrollView.addSubview(self.attorneyFirstNameTextField)
+        self.attorneyNameScrollView.addSubview(self.attorneyLastNameTextFieldLabel)
+        self.attorneyNameScrollView.addSubview(self.attorneyLastNameTextField)
+        self.attorneyNameScrollView.addSubview(self.attorneyPhoneTextFieldLabel)
+        self.attorneyNameScrollView.addSubview(self.attorneyPhoneTextField)
         
-        // Add Subviews to attorneysignupview
-        self.attorneySignupView.addSubview(self.attorneySignupLabel)
-        self.attorneySignupView.addSubview(self.attorneySignupEmailTextField)
-        self.attorneySignupView.addSubview(self.attorneySignupPhoneTextField)
-        self.attorneySignupView.addSubview(self.attorneySignupPasswordTextField)
+        // Attorney EmailView
+        self.attorneyView.addSubview(self.attorneyEmailScrollView)
+        self.attorneyEmailScrollView.addSubview(self.attorneyEmailLabel)
+        self.attorneyEmailScrollView.addSubview(self.attorneyBarTextFieldLabel)
+        self.attorneyEmailScrollView.addSubview(self.attorneyBarTextField)
+        self.attorneyEmailScrollView.addSubview(self.attorneyEmailTextFieldLabel)
+        self.attorneyEmailScrollView.addSubview(self.attorneyEmailTextField)
+        self.attorneyEmailScrollView.addSubview(self.attorneyPasswordTextFieldLabel)
+        self.attorneyEmailScrollView.addSubview(self.attorneyPasswordTextField)
         
-        // Add Subviews to attorneysignupnameview
-        self.attorneyView.addSubview(self.attorneySignupNameView)
-        self.attorneySignupNameView.addSubview(self.attorneySignupNameLabel)
-        self.attorneySignupNameView.addSubview(self.attorneySignupFirstNameTextField)
-        self.attorneySignupNameView.addSubview(self.attorneySignupLastNameTextField)
-        self.attorneySignupNameView.addSubview(self.attorneySignupBarNumberTextField)
+        // Attorney Buttons
+        self.attorneyView.addSubview(self.attorneyNameToEmailButton)
+        self.attorneyView.addSubview(self.attorneySignupButton)
         
-        // Constraints
+        // AttorneyView Margins
         self.attorneyView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
-        self.attorneyView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
         self.attorneyView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.attorneyView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
         self.attorneyView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
         
-        // navbar constraints
+        // Navbar Margins
         self.attorneyNavbar.leftAnchor.constraint(equalTo: self.attorneyView.leftAnchor).isActive = true
         self.attorneyNavbar.rightAnchor.constraint(equalTo: self.attorneyView.rightAnchor).isActive = true
-        self.attorneyNavbar.topAnchor.constraint(equalTo: self.attorneyView.topAnchor).isActive = true
+        self.attorneyNavbar.topAnchor.constraint(equalTo: self.attorneyView.topAnchor, constant: 20).isActive = true
         
-        // MemberView bottom button
-        self.attorneyViewButton.bottomAnchor.constraint(equalTo: self.attorneyView.bottomAnchor, constant: -50).isActive = true
-        self.attorneyViewButton.centerXAnchor.constraint(equalTo: self.attorneyView.centerXAnchor).isActive = true
-        self.attorneyViewButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        self.attorneyViewButton.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        // AttorneyNameScrollView Margins
+        self.attorneyNameScrollView.widthAnchor.constraint(equalTo: self.attorneyView.widthAnchor).isActive = true
+        self.attorneySignupNameScrollViewLeftAnchor = self.attorneyNameScrollView.leftAnchor.constraint(equalTo: self.attorneyView.leftAnchor, constant: self.view.bounds.width)
+        self.attorneySignupNameScrollViewLeftAnchor?.isActive = true
+        self.attorneyNameScrollView.topAnchor.constraint(equalTo: self.attorneyView.topAnchor, constant: 60).isActive = true
+        self.attorneySignupNameScrollViewHeightAnchor = self.attorneyNameScrollView.heightAnchor.constraint(equalToConstant: self.view.bounds.height)
+        self.attorneySignupNameScrollViewHeightAnchor?.isActive = true
+        self.attorneyNameScrollView.delegate = self
+        self.attorneyNameScrollView.contentSize = CGSize(width: self.view.bounds.width, height: 550)
         
-        // MemberViewLogin Constraints
-        self.attorneyLoginView.topAnchor.constraint(equalTo: self.attorneyNavbar.bottomAnchor).isActive = true
-        self.attorneyLoginView.bottomAnchor.constraint(equalTo: self.attorneyViewButton.topAnchor).isActive = true
-        self.attorneyLoginView.widthAnchor.constraint(equalToConstant: self.view.bounds.width).isActive = true
-        self.attorneyLoginView.rightAnchor.constraint(equalTo: self.attorneyView.rightAnchor).isActive = true
+        // Attorney Name Label
+        self.attorneyNameLabel.topAnchor.constraint(equalTo: self.attorneyNameScrollView.bottomAnchor, constant: 40).isActive = true
+        self.attorneyNameLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyNameLabel.centerXAnchor.constraint(equalTo: self.attorneyNameScrollView.centerXAnchor).isActive = true
         
-        // MemberViewLogin Component Constraints
-        self.attorneyLoginLabel.topAnchor.constraint(equalTo: self.attorneyLoginView.topAnchor, constant: 50).isActive = true
-        self.attorneyLoginLabel.centerXAnchor.constraint(equalTo: self.attorneyLoginView.centerXAnchor).isActive = true
+        // Attorney FirstName TextField Label
+        self.attorneyFirstNameTextFieldLabel.topAnchor.constraint(equalTo: self.attorneyNameLabel.bottomAnchor, constant: 40).isActive = true
+        self.attorneyFirstNameTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyFirstNameTextFieldLabel.centerXAnchor.constraint(equalTo: self.attorneyNameScrollView.centerXAnchor).isActive = true
         
-        self.attorneyLoginEmailTextField.topAnchor.constraint(equalTo: self.attorneyLoginLabel.bottomAnchor, constant: 50).isActive = true
-        self.attorneyLoginEmailTextField.leftAnchor.constraint(equalTo: self.attorneyLoginView.leftAnchor).isActive = true
-        self.attorneyLoginEmailTextField.rightAnchor.constraint(equalTo: self.attorneyLoginView.rightAnchor).isActive = true
-        self.attorneyLoginEmailTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        // Attorney FirstName TextField
+        self.attorneyFirstNameTextField.topAnchor.constraint(equalTo: self.attorneyFirstNameTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.attorneyFirstNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneyFirstNameTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyFirstNameTextField.centerXAnchor.constraint(equalTo: self.attorneyNameScrollView.centerXAnchor).isActive = true
         
-        self.attorneyLoginPasswordTextField.topAnchor.constraint(equalTo: self.attorneyLoginEmailTextField.bottomAnchor, constant: 1).isActive = true
-        self.attorneyLoginPasswordTextField.leftAnchor.constraint(equalTo: self.attorneyLoginView.leftAnchor).isActive = true
-        self.attorneyLoginPasswordTextField.rightAnchor.constraint(equalTo: self.attorneyLoginView.rightAnchor).isActive = true
-        self.attorneyLoginPasswordTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        // Attorney LastName TextField Label
+        self.attorneyLastNameTextFieldLabel.topAnchor.constraint(equalTo: self.attorneyFirstNameTextField.bottomAnchor, constant: 10).isActive = true
+        self.attorneyLastNameTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyLastNameTextFieldLabel.centerXAnchor.constraint(equalTo: self.attorneyNameScrollView.centerXAnchor).isActive = true
         
-        // AttorneyViewSignup Constraints
-        self.attorneySignupView.topAnchor.constraint(equalTo: self.attorneyNavbar.bottomAnchor).isActive = true
-        self.attorneySignupView.bottomAnchor.constraint(equalTo: self.attorneyViewButton.topAnchor).isActive = true
-        self.attorneySignupView.widthAnchor.constraint(equalToConstant: self.view.bounds.width).isActive = true
-        self.attorneySignupViewRightAnchor = self.attorneySignupView.rightAnchor.constraint(equalTo: self.attorneyView.leftAnchor)
-        self.attorneySignupViewLeftAnchor = self.attorneySignupView.leftAnchor.constraint(equalTo: self.attorneyView.leftAnchor)
-        self.attorneySignupViewRightAnchor?.isActive = true
+        // Attorney LastName TextField
+        self.attorneyLastNameTextField.topAnchor.constraint(equalTo: self.attorneyLastNameTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.attorneyLastNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneyLastNameTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyLastNameTextField.centerXAnchor.constraint(equalTo: self.attorneyNameScrollView.centerXAnchor).isActive = true
         
-        // AttorneyViewSignup Component Constraints
-        self.attorneySignupLabel.topAnchor.constraint(equalTo: self.attorneySignupView.topAnchor, constant: 50).isActive = true
-        self.attorneySignupLabel.centerXAnchor.constraint(equalTo: self.attorneySignupView.centerXAnchor).isActive = true
+        // Attorney Phone TextField Label
+        self.attorneyPhoneTextFieldLabel.topAnchor.constraint(equalTo: self.attorneyLastNameTextField.bottomAnchor, constant: 10).isActive = true
+        self.attorneyPhoneTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyPhoneTextFieldLabel.centerXAnchor.constraint(equalTo: self.attorneyNameScrollView.centerXAnchor).isActive = true
         
-        self.attorneySignupEmailTextField.topAnchor.constraint(equalTo: self.attorneySignupLabel.bottomAnchor, constant: 50).isActive = true
-        self.attorneySignupEmailTextField.leftAnchor.constraint(equalTo: self.attorneySignupView.leftAnchor).isActive = true
-        self.attorneySignupEmailTextField.rightAnchor.constraint(equalTo: self.attorneySignupView.rightAnchor).isActive = true
-        self.attorneySignupEmailTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        // Attorney Phone TextField
+        self.attorneyPhoneTextField.topAnchor.constraint(equalTo: self.attorneyPhoneTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.attorneyPhoneTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneyPhoneTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyPhoneTextField.centerXAnchor.constraint(equalTo: self.attorneyNameScrollView.centerXAnchor).isActive = true
         
-        self.attorneySignupPhoneTextField.topAnchor.constraint(equalTo: self.attorneySignupEmailTextField.bottomAnchor, constant: 1).isActive = true
-        self.attorneySignupPhoneTextField.leftAnchor.constraint(equalTo: self.attorneySignupView.leftAnchor).isActive = true
-        self.attorneySignupPhoneTextField.rightAnchor.constraint(equalTo: self.attorneySignupView.rightAnchor).isActive = true
-        self.attorneySignupPhoneTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        /*
+         AttorneyEmailScrollView Margins
+        */
+        self.attorneyEmailScrollView.widthAnchor.constraint(equalTo: self.attorneyView.widthAnchor).isActive = true
+        self.attorneySignupEmailScrollViewLeftAnchor = self.attorneyEmailScrollView.leftAnchor.constraint(equalTo: self.attorneyView.leftAnchor, constant: self.view.bounds.width)
+        self.attorneySignupEmailScrollViewLeftAnchor?.isActive = true
+        self.attorneyEmailScrollView.topAnchor.constraint(equalTo: self.attorneyView.topAnchor, constant: 60).isActive = true
+        self.attorneySignupEmailScrollViewHeightAnchor = self.attorneyEmailScrollView.heightAnchor.constraint(equalToConstant: self.view.bounds.height)
+        self.attorneySignupEmailScrollViewHeightAnchor?.isActive = true
+        self.attorneyEmailScrollView.delegate = self
+        self.attorneyEmailScrollView.contentSize = CGSize(width: self.view.bounds.width, height: 550)
         
-        self.attorneySignupPasswordTextField.topAnchor.constraint(equalTo: self.attorneySignupPhoneTextField.bottomAnchor, constant: 1).isActive = true
-        self.attorneySignupPasswordTextField.leftAnchor.constraint(equalTo: self.attorneySignupView.leftAnchor).isActive = true
-        self.attorneySignupPasswordTextField.rightAnchor.constraint(equalTo: self.attorneySignupView.rightAnchor).isActive = true
-        self.attorneySignupPasswordTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        // Attorney Email Label
+        self.attorneyEmailLabel.topAnchor.constraint(equalTo: self.attorneyEmailScrollView.bottomAnchor, constant: 40).isActive = true
+        self.attorneyEmailLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyEmailLabel.centerXAnchor.constraint(equalTo: self.attorneyEmailScrollView.centerXAnchor).isActive = true
         
-        //  AttorneySignupName View Constraints
-        self.attorneySignupNameView.bottomAnchor.constraint(equalTo: self.attorneyViewButton.topAnchor).isActive = true
-        self.attorneySignupNameView.topAnchor.constraint(equalTo: self.attorneyNavbar.bottomAnchor).isActive = true
-        self.attorneySignupNameView.widthAnchor.constraint(equalTo: self.attorneyView.widthAnchor).isActive = true
-        self.attorneySignupNameViewLeftAnchor = self.attorneySignupNameView.leftAnchor.constraint(equalTo: self.attorneyView.leftAnchor)
-        self.attorneySignupNameViewRightAnchor = self.attorneySignupNameView.rightAnchor.constraint(equalTo: self.attorneyView.leftAnchor)
-        self.attorneySignupNameViewRightAnchor?.isActive = true
+        // Attorney Bar Number TextField Label
+        self.attorneyBarTextFieldLabel.topAnchor.constraint(equalTo: self.attorneyEmailLabel.bottomAnchor, constant: 40).isActive = true
+        self.attorneyBarTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyBarTextFieldLabel.centerXAnchor.constraint(equalTo: self.attorneyEmailScrollView.centerXAnchor).isActive = true
         
-        self.attorneySignupNameLabel.topAnchor.constraint(equalTo: self.attorneyNavbar.bottomAnchor, constant: 50).isActive = true
-        self.attorneySignupNameLabel.centerXAnchor.constraint(equalTo: self.attorneySignupNameView.centerXAnchor).isActive = true
+        // Attorney Bar TextField
+        self.attorneyBarTextField.topAnchor.constraint(equalTo: self.attorneyBarTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.attorneyBarTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneyBarTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyBarTextField.centerXAnchor.constraint(equalTo: self.attorneyEmailScrollView.centerXAnchor).isActive = true
         
-        self.attorneySignupFirstNameTextField.topAnchor.constraint(equalTo: self.attorneySignupNameLabel.bottomAnchor, constant: 50).isActive = true
-        self.attorneySignupFirstNameTextField.leftAnchor.constraint(equalTo: self.attorneySignupNameView.leftAnchor).isActive = true
-        self.attorneySignupFirstNameTextField.rightAnchor.constraint(equalTo: self.attorneySignupNameView.rightAnchor).isActive = true
-        self.attorneySignupFirstNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        // Attorney Email TextField Label
+        self.attorneyEmailTextFieldLabel.topAnchor.constraint(equalTo: self.attorneyBarTextField.bottomAnchor, constant: 10).isActive = true
+        self.attorneyEmailTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyEmailTextFieldLabel.centerXAnchor.constraint(equalTo: self.attorneyEmailScrollView.centerXAnchor).isActive = true
         
-        self.attorneySignupLastNameTextField.topAnchor.constraint(equalTo: self.attorneySignupFirstNameTextField.bottomAnchor, constant: 1).isActive = true
-        self.attorneySignupLastNameTextField.leftAnchor.constraint(equalTo: self.attorneySignupNameView.leftAnchor).isActive = true
-        self.attorneySignupLastNameTextField.rightAnchor.constraint(equalTo: self.attorneySignupNameView.rightAnchor).isActive = true
-        self.attorneySignupLastNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        // Attorney Email TextField
+        self.attorneyEmailTextField.topAnchor.constraint(equalTo: self.attorneyEmailTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.attorneyEmailTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneyEmailTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyEmailTextField.centerXAnchor.constraint(equalTo: self.attorneyEmailScrollView.centerXAnchor).isActive = true
         
-        self.attorneySignupBarNumberTextField.topAnchor.constraint(equalTo: self.attorneySignupLastNameTextField.bottomAnchor, constant: 1).isActive = true
-        self.attorneySignupBarNumberTextField.leftAnchor.constraint(equalTo: self.attorneySignupNameView.leftAnchor).isActive = true
-        self.attorneySignupBarNumberTextField.rightAnchor.constraint(equalTo: self.attorneySignupNameView.rightAnchor).isActive = true
-        self.attorneySignupBarNumberTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        // Attorney Password TextField Label
+        self.attorneyPasswordTextFieldLabel.topAnchor.constraint(equalTo: self.attorneyEmailTextField.bottomAnchor, constant: 10).isActive = true
+        self.attorneyPasswordTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyPasswordTextFieldLabel.centerXAnchor.constraint(equalTo: self.attorneyEmailScrollView.centerXAnchor).isActive = true
+        
+        // Attorney Password TextField
+        self.attorneyPasswordTextField.topAnchor.constraint(equalTo: self.attorneyPasswordTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.attorneyPasswordTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneyPasswordTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.attorneyPasswordTextField.centerXAnchor.constraint(equalTo: self.attorneyEmailScrollView.centerXAnchor).isActive = true
+        
+        /*
+         Attorney Button Margins
+         */
+        self.attorneyNameToEmailButton.heightAnchor.constraint(equalToConstant:50).isActive = true
+        self.attorneyNameToEmailButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneyNameToEmailButtonBottomMargin = self.attorneyNameToEmailButton.bottomAnchor.constraint(equalTo: self.attorneyView.bottomAnchor, constant: -25)
+        self.attorneyNameToEmailButtonBottomMargin?.isActive = true
+        self.attorneyNameToEmailButton.rightAnchor.constraint(equalTo: self.attorneyView.rightAnchor, constant: -20).isActive = true
+        
+        self.attorneySignupButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneySignupButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        self.attorneySignupButtonBottomMargin = self.attorneySignupButton.bottomAnchor.constraint(equalTo: self.attorneyView.bottomAnchor, constant: -25)
+        self.attorneySignupButtonBottomMargin?.isActive = true
+        self.attorneySignupButton.rightAnchor.constraint(equalTo: self.attorneyView.rightAnchor, constant: -20).isActive = true
     }
+    var attorneyNameToEmailButtonBottomMargin: NSLayoutConstraint?
+    var attorneySignupButtonBottomMargin: NSLayoutConstraint?
+    
+    /* MemberView Component Initialization */
+    func initializeMemberView() {}
     
     /* Member Field Validation methods */
     func validEmail(email: String) -> Bool {
@@ -801,7 +839,11 @@ class LoginSignupController: UIViewController {
     
     /* UI Manip */
     override var prefersStatusBarHidden: Bool {
-        return true
+        return false
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
