@@ -22,14 +22,14 @@ class FeedCell: UITableViewCell {
         let label = UILabel()
         label.numberOfLines = 2
         label.text = "Heriberto Prieto"
-        label.font = UIFont(name: "AvenirNext-DemiBold", size: 16)
+        label.font = UIFont(name: "HelveticaNeue", size: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     let statusTextView: UITextView = {
         let textView = UITextView()
-        textView.font = UIFont.systemFont(ofSize: 14)
+        textView.font = UIFont(name: "HelveticaNeue", size: 14)
         textView.backgroundColor = UIColor.clear
         textView.isScrollEnabled = false
         textView.isEditable = false
@@ -48,7 +48,7 @@ class FeedCell: UITableViewCell {
     
     let likesCommentsLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont(name: "HelveticaNeue", size: 12)
         label.textColor = UIColor.rgb(155, green: 161, blue: 171)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -68,7 +68,7 @@ class FeedCell: UITableViewCell {
     
     let timestamp: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = UIFont(name: "HelveticaNeue", size: 16)
         label.textColor = UIColor.rgb(155, green: 161, blue: 171)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label

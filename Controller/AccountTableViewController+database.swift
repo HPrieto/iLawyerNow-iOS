@@ -33,6 +33,15 @@ extension AccountTableViewController {
         }
     }
     
+    func logoutUser() {
+        do {
+            try FIRAuth.auth()?.signOut()
+        } catch let logoutError {
+            print(logoutError)
+        }
+        self.navigationController?.pushViewController(LoginSignupController(), animated: false)
+    }
+    
     /* Gets and sets image from urlstring */
     func setImageFromURL(urlString: String) {
         print("Setting image from url...")

@@ -13,6 +13,76 @@ class AccountTableViewController: UITableViewController {
     
     @IBOutlet weak var profileNameLabel: UILabel!
     @IBOutlet weak var profileNameImage: UIImageView!
+    
+    var logoutContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor(displayP3Red: 0, green: 0, blue: 0, alpha: 0.25)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    var logoutView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white
+        view.layer.cornerRadius = 15
+        view.layer.masksToBounds = true
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let logoutMessage: UILabel = {
+        let label = UILabel()
+        label.text = "Are you sure you want to log out?"
+        label.numberOfLines = 2
+        label.backgroundColor = UIColor.clear
+        label.font = UIFont(name: "AvenirNext-Medium", size: 18)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let logoutButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = UIColor(r: 240, g: 0, b: 42)
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 20
+        button.setTitle("Log Out", for: .normal)
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 18)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    let cancelLogoutButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = UIColor.clear
+        button.setTitle("Cancel", for: .normal)
+        button.titleLabel?.textColor = UIColor.lightText
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 18)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    var logoutViewBottomMargin: NSLayoutConstraint?
+    var logoutViewTopMargin: NSLayoutConstraint?
+    func initializeLogoutView() {
+        self.view.addSubview(self.logoutContainer)
+        self.logoutContainer.addSubview(self.logoutView)
+        self.logoutContainer.addSubview(self.logoutMessage)
+        self.logoutContainer.addSubview(self.logoutButton)
+        self.logoutContainer.addSubview(self.cancelLogoutButton)
+        
+        // Logout Container Margins
+        self.logoutContainer.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.logoutContainer.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.logoutContainer.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+        self.logoutContainer.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        
+        // LogoutView Margins
+        self.logoutViewTopMargin = self.logoutView.topAnchor.constraint(equalTo: self.logoutContainer.topAnchor)
+        self.logoutViewTopMargin?.isActive = true
+        self.logoutViewBottomMargin = self.logoutView.bottomAnchor.constraint(equalTo: self.logoutContainer.bottomAnchor)
+        
+    }
+    
     /* AccountTableViewController LifeCycle Methods */
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,12 +106,7 @@ class AccountTableViewController: UITableViewController {
         } else if row == 1 && section == 1 {
             self.navigationController?.pushViewController(PaymentCardViewController(), animated: true)
         } else if row == 0 && section == 4 {
-            do {
-                try FIRAuth.auth()?.signOut()
-            } catch let logoutError {
-                print(logoutError)
-            }
-            self.navigationController?.pushViewController(LoginSignupController(), animated: false)
+            // prompt and logout user
         }
         print(row, section)
     }

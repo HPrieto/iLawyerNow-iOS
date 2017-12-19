@@ -19,7 +19,7 @@
         <scene sceneID="gq0-ka-VSp">
             <objects>
                 <tabBarController id="9dx-cC-H56" sceneMemberID="viewController">
-                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="PQB-W6-uFC">
+                    <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" itemPositioning="fill" id="PQB-W6-uFC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="49"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -606,7 +606,9 @@
         <scene sceneID="75m-zg-RDa">
             <objects>
                 <navigationController id="yZu-Yq-1pX" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="" image="map_tab_icon" id="3JI-WZ-G1Q"/>
+                    <tabBarItem key="tabBarItem" title="" image="tab_bar_map" id="3JI-WZ-G1Q">
+                        <inset key="imageInsets" minX="0.0" minY="5" maxX="0.0" maxY="-5"/>
+                    </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="V0m-WI-fcv">
                         <rect key="frame" x="0.0" y="20" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -680,7 +682,9 @@
         <scene sceneID="J3K-1l-O91">
             <objects>
                 <navigationController id="pYF-Kw-dzz" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="" image="feed_tab_icon" id="h5Q-gy-Ls8"/>
+                    <tabBarItem key="tabBarItem" title="" image="tab_bar_home" selectedImage="tab_bar_home" id="h5Q-gy-Ls8">
+                        <inset key="imageInsets" minX="0.0" minY="5" maxX="0.0" maxY="-5"/>
+                    </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="1L9-CW-0v0">
                         <rect key="frame" x="0.0" y="20" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -725,7 +729,9 @@
         <scene sceneID="ITC-vR-lsR">
             <objects>
                 <navigationController id="mZf-Jm-JMm" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="" image="account_tab_icon" id="Ve3-yZ-KLX"/>
+                    <tabBarItem key="tabBarItem" title="" image="tab_bar_user" id="Ve3-yZ-KLX">
+                        <inset key="imageInsets" minX="0.0" minY="5" maxX="0.0" maxY="-5"/>
+                    </tabBarItem>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" translucent="NO" largeTitles="YES" id="zH9-bx-OCh">
                         <rect key="frame" x="0.0" y="20" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -748,16 +754,16 @@
         </scene>
     </scenes>
     <resources>
-        <image name="account_tab_icon" width="24" height="24"/>
         <image name="add_photo_icon" width="32" height="32"/>
         <image name="contacts_icon" width="128" height="128"/>
         <image name="credit_card_icon" width="128" height="128"/>
-        <image name="feed_tab_icon" width="24" height="24"/>
         <image name="logout_cell_icon" width="32" height="32"/>
-        <image name="map_tab_icon" width="24" height="24"/>
         <image name="phone_icon" width="128" height="128"/>
         <image name="profile_background" width="1620" height="1080"/>
         <image name="profile_icon" width="64" height="64"/>
+        <image name="tab_bar_home" width="24" height="24"/>
+        <image name="tab_bar_map" width="24" height="24"/>
+        <image name="tab_bar_user" width="24" height="24"/>
         <image name="user_icon_sm" width="32" height="32"/>
     </resources>
 </document>
