@@ -92,17 +92,20 @@ extension LoginSignupController {
     }
     
     func loginUser() {
-        /*guard let email = self.loginEmailTextField.text, let password = self.loginPasswordTextField.text else {
-            print("Invalid member login email or password is invalid.")
+        guard let email = self.loginEmailTextField.text, let password = self.loginPasswordTextField.text else {
+            self.disableLoginButton()
             return
         }
         FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
             if error != nil {
+                if let errorDescription = error?.localizedDescription {
+                    self.showErrorView(message: errorDescription)
+                }
                 print(error.debugDescription)
                 return
             }
             print("Member with email '\(email)' has logged in.")
             self.popThisView()
-        })*/
+        })
     }
 }

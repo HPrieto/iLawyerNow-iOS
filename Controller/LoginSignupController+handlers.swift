@@ -10,7 +10,22 @@ import UIKit
 
 extension LoginSignupController {
     @objc func loginFields() {
-        
+        guard let email = self.loginEmailTextField.text,
+            let password = self.loginPasswordTextField.text else {
+                self.disableLoginButton()
+                print("Invalid Login Fields")
+                return
+        }
+        if !self.validEmail(email: email) {
+            self.disableLoginButton()
+        } else if !self.validPassword(password: password) {
+            self.disableLoginButton()
+        } else if self.validPassword(password: password) &&
+            self.validEmail(email: email) {
+            self.enableLoginButton()
+        } else {
+            self.disableLoginButton()
+        }
     }
     
     @objc func attorneyFields() {
@@ -95,7 +110,11 @@ extension LoginSignupController {
     }
     
     @objc func loginButtonClicked() {
-        
+        self.loginUser()
+    }
+    
+    @objc func errorCancelButtonClicked() {
+        self.hideErrorView()
     }
     
     @objc func handleKeyboardWillShow(_ notification: Notification) {

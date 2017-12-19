@@ -68,13 +68,15 @@ class FeedTableViewController: UITableViewController {
     /* TableRow Heights */
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let statusText = posts[indexPath.item].statusText {
-            let rect = NSString(string: statusText).boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)], context: nil)
-            
+            let statusTextHeight = self.getTextHeight(text: statusText, font: 16)
             let knownHeight: CGFloat = 15 + 44 + 50
-            print("Custom Height")
-            return CGSize(width: view.frame.width, height: rect.height + knownHeight).height
+            return CGSize(width: view.frame.width, height: statusTextHeight + knownHeight).height
         }
         return CGSize(width: view.frame.width, height: 500).height
+    }
+    
+    func getTextHeight(text: String, font: CGFloat) -> CGFloat {
+        return NSString(string: text).boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: font)], context: nil).height
     }
     
     /* User tapped on tableview cell */

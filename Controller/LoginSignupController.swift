@@ -192,6 +192,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         textField.autocorrectionType = .no
         textField.backgroundColor = UIColor.clear
         textField.keyboardType = UIKeyboardType.emailAddress
+        textField.autocapitalizationType = .words
         textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
         textField.textColor = UIColor.white
         textField.tintColor = UIColor.white
@@ -208,6 +209,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         textField.isSecureTextEntry = true
         textField.backgroundColor = UIColor.clear
         textField.keyboardType = UIKeyboardType.alphabet
+        textField.autocapitalizationType = .words
         textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
         textField.textColor = UIColor.white
         textField.tintColor = UIColor.white
@@ -765,6 +767,30 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         self.attorneySignupButton.isEnabled = false
     }
     
+    let errorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let errorMessageLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = UIColor.black
+        label.numberOfLines = 5
+        label.font = UIFont(name: "AvenirNext-Regular", size: 14)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let errorCancelButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "error_cancel"), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(errorCancelButtonClicked), for: .touchUpInside)
+        return button
+    }()
+    
     func popThisView() {
         self.navigationController?.setNavigationBarHidden(false, animated: false)
         self.tabBarController?.tabBar.isHidden = false
@@ -786,6 +812,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         self.initializeLoginView()
         self.initializeMemberView()
         self.initializeAttorneyView()
+        self.initializeErrorView()
         
         NotificationCenter.default.addObserver(self, selector: #selector(handleKeyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         
@@ -794,8 +821,8 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
     
     func setGradientBackground() {
         //let colorTop =  UIColor(red:0.04, green:0.13, blue:0.25, alpha:1.0).cgColor
-        let colorTop = UIColor(red:0.38, green:0.26, blue:0.52, alpha:1.0).cgColor
         //let colorBottom = UIColor(red:0.33, green:0.47, blue:0.58, alpha:1.0).cgColor
+        let colorTop = UIColor(red:0.38, green:0.26, blue:0.52, alpha:1.0).cgColor
         let colorBottom = UIColor(red:0.32, green:0.39, blue:0.58, alpha:1.0).cgColor
         let gradientLayer = CAGradientLayer()
         gradientLayer.colors = [ colorTop, colorBottom]
@@ -804,6 +831,66 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         gradientLayer.frame = self.view.bounds
         
         self.view.layer.addSublayer(gradientLayer)
+    }
+    
+    /* Initialize ErrorView */
+    var errorViewBottomAnchor: NSLayoutConstraint?
+    var errorViewTopAnchor: NSLayoutConstraint?
+    var errorViewHeightAnchor: NSLayoutConstraint?
+    func initializeErrorView() {
+        self.view.addSubview(self.errorView)
+        self.errorView.addSubview(self.errorMessageLabel)
+        self.errorView.addSubview(self.errorCancelButton)
+        
+        // Error Main View
+        self.errorViewHeightAnchor = self.errorView.heightAnchor.constraint(equalToConstant: 50)
+        self.errorViewHeightAnchor?.isActive = true
+        self.errorView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.errorView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.errorViewTopAnchor = self.errorView.topAnchor.constraint(equalTo: self.view.bottomAnchor)
+        self.errorViewTopAnchor?.isActive = true
+        self.errorViewBottomAnchor = self.errorView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        
+        // Error Cancel Button Margins
+        self.errorCancelButton.rightAnchor.constraint(equalTo: self.errorView.rightAnchor, constant: -20).isActive = true
+        self.errorCancelButton.topAnchor.constraint(equalTo: self.errorView.topAnchor, constant: 10).isActive = true
+        self.errorCancelButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        self.errorCancelButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        
+        self.errorMessageLabel.leftAnchor.constraint(equalTo: self.errorView.leftAnchor, constant: 20).isActive = true
+        self.errorMessageLabel.rightAnchor.constraint(equalTo: self.errorCancelButton.rightAnchor, constant: -20).isActive = true
+        self.errorMessageLabel.topAnchor.constraint(equalTo: self.errorView.topAnchor, constant: 10).isActive = true
+        self.errorMessageLabel.bottomAnchor.constraint(equalTo: self.errorView.bottomAnchor, constant: -10).isActive = true
+    }
+    
+    func getTextHeight(text: String, font: CGFloat) -> CGFloat {
+        return NSString(string: text).boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: font)], context: nil).height
+    }
+    
+    func showErrorView(message: String) {
+        self.view.endEditing(true)
+        self.errorMessageLabel.text = message
+        let messageTextHeight = self.getTextHeight(text: message, font: 16)
+        self.errorViewHeightAnchor?.constant = messageTextHeight + 20
+        UIView.animate(withDuration: self.GRADUAL) {
+            self.errorViewTopAnchor?.isActive = false
+            self.errorViewBottomAnchor?.isActive = true
+            self.loginView.backgroundColor = UIColor(r: 254, g: 0, b: 0)
+            self.attorneyView.backgroundColor = UIColor(r: 254, g: 0, b: 0)
+            self.memberView.backgroundColor = UIColor(r: 254, g: 0, b: 0)
+            self.view.layoutIfNeeded()
+        }
+    }
+    
+    func hideErrorView() {
+        UIView.animate(withDuration: self.GRADUAL) {
+            self.errorViewTopAnchor?.isActive = true
+            self.errorViewBottomAnchor?.isActive = false
+            self.loginView.backgroundColor = UIColor.clear
+            self.attorneyView.backgroundColor = UIColor.clear
+            self.memberView.backgroundColor = UIColor.clear
+            self.view.layoutIfNeeded()
+        }
     }
     
     /* Initialize View */
@@ -1082,20 +1169,6 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
     var attorneyNameToEmailButtonBottomMargin: NSLayoutConstraint?
     var attorneySignupButtonBottomMargin: NSLayoutConstraint?
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     func initializeMemberView() {
         // Add SubViews to View
         self.view.addSubview(self.memberView)
@@ -1238,19 +1311,6 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
     }
     var memberNameToEmailButtonBottomMargin: NSLayoutConstraint?
     var memberSignupButtonBottomMargin: NSLayoutConstraint?
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     /* Member Field Validation methods */
     func validEmail(email: String) -> Bool {
