@@ -28,6 +28,66 @@ extension LoginSignupController {
         }
     }
     
+    func animateWelcomeFromMemberView() {
+        self.view.endEditing(true)
+        UIView.animate(withDuration: self.RAPID, animations: {
+            self.memberView.alpha = self.DISAPPEAR
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            self.animateWelcomeViewAlpha(alpha: self.APPEAR, animationDuration: self.RAPID)
+        }
+    }
+    
+    func animateMemberNameToEmail() {
+        self.view.endEditing(true)
+        UIView.animate(withDuration: self.RAPID, animations: {
+            self.memberSignupNameScrollViewLeftAnchor?.constant = -self.view.bounds.width
+            self.memberNameToEmailButton.alpha = self.DISAPPEAR
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            self.animateMemberEmailView(animationDuration: self.RAPID, leftMargin: 0, signupButtonAlpha: 1.0)
+        }
+    }
+    
+    func animateMemberEmailToName() {
+        self.view.endEditing(true)
+        UIView.animate(withDuration: self.RAPID, animations: {
+            self.memberSignupEmailScrollViewLeftAnchor?.constant = self.view.bounds.width
+            self.memberSignupButton.alpha = self.DISAPPEAR
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            self.animateMemberNameView(animationDuration: self.RAPID, leftMargin: 0, signupButtonAlpha: 1.0)
+        }
+    }
+    
+    func animateMemberNameView(animationDuration: TimeInterval, leftMargin: CGFloat, signupButtonAlpha: CGFloat) {
+        UIView.animate(withDuration: animationDuration, animations: {
+            self.memberSignupNameScrollViewLeftAnchor?.constant = leftMargin
+            self.memberNameToEmailButton.alpha = signupButtonAlpha
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            if self.memberSignupNameScrollViewLeftAnchor?.constant == 0 {
+                self.memberFirstNameTextField.becomeFirstResponder()
+            } else {
+                self.view.endEditing(true)
+            }
+        }
+    }
+    
+    func animateMemberEmailView(animationDuration: TimeInterval, leftMargin: CGFloat, signupButtonAlpha: CGFloat) {
+        UIView.animate(withDuration: animationDuration, animations: {
+            self.memberSignupEmailScrollViewLeftAnchor?.constant = leftMargin
+            self.memberSignupButton.alpha = signupButtonAlpha
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            if self.memberSignupEmailScrollViewLeftAnchor?.constant == 0 {
+                self.memberEmailTextField.becomeFirstResponder()
+            } else {
+                self.view.endEditing(true)
+            }
+        }
+    }
+    
     func animateWelcomeFromAttorneyView() {
         self.view.endEditing(true)
         UIView.animate(withDuration: self.RAPID, animations: {
@@ -89,11 +149,24 @@ extension LoginSignupController {
     }
     
     func animateMemberViewShow() {
+        self.memberSignupNameScrollViewLeftAnchor?.constant = self.view.bounds.width
+        self.memberSignupEmailScrollViewLeftAnchor?.constant = self.view.bounds.width
+        self.memberNameToEmailButton.alpha = 1
+        self.memberSignupButton.alpha = 0
+        self.memberFirstNameTextField.setBottomLine(borderColor: UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.5))
+        self.memberLastNameTextField.setBottomLine(borderColor: UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.5))
+        self.memberPhoneTextField.setBottomLine(borderColor: UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.5))
+        self.memberEmailTextField.setBottomLine(borderColor: UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.5))
+        self.memberPasswordTextField.setBottomLine(borderColor: UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.5))
         UIView.animate(withDuration: self.RAPID, animations: {
             self.welcomeView.alpha = self.DISAPPEAR
             self.view.layoutIfNeeded()
         }) { (true) in
-            self.animateMemberViewSignupAlpha(alpha: self.APPEAR, animationDuration: self.RAPID)
+            self.animateMemberViewAlpha(alpha: self.APPEAR, animationDuration: self.RAPID)
+            UIView.animate(withDuration: self.GRADUAL, animations: {
+                self.memberSignupNameScrollViewLeftAnchor?.constant = 0
+                self.view.layoutIfNeeded()
+            })
         }
     }
     
@@ -185,6 +258,19 @@ extension LoginSignupController {
         }) { (true) in
             if alpha == self.APPEAR {
                 self.attorneyFirstNameTextField.becomeFirstResponder()
+            } else {
+                self.view.endEditing(true)
+            }
+        }
+    }
+    
+    func animateMemberViewAlpha(alpha:CGFloat,animationDuration:Double) {
+        UIView.animate(withDuration: animationDuration, animations: {
+            self.memberView.alpha = alpha
+            self.view.layoutIfNeeded()
+        }) { (true) in
+            if alpha == self.APPEAR {
+                self.memberFirstNameTextField.becomeFirstResponder()
             } else {
                 self.view.endEditing(true)
             }

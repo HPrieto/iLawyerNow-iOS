@@ -42,9 +42,17 @@ extension LoginSignupController {
         
     }
     
+    @objc func memberSignupButtonClicked() {
+        
+    }
+    
     /* MemberView Actions */
-    @objc func memberLeftNavItemClicked() {
-        self.view.endEditing(true)
+    @objc func memberNavbarLeftButtonClicked() {
+        if self.memberSignupNameScrollViewLeftAnchor?.constant == 0 {
+            self.animateWelcomeFromMemberView()
+        } else {
+            self.animateMemberEmailToName()
+        }
     }
     
     /* Fields for member signup: email, password, phone, first name, last name */
@@ -78,6 +86,10 @@ extension LoginSignupController {
         self.animateAttorneyNameToEmail()
     }
     
+    @objc func memberNameToEmailButtonClicked() {
+        self.animateMemberNameToEmail()
+    }
+    
     @objc func attorneySignupButtonClicked() {
         
     }
@@ -95,6 +107,12 @@ extension LoginSignupController {
         self.attorneySignupEmailScrollViewHeightAnchor?.constant = self.view.bounds.height - keyboardHeight
         self.attorneyNameToEmailButtonBottomMargin?.constant = -(keyboardHeight + 25)
         self.attorneySignupButtonBottomMargin?.constant = -(keyboardHeight + 25)
+        
+        self.memberSignupNameScrollViewHeightAnchor?.constant = self.view.bounds.height - keyboardHeight
+        self.memberSignupEmailScrollViewHeightAnchor?.constant = self.view.bounds.height - keyboardHeight
+        self.memberNameToEmailButtonBottomMargin?.constant = -(keyboardHeight + 25)
+        self.memberSignupButtonBottomMargin?.constant = -(keyboardHeight + 25)
+        
         self.loginButtonBottomMargin?.constant = -(keyboardHeight + 25)
         UIView.animate(withDuration: keyboardDuration!, animations: {
             self.view.layoutIfNeeded()
@@ -108,6 +126,13 @@ extension LoginSignupController {
         self.attorneySignupEmailScrollViewHeightAnchor?.constant = self.view.bounds.height
         self.attorneyNameToEmailButtonBottomMargin?.constant = -25
         self.attorneySignupButtonBottomMargin?.constant = -25
+        
+        self.memberSignupNameScrollViewHeightAnchor?.constant = self.view.bounds.height
+        self.memberSignupEmailScrollViewHeightAnchor?.constant = self.view.bounds.height
+        self.memberNameToEmailButtonBottomMargin?.constant = -25
+        self.memberSignupButtonBottomMargin?.constant = -25
+        
+        
         self.loginButtonBottomMargin?.constant = -25
         UIView.animate(withDuration: keyboardDuration!, animations: {
             self.view.layoutIfNeeded()

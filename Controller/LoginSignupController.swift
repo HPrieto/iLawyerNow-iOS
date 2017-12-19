@@ -22,6 +22,8 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
     let VERYSLOW:Double = 1.0
     let INVIEW:CGFloat = 0.0
     var OFFVIEW = CGFloat() // not a constant but whatevs, initialized in viewdidload
+    let DISABLED:CGFloat = 0.75
+    let ENABLED:CGFloat = 1.0
     
     /* AttorneyView Margin Variables */
     var attorneySignupNameScrollViewHeightAnchor: NSLayoutConstraint?
@@ -33,6 +35,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
     var memberSignupNameScrollViewHeightAnchor: NSLayoutConstraint?
     var memberSignupEmailScrollViewHeightAnchor: NSLayoutConstraint?
     var memberSignupNameScrollViewLeftAnchor: NSLayoutConstraint?
+    var memberSignupEmailScrollViewLeftAnchor: NSLayoutConstraint?
     
     /* DirectoryView Components */
     let welcomeNavbar: UINavigationBar = {
@@ -457,6 +460,238 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         return button
     }()
     
+    /* MemberView Margins */
+    let memberView: UIView = {
+        let view = UIView()
+        view.alpha = 0
+        view.backgroundColor = UIColor.clear
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let memberNameScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.bounces = true
+        scrollView.isUserInteractionEnabled = true
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.tintColor = UIColor.white
+        scrollView.isScrollEnabled = true
+        scrollView.backgroundColor = UIColor.clear
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    let memberNavbar: UINavigationBar = {
+        let navbar = UINavigationBar()
+        navbar.barStyle = .default
+        navbar.barTintColor = UIColor.clear
+        navbar.backgroundColor = UIColor.clear
+        navbar.tintColor = UIColor.white
+        navbar.isTranslucent = true
+        navbar.isOpaque = false
+        navbar.setBackgroundImage(UIImage(), for: .default)
+        navbar.shadowImage = UIImage()
+        navbar.translatesAutoresizingMaskIntoConstraints = false
+        return navbar
+    }()
+    
+    let memberNavbarItems: UINavigationItem = {
+        let navItems = UINavigationItem()
+        navItems.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "left_arrow"), style: UIBarButtonItemStyle.plain, target: self, action: #selector(memberNavbarLeftButtonClicked))
+        return navItems
+    }()
+    
+    let memberNameLabel: UILabel = {
+        let label = UILabel()
+        label.text = "What's your name?"
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Regular", size: 32)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let memberFirstNameTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "FIRST NAME"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let memberLastNameTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "LAST NAME"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let memberPhoneTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "PHONE NUMBER"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let memberFirstNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.emailAddress
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    let memberLastNameTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.isSecureTextEntry = true
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.alphabet
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    let memberPhoneTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.isSecureTextEntry = true
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.phonePad
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    /* Member Email Components */
+    let memberEmailScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        scrollView.bounces = true
+        scrollView.isUserInteractionEnabled = true
+        scrollView.showsVerticalScrollIndicator = true
+        scrollView.tintColor = UIColor.white
+        scrollView.isScrollEnabled = true
+        scrollView.backgroundColor = UIColor.clear
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        return scrollView
+    }()
+    
+    let memberEmailLabel: UILabel = {
+        let label = UILabel()
+        label.text = "And, your email?"
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Regular", size: 32)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let memberEmailTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "EMAIL"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let memberPasswordTextFieldLabel: UILabel = {
+        let label = UILabel()
+        label.text = "PASSWORD"
+        label.textAlignment = .left
+        label.font = UIFont(name: "AvenirNext-Bold", size: 14)
+        label.textColor = UIColor(displayP3Red: 1, green: 1, blue: 1, alpha: 0.9)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let memberEmailTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.emailAddress
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    let memberPasswordTextField: UITextField = {
+        let textField = UITextField()
+        textField.autocorrectionType = .no
+        textField.isSecureTextEntry = true
+        textField.backgroundColor = UIColor.clear
+        textField.keyboardType = UIKeyboardType.alphabet
+        textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
+        textField.textColor = UIColor.white
+        textField.tintColor = UIColor.white
+        textField.leftViewMode = UITextFieldViewMode.always
+        textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        return textField
+    }()
+    
+    var memberNameToEmailButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = UIColor.white
+        button.contentMode = .scaleAspectFit
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 25
+        button.layer.borderWidth = 10
+        button.layer.borderColor = UIColor.white.cgColor
+        button.setImage(UIImage(named: "right_arrow_purple"), for: .normal)
+        button.addTarget(self, action: #selector(memberNameToEmailButtonClicked), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.alpha = 0.75
+        button.isEnabled = false
+        return button
+    }()
+    
+    var memberSignupButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = UIColor.white
+        button.contentMode = .scaleAspectFit
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 25
+        button.setImage(UIImage(named: "right_arrow_purple"), for: .normal)
+        button.addTarget(self, action: #selector(memberSignupButtonClicked), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.alpha = 0.75
+        button.isEnabled = false
+        return button
+    }()
+    
     var attorneySignupButton: UIButton = {
         let button = UIButton()
         button.backgroundColor = UIColor.white
@@ -466,6 +701,8 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         button.setImage(UIImage(named: "right_arrow_purple"), for: .normal)
         button.addTarget(self, action: #selector(attorneySignupButtonClicked), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.alpha = 0.75
+        button.isEnabled = false
         return button
     }()
     
@@ -478,8 +715,55 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         button.setImage(UIImage(named: "right_arrow_purple"), for: .normal)
         button.addTarget(self, action: #selector(loginButtonClicked), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.alpha = 0.75
+        button.isEnabled = false
         return button
     }()
+    
+    func disableLoginButton() {
+        self.loginButton.alpha = self.DISABLED
+        self.loginButton.isEnabled = false
+    }
+    
+    func enableLoginButton() {
+        self.loginButton.alpha = self.ENABLED
+        self.loginButton.isEnabled = true
+    }
+    
+    func disableAttorneyNameToEmailButton() {
+        self.attorneyNameToEmailButton.alpha = self.DISABLED
+        self.attorneyNameToEmailButton.isEnabled = false
+    }
+    
+    func enableAttorneyNameToEmailButton() {
+        self.attorneyNameToEmailButton.alpha = self.ENABLED
+        self.attorneyNameToEmailButton.isEnabled = true
+    }
+    
+    func disableMemberNameToEmailButton() {
+        self.memberNameToEmailButton.alpha = self.DISABLED
+        self.memberNameToEmailButton.isEnabled = false
+    }
+    
+    func enableMemberNameToEmailButton() {
+        self.memberNameToEmailButton.alpha = self.ENABLED
+        self.memberNameToEmailButton.isEnabled = true
+    }
+    
+    func disableMemberSignupButton() {
+        self.memberSignupButton.alpha = self.DISABLED
+        self.memberSignupButton.isEnabled = false
+    }
+    
+    func enableMemberSignupButton() {
+        self.memberSignupButton.alpha = self.ENABLED
+        self.memberSignupButton.isEnabled = true
+    }
+    
+    func disableAttorneySignupButton() {
+        self.attorneySignupButton.alpha = self.DISABLED
+        self.attorneySignupButton.isEnabled = false
+    }
     
     func popThisView() {
         self.navigationController?.setNavigationBarHidden(false, animated: false)
@@ -497,6 +781,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         self.welcomeNavbar.setItems([self.welcomeNavbarItems], animated: false)
         self.loginNavbar.setItems([self.loginNavbarItems], animated: false)
         self.attorneyNavbar.setItems([self.attorneyNavbarItems], animated: false)
+        self.memberNavbar.setItems([self.memberNavbarItems], animated: false)
         self.initializeView()
         self.initializeLoginView()
         self.initializeMemberView()
@@ -797,8 +1082,175 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
     var attorneyNameToEmailButtonBottomMargin: NSLayoutConstraint?
     var attorneySignupButtonBottomMargin: NSLayoutConstraint?
     
-    /* MemberView Component Initialization */
-    func initializeMemberView() {}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    func initializeMemberView() {
+        // Add SubViews to View
+        self.view.addSubview(self.memberView)
+        self.memberView.addSubview(self.memberNavbar)
+        
+        // Member NameView
+        self.memberView.addSubview(self.memberNameScrollView)
+        self.memberNameScrollView.addSubview(self.memberNameLabel)
+        self.memberNameScrollView.addSubview(self.memberFirstNameTextFieldLabel)
+        self.memberNameScrollView.addSubview(self.memberFirstNameTextField)
+        self.memberNameScrollView.addSubview(self.memberLastNameTextFieldLabel)
+        self.memberNameScrollView.addSubview(self.memberLastNameTextField)
+        self.memberNameScrollView.addSubview(self.memberPhoneTextFieldLabel)
+        self.memberNameScrollView.addSubview(self.memberPhoneTextField)
+        
+        // Member EmailView
+        self.memberView.addSubview(self.memberEmailScrollView)
+        self.memberEmailScrollView.addSubview(self.memberEmailLabel)
+        self.memberEmailScrollView.addSubview(self.memberEmailTextFieldLabel)
+        self.memberEmailScrollView.addSubview(self.memberEmailTextField)
+        self.memberEmailScrollView.addSubview(self.memberPasswordTextFieldLabel)
+        self.memberEmailScrollView.addSubview(self.memberPasswordTextField)
+        
+        // Member Buttons
+        self.memberView.addSubview(self.memberNameToEmailButton)
+        self.memberView.addSubview(self.memberSignupButton)
+        
+        // MemberView Margins
+        self.memberView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.memberView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.memberView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+        self.memberView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        
+        // Navbar Margins
+        self.memberNavbar.leftAnchor.constraint(equalTo: self.memberView.leftAnchor).isActive = true
+        self.memberNavbar.rightAnchor.constraint(equalTo: self.memberView.rightAnchor).isActive = true
+        self.memberNavbar.topAnchor.constraint(equalTo: self.memberView.topAnchor, constant: 20).isActive = true
+        
+        // MemberNameScrollView Margins
+        self.memberNameScrollView.widthAnchor.constraint(equalTo: self.memberView.widthAnchor).isActive = true
+        self.memberSignupNameScrollViewLeftAnchor = self.memberNameScrollView.leftAnchor.constraint(equalTo: self.memberView.leftAnchor, constant: self.view.bounds.width)
+        self.memberSignupNameScrollViewLeftAnchor?.isActive = true
+        self.memberNameScrollView.topAnchor.constraint(equalTo: self.memberView.topAnchor, constant: 60).isActive = true
+        self.memberSignupNameScrollViewHeightAnchor = self.memberNameScrollView.heightAnchor.constraint(equalToConstant: self.view.bounds.height)
+        self.memberSignupNameScrollViewHeightAnchor?.isActive = true
+        self.memberNameScrollView.delegate = self
+        self.memberNameScrollView.contentSize = CGSize(width: self.view.bounds.width, height: 550)
+        
+        // Member Name Label
+        self.memberNameLabel.topAnchor.constraint(equalTo: self.memberNameScrollView.bottomAnchor, constant: 40).isActive = true
+        self.memberNameLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberNameLabel.centerXAnchor.constraint(equalTo: self.memberNameScrollView.centerXAnchor).isActive = true
+        
+        // Member FirstName TextField Label
+        self.memberFirstNameTextFieldLabel.topAnchor.constraint(equalTo: self.memberNameLabel.bottomAnchor, constant: 40).isActive = true
+        self.memberFirstNameTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberFirstNameTextFieldLabel.centerXAnchor.constraint(equalTo: self.memberNameScrollView.centerXAnchor).isActive = true
+        
+        // Member FirstName TextField
+        self.memberFirstNameTextField.topAnchor.constraint(equalTo: self.memberFirstNameTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.memberFirstNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.memberFirstNameTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberFirstNameTextField.centerXAnchor.constraint(equalTo: self.memberNameScrollView.centerXAnchor).isActive = true
+        
+        // Member LastName TextField Label
+        self.memberLastNameTextFieldLabel.topAnchor.constraint(equalTo: self.memberFirstNameTextField.bottomAnchor, constant: 10).isActive = true
+        self.memberLastNameTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberLastNameTextFieldLabel.centerXAnchor.constraint(equalTo: self.memberNameScrollView.centerXAnchor).isActive = true
+        
+        // Member LastName TextField
+        self.memberLastNameTextField.topAnchor.constraint(equalTo: self.memberLastNameTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.memberLastNameTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.memberLastNameTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberLastNameTextField.centerXAnchor.constraint(equalTo: self.memberNameScrollView.centerXAnchor).isActive = true
+        
+        // Member Phone TextField Label
+        self.memberPhoneTextFieldLabel.topAnchor.constraint(equalTo: self.memberLastNameTextField.bottomAnchor, constant: 10).isActive = true
+        self.memberPhoneTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberPhoneTextFieldLabel.centerXAnchor.constraint(equalTo: self.memberNameScrollView.centerXAnchor).isActive = true
+        
+        // Member Phone TextField
+        self.memberPhoneTextField.topAnchor.constraint(equalTo: self.memberPhoneTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.memberPhoneTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.memberPhoneTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberPhoneTextField.centerXAnchor.constraint(equalTo: self.memberNameScrollView.centerXAnchor).isActive = true
+        
+        /*
+         MemberEmailScrollView Margins
+         */
+        self.memberEmailScrollView.widthAnchor.constraint(equalTo: self.memberView.widthAnchor).isActive = true
+        self.memberSignupEmailScrollViewLeftAnchor = self.memberEmailScrollView.leftAnchor.constraint(equalTo: self.memberView.leftAnchor, constant: self.view.bounds.width)
+        self.memberSignupEmailScrollViewLeftAnchor?.isActive = true
+        self.memberEmailScrollView.topAnchor.constraint(equalTo: self.memberView.topAnchor, constant: 60).isActive = true
+        self.memberSignupEmailScrollViewHeightAnchor = self.memberEmailScrollView.heightAnchor.constraint(equalToConstant: self.view.bounds.height)
+        self.memberSignupEmailScrollViewHeightAnchor?.isActive = true
+        self.memberEmailScrollView.delegate = self
+        self.memberEmailScrollView.contentSize = CGSize(width: self.view.bounds.width, height: 450)
+        
+        // Member Email Label
+        self.memberEmailLabel.topAnchor.constraint(equalTo: self.memberEmailScrollView.bottomAnchor, constant: 40).isActive = true
+        self.memberEmailLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberEmailLabel.centerXAnchor.constraint(equalTo: self.memberEmailScrollView.centerXAnchor).isActive = true
+        
+        // Member Email TextField Label
+        self.memberEmailTextFieldLabel.topAnchor.constraint(equalTo: self.memberEmailLabel.bottomAnchor, constant: 40).isActive = true
+        self.memberEmailTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberEmailTextFieldLabel.centerXAnchor.constraint(equalTo: self.memberEmailScrollView.centerXAnchor).isActive = true
+        
+        // Member Email TextField
+        self.memberEmailTextField.topAnchor.constraint(equalTo: self.memberEmailTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.memberEmailTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.memberEmailTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberEmailTextField.centerXAnchor.constraint(equalTo: self.memberEmailScrollView.centerXAnchor).isActive = true
+        
+        // Member Password TextField Label
+        self.memberPasswordTextFieldLabel.topAnchor.constraint(equalTo: self.memberEmailTextField.bottomAnchor, constant: 10).isActive = true
+        self.memberPasswordTextFieldLabel.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberPasswordTextFieldLabel.centerXAnchor.constraint(equalTo: self.memberEmailScrollView.centerXAnchor).isActive = true
+        
+        // Member Password TextField
+        self.memberPasswordTextField.topAnchor.constraint(equalTo: self.memberPasswordTextFieldLabel.bottomAnchor, constant: 5).isActive = true
+        self.memberPasswordTextField.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.memberPasswordTextField.widthAnchor.constraint(equalToConstant: self.view.bounds.width - 40).isActive = true
+        self.memberPasswordTextField.centerXAnchor.constraint(equalTo: self.memberEmailScrollView.centerXAnchor).isActive = true
+        
+        /*
+         Member Button Margins
+         */
+        self.memberNameToEmailButton.heightAnchor.constraint(equalToConstant:50).isActive = true
+        self.memberNameToEmailButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        self.memberNameToEmailButtonBottomMargin = self.memberNameToEmailButton.bottomAnchor.constraint(equalTo: self.memberView.bottomAnchor, constant: -25)
+        self.memberNameToEmailButtonBottomMargin?.isActive = true
+        self.memberNameToEmailButton.rightAnchor.constraint(equalTo: self.memberView.rightAnchor, constant: -20).isActive = true
+        
+        self.memberSignupButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.memberSignupButton.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        self.memberSignupButtonBottomMargin = self.memberSignupButton.bottomAnchor.constraint(equalTo: self.memberView.bottomAnchor, constant: -25)
+        self.memberSignupButtonBottomMargin?.isActive = true
+        self.memberSignupButton.rightAnchor.constraint(equalTo: self.memberView.rightAnchor, constant: -20).isActive = true
+    }
+    var memberNameToEmailButtonBottomMargin: NSLayoutConstraint?
+    var memberSignupButtonBottomMargin: NSLayoutConstraint?
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     /* Member Field Validation methods */
     func validEmail(email: String) -> Bool {
