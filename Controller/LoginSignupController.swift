@@ -76,7 +76,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
     let memberButton: UIButton = {
         let button = UIButton()
         button.setTitle("Member", for: .normal)
-        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 20)
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 18)
         button.titleLabel?.textColor = UIColor.white
         button.backgroundColor = UIColor.clear
         button.layer.borderColor = UIColor.white.cgColor
@@ -90,8 +90,13 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
     
     let attorneyButton: UIButton = {
         let button = UIButton()
+        button.frame =  CGRect(x: 2, y: 74, width: 140, height: 40)
+        button.tintColor = UIColor.white
+//        button.setImage(UIImage(named:"facebook_logo_purple"), for: .normal)
+//        button.imageEdgeInsets = UIEdgeInsets(top: 6,left: -5,bottom: 6,right: 14)
+//        button.titleEdgeInsets = UIEdgeInsets(top: 0,left: 20,bottom: 0,right: 34)
         button.setTitle("Attorney", for: .normal)
-        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 20)
+        button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 17)
         button.setTitleColor(UIColor(red:0.38, green:0.26, blue:0.52, alpha:1.0), for: .normal)
         button.backgroundColor = UIColor.white
         button.layer.borderColor = UIColor.white.cgColor
@@ -312,14 +317,13 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(attorneyNameFields), for: .editingChanged)
         return textField
     }()
     
     let attorneyLastNameTextField: UITextField = {
         let textField = UITextField()
         textField.autocorrectionType = .no
-        textField.isSecureTextEntry = true
         textField.backgroundColor = UIColor.clear
         textField.keyboardType = UIKeyboardType.alphabet
         textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
@@ -328,14 +332,13 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(attorneyNameFields), for: .editingChanged)
         return textField
     }()
     
     let attorneyPhoneTextField: UITextField = {
         let textField = UITextField()
         textField.autocorrectionType = .no
-        textField.isSecureTextEntry = true
         textField.backgroundColor = UIColor.clear
         textField.keyboardType = UIKeyboardType.phonePad
         textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
@@ -344,7 +347,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(attorneyNameFields), for: .editingChanged)
         return textField
     }()
     
@@ -435,7 +438,6 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
     let attorneyBarTextField: UITextField = {
         let textField = UITextField()
         textField.autocorrectionType = .no
-        textField.isSecureTextEntry = true
         textField.backgroundColor = UIColor.clear
         textField.keyboardType = UIKeyboardType.numberPad
         textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
@@ -459,6 +461,8 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         button.setImage(UIImage(named: "right_arrow_purple"), for: .normal)
         button.addTarget(self, action: #selector(attorneyNameToEmailButtonClicked), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.isEnabled = false
+        button.alpha = 0.75
         return button
     }()
     
@@ -554,14 +558,13 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(memberNameFields), for: .editingChanged)
         return textField
     }()
     
     let memberLastNameTextField: UITextField = {
         let textField = UITextField()
         textField.autocorrectionType = .no
-        textField.isSecureTextEntry = true
         textField.backgroundColor = UIColor.clear
         textField.keyboardType = UIKeyboardType.alphabet
         textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
@@ -570,14 +573,13 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(memberNameFields), for: .editingChanged)
         return textField
     }()
     
     let memberPhoneTextField: UITextField = {
         let textField = UITextField()
         textField.autocorrectionType = .no
-        textField.isSecureTextEntry = true
         textField.backgroundColor = UIColor.clear
         textField.keyboardType = UIKeyboardType.phonePad
         textField.font = UIFont(name: "AvenirNext-DemiBold", size: 21)
@@ -586,7 +588,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(memberNameFields), for: .editingChanged)
         return textField
     }()
     
@@ -644,7 +646,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(memberFields), for: .editingChanged)
         return textField
     }()
     
@@ -660,7 +662,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         textField.leftViewMode = UITextFieldViewMode.always
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 0, height: 75))
         textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.addTarget(self, action: #selector(attorneyFields), for: .editingChanged)
+        textField.addTarget(self, action: #selector(memberFields), for: .editingChanged)
         return textField
     }()
     
@@ -767,6 +769,11 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         self.attorneySignupButton.isEnabled = false
     }
     
+    func enableAttorneySignupButton() {
+        self.attorneySignupButton.alpha = self.ENABLED
+        self.attorneySignupButton.isEnabled = true
+    }
+    
     let errorView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.white
@@ -853,25 +860,31 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
         
         // Error Cancel Button Margins
         self.errorCancelButton.rightAnchor.constraint(equalTo: self.errorView.rightAnchor, constant: -20).isActive = true
-        self.errorCancelButton.topAnchor.constraint(equalTo: self.errorView.topAnchor, constant: 10).isActive = true
+        self.errorCancelButton.topAnchor.constraint(equalTo: self.errorView.topAnchor, constant: 15).isActive = true
         self.errorCancelButton.heightAnchor.constraint(equalToConstant: 30).isActive = true
         self.errorCancelButton.widthAnchor.constraint(equalToConstant: 30).isActive = true
         
         self.errorMessageLabel.leftAnchor.constraint(equalTo: self.errorView.leftAnchor, constant: 20).isActive = true
-        self.errorMessageLabel.rightAnchor.constraint(equalTo: self.errorCancelButton.rightAnchor, constant: -20).isActive = true
+        self.errorMessageLabel.rightAnchor.constraint(equalTo: self.errorCancelButton.leftAnchor, constant: -20).isActive = true
         self.errorMessageLabel.topAnchor.constraint(equalTo: self.errorView.topAnchor, constant: 10).isActive = true
         self.errorMessageLabel.bottomAnchor.constraint(equalTo: self.errorView.bottomAnchor, constant: -10).isActive = true
     }
     
-    func getTextHeight(text: String, font: CGFloat) -> CGFloat {
-        return NSString(string: text).boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: font)], context: nil).height
+    func getTextHeight(text: String, font: CGFloat, frameWidth: CGFloat) -> CGFloat {
+        return NSString(string: text).boundingRect(with: CGSize(width: frameWidth, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: font)], context: nil).height
     }
     
     func showErrorView(message: String) {
         self.view.endEditing(true)
         self.errorMessageLabel.text = message
-        let messageTextHeight = self.getTextHeight(text: message, font: 16)
-        self.errorViewHeightAnchor?.constant = messageTextHeight + 20
+        var messageTextHeight = self.getTextHeight(text: message, font: 16, frameWidth: self.errorMessageLabel.bounds.width-50.0)
+        print("Banner Height: \(messageTextHeight)")
+        if messageTextHeight > 75 {
+            messageTextHeight = messageTextHeight + 20.0
+        } else {
+            messageTextHeight = 75.0
+        }
+        self.errorViewHeightAnchor?.constant = messageTextHeight
         UIView.animate(withDuration: self.GRADUAL) {
             self.errorViewTopAnchor?.isActive = false
             self.errorViewBottomAnchor?.isActive = true

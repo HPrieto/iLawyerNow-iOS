@@ -9,7 +9,7 @@
 import UIKit
 import Firebase
 
-class AccountTableViewController: UITableViewController {
+class AccountTableViewController: UITableViewController, UITabBarDelegate {
     
     @IBOutlet weak var profileNameLabel: UILabel!
     @IBOutlet weak var profileNameImage: UIImageView!
@@ -107,9 +107,11 @@ class AccountTableViewController: UITableViewController {
             self.navigationController?.pushViewController(PaymentCardViewController(), animated: true)
         } else if row == 0 && section == 4 {
             // prompt and logout user
+            self.logoutUser()
         }
         print(row, section)
     }
+    
     /* UIManip */
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent

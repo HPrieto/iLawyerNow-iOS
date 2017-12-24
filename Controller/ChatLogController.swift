@@ -116,8 +116,8 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         self.collectionView?.backgroundColor = UIColor.white
         self.collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: self.cellId)
         self.collectionView?.keyboardDismissMode = .interactive
-        
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(handleRightBarButtonClick))
+        //self.navigationController?.navigationBar.prefersLargeTitles = false
     }
     
     override func viewWillAppear(_ animated: Bool) {

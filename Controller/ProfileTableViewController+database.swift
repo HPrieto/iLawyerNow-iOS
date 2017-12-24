@@ -27,7 +27,6 @@ extension ProfileTableViewController {
                         self.setImageFromURL(urlString: imageUrl)
                     } else {
                         print("There is no url")
-                        self.addPhotoButton.backgroundColor = UIColor.red
                     }
                     if let street = dictionary["street"] as? String {
                         self.streetAddressField.text = street

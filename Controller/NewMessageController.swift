@@ -21,6 +21,14 @@ class NewMessageController: UICollectionViewController, UITextFieldDelegate, UIC
         return textField
     }()
     
+    let messageTextField: UITextField = {
+        let textField = UITextField()
+        textField.placeholder = "Enter a message..."
+        textField.textInputView.backgroundColor = UIColor.red
+        textField.translatesAutoresizingMaskIntoConstraints = false
+        return textField
+    }()
+    
     lazy var inputContainerView: UIView = {
         let containerView = UIView()
         containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
@@ -116,8 +124,21 @@ class NewMessageController: UICollectionViewController, UITextFieldDelegate, UIC
         self.collectionView?.backgroundColor = UIColor.white
         self.collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: self.cellId)
         self.collectionView?.keyboardDismissMode = .interactive
-        
+        self.navigationController?.navigationBar.isTranslucent = false
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.backgroundColor = UIColor.clear
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(handleRightBarButtonClick))
+        self.initializeMargins()
+    }
+    
+    func initializeMargins() {
+        self.view.addSubview(self.messageTextField)
+        
+        // TextField Margins
+        self.messageTextField.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
+        self.messageTextField.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
+        self.messageTextField.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 20).isActive = true
+        self.messageTextField.bottomAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
     }
     
     override func viewWillAppear(_ animated: Bool) {

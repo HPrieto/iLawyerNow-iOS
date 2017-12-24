@@ -151,6 +151,7 @@ class FeedCell: UITableViewCell {
         self.addSubview(self.statusTextView)
         self.addSubview(self.timestamp)
         self.addSubview(self.commentButton)
+        self.addSubview(self.dividerLineView)
         // Profile Image Margins
         self.profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 10).isActive = true
         self.profileImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 15).isActive = true
@@ -169,8 +170,113 @@ class FeedCell: UITableViewCell {
         // Status TextView Margins
         self.statusTextView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 59).isActive = true
         self.statusTextView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10).isActive = true
-        self.statusTextView.topAnchor.constraint(equalTo: self.usernameLabel.bottomAnchor, constant: -5).isActive = true
+        self.statusTextView.topAnchor.constraint(equalTo: self.usernameLabel.bottomAnchor, constant: -3).isActive = true
+        
+        // Divider LineView Margins
+        self.addSubview(self.actionView)
+        self.actionView.addSubview(self.commentView)
+        self.actionView.addSubview(self.shareView)
+        self.actionView.addSubview(self.likeView)
+        self.actionView.addSubview(self.messageView)
+        let iconDimensions:CGFloat = 16.0
+        self.actionView.topAnchor.constraint(equalTo: self.statusTextView.bottomAnchor, constant: -4).isActive = true
+        self.actionView.leftAnchor.constraint(equalTo: self.usernameLabel.leftAnchor).isActive = true
+        self.actionView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -25).isActive = true
+        self.actionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -9).isActive = true
+        
+        self.commentView.leftAnchor.constraint(equalTo: self.actionView.leftAnchor).isActive = true
+        self.commentView.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
+        self.commentView.heightAnchor.constraint(equalToConstant: iconDimensions).isActive = true
+        self.commentView.widthAnchor.constraint(equalToConstant: iconDimensions).isActive = true
+        
+        self.shareView.leftAnchor.constraint(equalTo: self.actionView.leftAnchor, constant: (self.bounds.width-60)*(1/4)).isActive = true
+        self.shareView.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
+        self.shareView.widthAnchor.constraint(equalToConstant: iconDimensions).isActive = true
+        self.shareView.heightAnchor.constraint(equalToConstant: iconDimensions).isActive = true
+        
+        self.likeView.leftAnchor.constraint(equalTo: self.actionView.leftAnchor, constant: (self.bounds.width-60)*(1/2)).isActive = true
+        self.likeView.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
+        self.likeView.widthAnchor.constraint(equalToConstant: iconDimensions).isActive = true
+        self.likeView.heightAnchor.constraint(equalToConstant: iconDimensions).isActive = true
+        
+        self.messageView.leftAnchor.constraint(equalTo: self.actionView.leftAnchor, constant: (self.bounds.width-60)*(3/4)).isActive = true
+        self.messageView.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
+        self.messageView.widthAnchor.constraint(equalToConstant: iconDimensions).isActive = true
+        self.messageView.heightAnchor.constraint(equalToConstant: iconDimensions).isActive = true
+        
+        self.actionView.addSubview(self.commentsLabel)
+        self.commentsLabel.leftAnchor.constraint(equalTo: self.commentView.rightAnchor, constant: 5).isActive = true
+        self.commentsLabel.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
+        
+        self.actionView.addSubview(self.sharesLabel)
+        self.sharesLabel.leftAnchor.constraint(equalTo: self.shareView.rightAnchor, constant: 5).isActive = true
+        self.sharesLabel.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
+        
+        self.actionView.addSubview(self.likesLabel)
+        self.likesLabel.leftAnchor.constraint(equalTo: self.likeView.rightAnchor, constant: 5).isActive = true
+        self.likesLabel.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
     }
+    
+    let actionView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let commentView: UIButton = {
+        let button = UIButton()
+        button.setBackgroundImage(UIImage(named: "bubble_icon"), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    let commentsLabel: UILabel = {
+        let label = UILabel()
+        label.text = "2"
+        label.font = UIFont(name: "HelveticaNeue-Medium", size: 14)
+        label.textColor = UIColor.lightGray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let shareView: UIButton = {
+        let button = UIButton()
+        button.setBackgroundImage(UIImage(named: "share_icon"), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    let sharesLabel: UILabel = {
+        let label = UILabel()
+        label.text = "5"
+        label.font = UIFont(name: "HelveticaNeue-Medium", size: 14)
+        label.textColor = UIColor.lightGray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let likeView: UIButton = {
+        let button = UIButton()
+        button.setBackgroundImage(UIImage(named: "heart_icon"), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    let likesLabel: UILabel = {
+        let label = UILabel()
+        label.text = "10"
+        label.font = UIFont(name: "HelveticaNeue-Medium", size: 14)
+        label.textColor = UIColor.lightGray
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    let messageView: UIButton = {
+        let button = UIButton()
+        button.setBackgroundImage(UIImage(named: "message_icon"), for: .normal)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

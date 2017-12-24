@@ -11,10 +11,9 @@ import UIKit
 extension LoginSignupController {
     @objc func loginFields() {
         guard let email = self.loginEmailTextField.text,
-            let password = self.loginPasswordTextField.text else {
+              let password = self.loginPasswordTextField.text else {
                 self.disableLoginButton()
-                print("Invalid Login Fields")
-                return
+            return
         }
         if !self.validEmail(email: email) {
             self.disableLoginButton()
@@ -28,8 +27,87 @@ extension LoginSignupController {
         }
     }
     
+    @objc func attorneyNameFields() {
+        guard let firstName   = self.attorneyFirstNameTextField.text,
+              let lastName    = self.attorneyLastNameTextField.text,
+              let phoneNumber = self.attorneyPhoneTextField.text else {
+            return
+        }
+        if !self.validName(name: firstName) {
+            self.disableAttorneyNameToEmailButton()
+        } else if !self.validName(name: lastName) {
+            self.disableAttorneyNameToEmailButton()
+        } else if !self.validPhoneNumber(phoneNumber: phoneNumber) {
+            self.disableAttorneyNameToEmailButton()
+        } else {
+            self.enableAttorneyNameToEmailButton()
+        }
+    }
+    
     @objc func attorneyFields() {
-        
+        guard let firstName   = self.attorneyFirstNameTextField.text,
+              let lastName    = self.attorneyLastNameTextField.text,
+              let phoneNumber = self.attorneyPhoneTextField.text,
+              let barNumber   = self.attorneyBarTextField.text,
+              let email       = self.attorneyEmailTextField.text,
+              let password    = self.attorneyPasswordTextField.text else {
+            return
+        }
+        if !self.validName(name: firstName) {
+            self.disableAttorneySignupButton()
+        } else if !self.validName(name: lastName) {
+            self.disableAttorneySignupButton()
+        } else if !self.validPhoneNumber(phoneNumber: phoneNumber) {
+            self.disableAttorneySignupButton()
+        } else if !self.validateBar(bar: barNumber) {
+            self.disableAttorneySignupButton()
+        } else if !self.validEmail(email: email) {
+            self.disableAttorneySignupButton()
+        } else if !self.validPassword(password: password) {
+            self.disableAttorneySignupButton()
+        } else {
+            self.enableAttorneySignupButton()
+        }
+    }
+    
+    @objc func memberNameFields() {
+        guard let firstName   = self.memberFirstNameTextField.text,
+              let lastName    = self.memberLastNameTextField.text,
+              let phoneNumber = self.memberPhoneTextField.text else {
+                return
+        }
+        if !self.validName(name: firstName) {
+            self.disableMemberNameToEmailButton()
+        } else if !self.validName(name: lastName) {
+            self.disableMemberNameToEmailButton()
+        } else if !self.validPhoneNumber(phoneNumber: phoneNumber) {
+            self.disableMemberNameToEmailButton()
+        } else {
+            self.enableMemberNameToEmailButton()
+        }
+    }
+    
+    @objc func memberFields() {
+        guard let firstName   = self.memberFirstNameTextField.text,
+              let lastName    = self.memberLastNameTextField.text,
+              let phoneNumber = self.memberPhoneTextField.text,
+              let email       = self.memberEmailTextField.text,
+              let password    = self.memberPasswordTextField.text else {
+                return
+        }
+        if !self.validName(name: firstName) {
+            self.disableMemberSignupButton()
+        } else if !self.validName(name: lastName) {
+            self.disableMemberSignupButton()
+        } else if !self.validPhoneNumber(phoneNumber: phoneNumber) {
+            self.disableMemberSignupButton()
+        }  else if !self.validEmail(email: email) {
+            self.disableMemberSignupButton()
+        } else if !self.validPassword(password: password) {
+            self.disableMemberSignupButton()
+        } else {
+            self.enableMemberSignupButton()
+        }
     }
     
     @objc func welcomeNavbarRightButtonClicked() {
@@ -58,7 +136,7 @@ extension LoginSignupController {
     }
     
     @objc func memberSignupButtonClicked() {
-        
+        self.signupMember()
     }
     
     /* MemberView Actions */
@@ -106,7 +184,7 @@ extension LoginSignupController {
     }
     
     @objc func attorneySignupButtonClicked() {
-        
+        self.signupAttorney()
     }
     
     @objc func loginButtonClicked() {
@@ -150,7 +228,6 @@ extension LoginSignupController {
         self.memberSignupEmailScrollViewHeightAnchor?.constant = self.view.bounds.height
         self.memberNameToEmailButtonBottomMargin?.constant = -25
         self.memberSignupButtonBottomMargin?.constant = -25
-        
         
         self.loginButtonBottomMargin?.constant = -25
         UIView.animate(withDuration: keyboardDuration!, animations: {

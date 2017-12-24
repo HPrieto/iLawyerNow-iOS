@@ -45,6 +45,7 @@ class FeedTableViewController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
+        self.setProfileImage()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -56,7 +57,9 @@ class FeedTableViewController: UITableViewController {
     func initFeed() {
         self.tableView.register(FeedCell.self, forCellReuseIdentifier: self.CELLID)
         self.navigationItem.title = "Home"
-        self.navigationItem.rightBarButtonItem? = UIBarButtonItem(barButtonSystemItem: .compose, target: self, action: #selector(composeMessage))
+        let barImage = UIImage(named: "pen_compose")
+        //self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationItem.rightBarButtonItem? = UIBarButtonItem(image: barImage, style: .plain, target: self, action: #selector(composeMessage))
         self.navigationItem.rightBarButtonItem?.tintColor = self.greyBubbleColor
     }
     
@@ -69,7 +72,7 @@ class FeedTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let statusText = posts[indexPath.item].statusText {
             let statusTextHeight = self.getTextHeight(text: statusText, font: 16)
-            let knownHeight: CGFloat = 15 + 44 + 50
+            let knownHeight: CGFloat = 15 + 44 + 46
             return CGSize(width: view.frame.width, height: statusTextHeight + knownHeight).height
         }
         return CGSize(width: view.frame.width, height: 500).height

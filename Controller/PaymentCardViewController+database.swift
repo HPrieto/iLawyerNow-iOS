@@ -20,7 +20,7 @@ extension PaymentCardViewController {
             print("Invalid credit card")
             return
         }
-        FIRDatabase.database().reference().child("users").child(user.uid).setValue(["cardNumber":creditCardNumber]) { (error, ref) in
+        FIRDatabase.database().reference().child("users").child(user.uid).updateChildValues(["cardNumber":creditCardNumber]) { (error, ref) in
             if error != nil {
                 print("unable to save the credit card number...")
                 return

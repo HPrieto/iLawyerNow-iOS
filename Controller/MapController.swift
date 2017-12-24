@@ -10,12 +10,12 @@ import UIKit
 import MapKit
 import CoreLocation
 
-class MapController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate, UIGestureRecognizerDelegate {
+class MapController: UIViewController, MKMapViewDelegate, CLLocationManagerDelegate, UIGestureRecognizerDelegate, UINavigationControllerDelegate, UITabBarControllerDelegate {
     
     /* Global Variables */
     let locationManager = CLLocationManager()
-    let LATDELTA:CLLocationDegrees = 0.045
-    let LONDELTA:CLLocationDegrees = 0.045
+    let LATDELTA:CLLocationDegrees = 0.11
+    let LONDELTA:CLLocationDegrees = 0.11
     let LOWERED:CGFloat = -240
     let RAISED:CGFloat = 0
     let GRADUAL:Double = 0.5
@@ -106,8 +106,8 @@ class MapController: UIViewController, MKMapViewDelegate, CLLocationManagerDeleg
     }
     /* Centers map around given coordinate of type CLLocationCoordinate2D */
     func centerMapOnCoordinate(coordinate:CLLocationCoordinate2D) {
-        let mkSpan                      = MKCoordinateSpanMake(self.LATDELTA, self.LONDELTA)
-        let mkRegion                    = MKCoordinateRegionMake(coordinate, mkSpan)
+        let mkSpan   = MKCoordinateSpanMake(self.LATDELTA, self.LONDELTA)
+        let mkRegion = MKCoordinateRegionMake(coordinate, mkSpan)
         self.map.setRegion(mkRegion, animated: true)
     }
     /* Centers map around given location of data type CLLocation */

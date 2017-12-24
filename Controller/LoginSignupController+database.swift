@@ -12,23 +12,24 @@ import Firebase
 extension LoginSignupController {
     /* Attorney Signup/Login methods */
     func signupAttorney() {
-        /*guard let attorneyEmail = self.attorneySignupEmailTextField.text, let attorneyPassword = self.attorneySignupPasswordTextField.text else {
-            print("Invalid attorney email and password fields on signup")
+        guard let attorneyEmail = self.attorneyEmailTextField.text, let attorneyPassword = self.attorneyPasswordTextField.text else {
+            self.showErrorView(message: "Invalid signup parameters.")
             return
         }
         FIRAuth.auth()?.createUser(withEmail: attorneyEmail, password: attorneyPassword, completion: { (user, error) in
             if error != nil {
                 print(error.debugDescription)
+                if let errorMessage = error?.localizedDescription {
+                    self.showErrorView(message: errorMessage)
+                }
                 return
             }
             // Attorney has signed up.
-            guard let attorneyFirstName = self.attorneySignupFirstNameTextField.text, let attorneyLastName = self.attorneySignupLastNameTextField.text, let attorneyPhoneNumber = self.attorneySignupPhoneTextField.text, let barNumber = self.attorneySignupBarNumberTextField.text else {
-                self.popThisView()
-                print("Invalid attorney firstname, lastname or phone number")
+            guard let attorneyFirstName = self.attorneyFirstNameTextField.text, let attorneyLastName = self.attorneyLastNameTextField.text, let attorneyPhoneNumber = self.attorneyPhoneTextField.text, let barNumber = self.attorneyBarTextField.text else {
+                self.showErrorView(message: "Invlaid signup parameters.")
                 return
             }
             guard let attorney = user?.uid else {
-                self.popThisView()
                 return
             }
             let attorneyInfo = ["email":attorneyEmail,
@@ -41,35 +42,38 @@ extension LoginSignupController {
             let attorniesRef = ref.child("users").child(attorney)
             attorniesRef.updateChildValues(attorneyInfo, withCompletionBlock: { (err, ref) in
                 if err != nil {
-                    print(err.debugDescription)
-                    self.popThisView()
+                    if let errorMessage = err?.localizedDescription {
+                        self.showErrorView(message: errorMessage)
+                    }
                     return
                 }
                 print("New attorney '\(attorneyFirstName)' saved to database successfully.")
             })
             self.popThisView()
-        })*/
+        })
     }
     
     /* Member Signup/Login methods */
     func signupMember() {
-        /*guard let memberEmail = self.memberSignupEmailTextField.text, let memberPassword = self.memberSignupPasswordTextField.text else {
+        guard let memberEmail = self.memberEmailTextField.text, let memberPassword = self.memberPasswordTextField.text else {
             print("Invalid member email and password fields on signup")
             return
         }
         FIRAuth.auth()?.createUser(withEmail: memberEmail, password: memberPassword, completion: { (user, error) in
             if error != nil {
                 print(error.debugDescription)
+                if let errorMessage = error?.localizedDescription {
+                    self.showErrorView(message: errorMessage)
+                }
                 return
             }
             // Member has signed up.
-            guard let memberFirstName = self.memberSignupFirstNameTextField.text, let memberLastName = self.memberSignupLastNameTextField.text, let memberPhoneNumber = self.memberSignupPhoneTextField.text else {
-                self.popThisView()
+            guard let memberFirstName = self.memberFirstNameTextField.text, let memberLastName = self.memberLastNameTextField.text, let memberPhoneNumber = self.memberPhoneTextField.text else {
+                self.showErrorView(message: "Invalid fields.")
                 print("Invalid member firstname, lastname or phone number")
                 return
             }
             guard let member = user?.uid else {
-                self.popThisView()
                 return
             }
             let memberInfo = ["email":memberEmail,
@@ -81,14 +85,15 @@ extension LoginSignupController {
             let membersRef = ref.child("users").child(member)
             membersRef.updateChildValues(memberInfo, withCompletionBlock: { (err, ref) in
                 if err != nil {
-                    print(err.debugDescription)
-                    self.popThisView()
+                    if let errorMessage = error?.localizedDescription {
+                        self.showErrorView(message: errorMessage)
+                    }
                     return
                 }
                 print("New member '\(memberFirstName)' saved to database successfully.")
             })
             self.popThisView()
-        })*/
+        })
     }
     
     func loginUser() {
