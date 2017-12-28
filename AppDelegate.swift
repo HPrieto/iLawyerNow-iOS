@@ -18,6 +18,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FIRApp.configure()
+        let tabBarController = self.window!.rootViewController as! UITabBarController
+        tabBarController.tabBar.unselectedItemTintColor = UIColor.MainColors.darkGrey
+        tabBarController.tabBar.tintColor = UIColor.MainColors.mainColor
         return true
     }
 

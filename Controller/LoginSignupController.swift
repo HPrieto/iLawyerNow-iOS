@@ -97,7 +97,7 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
 //        button.titleEdgeInsets = UIEdgeInsets(top: 0,left: 20,bottom: 0,right: 34)
         button.setTitle("Attorney", for: .normal)
         button.titleLabel?.font = UIFont(name: "AvenirNext-Medium", size: 17)
-        button.setTitleColor(UIColor(red:0.38, green:0.26, blue:0.52, alpha:1.0), for: .normal)
+        button.setTitleColor(UIColor.MainColors.mainColor, for: .normal)
         button.backgroundColor = UIColor.white
         button.layer.borderColor = UIColor.white.cgColor
         button.layer.borderWidth = 1
@@ -829,10 +829,10 @@ class LoginSignupController: UIViewController, UIScrollViewDelegate {
     func setGradientBackground() {
         //let colorTop =  UIColor(red:0.04, green:0.13, blue:0.25, alpha:1.0).cgColor
         //let colorBottom = UIColor(red:0.33, green:0.47, blue:0.58, alpha:1.0).cgColor
-        let colorTop = UIColor(red:0.38, green:0.26, blue:0.52, alpha:1.0).cgColor
-        let colorBottom = UIColor(red:0.32, green:0.39, blue:0.58, alpha:1.0).cgColor
+        let colorTop = UIColor.MainColors.darkColor.cgColor
+        let colorBottom = UIColor.MainColors.lightColor.cgColor
         let gradientLayer = CAGradientLayer()
-        gradientLayer.colors = [ colorTop, colorBottom]
+        gradientLayer.colors = [colorTop, colorBottom]
         gradientLayer.startPoint = CGPoint(x: 0, y: 0)
         gradientLayer.endPoint = CGPoint(x: 1, y: 1)
         gradientLayer.frame = self.view.bounds

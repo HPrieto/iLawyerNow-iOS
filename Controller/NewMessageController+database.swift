@@ -12,9 +12,9 @@ import Firebase
 extension NewMessageController {
     func observeMessages() {
         print("NewMessage Observing Messages...")
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
-            return
-        }
+        //guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+        //    return
+        //}
         let newMessageRef = FIRDatabase.database().reference().child("messages")
         newMessageRef.observe(.childAdded, with: {(snapshot) in
             guard let dictionary = snapshot.value as? [String:AnyObject] else {
@@ -41,13 +41,20 @@ extension NewMessageController {
         let ref = FIRDatabase.database().reference().child("messages")
         let childRef = ref.childByAutoId()
         let timestamp = Int(Date().timeIntervalSince1970)
-        let values = ["text": inputTextField.text!,"fromId": user.uid, "timestamp": timestamp] as [String : Any]
-        childRef.updateChildValues(values) { (error, ref) in
+        let values = ["text": messageTextField.text!,
+                      "fromId": user.uid,
+                      "timestamp": timestamp,
+                      "likes":0,
+                      "replies":0] as [String : Any]
+        childRef.updateChildValues(values) { (error, reference) in
             if error != nil {
                 print(error!)
                 return
             }
-            self.inputTextField.text = nil
+            let messageAutoId = reference.key
+            let userMessagesRef = FIRDatabase.database().reference().child("users").child(user.uid).child("messages")
+            userMessagesRef.updateChildValues([messageAutoId:timestamp])
+            self.messageTextField.text = nil
         }
     }
     

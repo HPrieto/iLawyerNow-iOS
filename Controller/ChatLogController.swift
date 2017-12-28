@@ -28,6 +28,8 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         let sendButton = UIButton(type: .system)
         sendButton.setTitle("Send", for: UIControlState())
+        sendButton.setTitleColor(UIColor.white, for: .normal)
+        sendButton.backgroundColor = UIColor.MainColors.lightColor
         sendButton.translatesAutoresizingMaskIntoConstraints = false
         sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
         containerView.addSubview(sendButton)
@@ -117,7 +119,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         self.collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: self.cellId)
         self.collectionView?.keyboardDismissMode = .interactive
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(handleRightBarButtonClick))
-        //self.navigationController?.navigationBar.prefersLargeTitles = false
+        self.navigationController?.navigationBar.tintColor = UIColor.MainColors.lightColor
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -133,7 +135,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         print("ChatLog ViewWillDisappear")
+        self.navigationController?.navigationBar.prefersLargeTitles = true
     }
+    
     override var inputAccessoryView: UIView? {
         get {
             return inputContainerView

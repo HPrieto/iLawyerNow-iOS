@@ -11,12 +11,13 @@ import UIKit
 extension NewMessageController {
     /* User Clicked on right bar button item */
     @objc func handleRightBarButtonClick() {
+        self.view.endEditing(true)
         self.dismiss(animated: true, completion: nil)
     }
     
     /* Handler for when user wants to send message */
-    @objc func handleSend() {
-//        self.sendMessage()
+    @objc func handleNewMessage() {
+        self.sendMessage()
         self.dismiss(animated: true, completion: nil)
     }
     
@@ -25,7 +26,7 @@ extension NewMessageController {
         let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
         let keyboardDuration = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
         
-        self.containerViewBottomAnchor?.constant = -keyboardFrame!.height
+        self.sendMessageButtonBottomMargin?.constant = -keyboardFrame!.height
         UIView.animate(withDuration: keyboardDuration!, animations: {
             self.view.layoutIfNeeded()
         })
@@ -35,7 +36,7 @@ extension NewMessageController {
     @objc func handleKeyboardWillHide(_ notification: Notification) {
         let keyboardDuration = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
         
-        self.containerViewBottomAnchor?.constant = 0
+        self.sendMessageButtonBottomMargin?.constant = 0
         UIView.animate(withDuration: keyboardDuration!, animations: {
             self.view.layoutIfNeeded()
         })

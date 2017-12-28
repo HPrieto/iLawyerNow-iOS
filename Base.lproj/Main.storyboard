@@ -29,8 +29,9 @@
                         <color key="selectedImageTintColor" red="0.074509803920000006" green="0.53333333329999999" blue="0.56078431370000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     </tabBar>
                     <connections>
-                        <segue destination="yZu-Yq-1pX" kind="relationship" relationship="viewControllers" id="6u1-RO-qrp"/>
                         <segue destination="pYF-Kw-dzz" kind="relationship" relationship="viewControllers" id="rBe-PB-9ei"/>
+                        <segue destination="yZu-Yq-1pX" kind="relationship" relationship="viewControllers" id="6u1-RO-qrp"/>
+                        <segue destination="ikj-lS-hDK" kind="relationship" relationship="viewControllers" id="pTn-vc-dSh"/>
                         <segue destination="mZf-Jm-JMm" kind="relationship" relationship="viewControllers" id="FfE-KE-D10"/>
                     </connections>
                 </tabBarController>
@@ -683,11 +684,60 @@
             </objects>
             <point key="canvasLocation" x="2846" y="650"/>
         </scene>
+        <!--Notifications-->
+        <scene sceneID="kcc-1a-dbf">
+            <objects>
+                <tableViewController id="e5W-lv-dmw" customClass="NotificationsController" customModule="iLawyerNow" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="G0g-uh-t5A">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="GGP-3f-hhj">
+                                <rect key="frame" x="0.0" y="28" width="375" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="GGP-3f-hhj" id="NaJ-nh-uMm">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="e5W-lv-dmw" id="AIs-TW-Nj7"/>
+                            <outlet property="delegate" destination="e5W-lv-dmw" id="JbM-my-7QH"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Notifications" id="NWJ-jm-Tdu"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="19p-zK-ORE" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2846" y="1356"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="8f2-A2-cFv">
+            <objects>
+                <navigationController id="ikj-lS-hDK" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="" image="tab_bar_ring_icon" selectedImage="tab_bar_ring_filled_icon" id="1D4-2G-Gbk">
+                        <inset key="imageInsets" minX="0.0" minY="5" maxX="0.0" maxY="-5"/>
+                    </tabBarItem>
+                    <navigationItem key="navigationItem" id="ozI-fe-Nh3"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="kzB-NZ-oid">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="e5W-lv-dmw" kind="relationship" relationship="rootViewController" id="PkY-ya-vXw"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="djM-Tg-xA8" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2092" y="1371"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="J3K-1l-O91">
             <objects>
                 <navigationController id="pYF-Kw-dzz" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="" image="tab_bar_home" selectedImage="tab_bar_home" id="h5Q-gy-Ls8">
+                    <tabBarItem key="tabBarItem" title="" image="tab_bar_home" selectedImage="tab_bar_home_filled" id="h5Q-gy-Ls8">
                         <inset key="imageInsets" minX="0.0" minY="5" maxX="0.0" maxY="-5"/>
                     </tabBarItem>
                     <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" barStyle="black" translucent="NO" prompted="NO"/>
@@ -722,6 +772,7 @@
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" largeTitles="YES" id="zH9-bx-OCh">
                         <rect key="frame" x="0.0" y="20" width="375" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <color key="barTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <textAttributes key="titleTextAttributes">
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -748,7 +799,10 @@
         <image name="profile_background" width="1620" height="1080"/>
         <image name="profile_icon" width="64" height="64"/>
         <image name="tab_bar_home" width="24" height="24"/>
+        <image name="tab_bar_home_filled" width="24" height="24"/>
         <image name="tab_bar_map" width="24" height="24"/>
+        <image name="tab_bar_ring_filled_icon" width="24" height="24"/>
+        <image name="tab_bar_ring_icon" width="24" height="24"/>
         <image name="tab_bar_user" width="24" height="24"/>
         <image name="user_icon_sm" width="32" height="32"/>
     </resources>

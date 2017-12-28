@@ -86,6 +86,7 @@ class AccountTableViewController: UITableViewController, UITabBarDelegate {
     /* AccountTableViewController LifeCycle Methods */
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.tintColor = UIColor.MainColors.mainColor
         self.profileNameImage.layer.masksToBounds = true
         self.profileNameImage.layer.cornerRadius = self.profileNameImage.bounds.width / 2
     }

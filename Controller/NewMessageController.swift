@@ -13,112 +13,39 @@ class NewMessageController: UICollectionViewController, UITextFieldDelegate, UIC
     var messages = [Message]()
     
     /* NewMessage Controller Components */
-    lazy var inputTextField: UITextField = {
-        let textField = UITextField()
-        textField.placeholder = "Enter a message..."
-        textField.translatesAutoresizingMaskIntoConstraints = false
-        textField.delegate = self
-        return textField
-    }()
-    
     let messageTextField: UITextField = {
         let textField = UITextField()
-        textField.placeholder = "Enter a message..."
-        textField.textInputView.backgroundColor = UIColor.red
+        textField.textColor = UIColor.black
+        textField.placeholder = "What's happening?"
+        textField.font = UIFont(name: "HelveticaNeue-Light", size: 21)
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
-    lazy var inputContainerView: UIView = {
-        let containerView = UIView()
-        containerView.frame = CGRect(x: 0, y: 0, width: self.view.frame.width, height: 50)
-        containerView.backgroundColor = UIColor.white
-        
-        let sendButton = UIButton(type: .system)
-        sendButton.setTitle("Send", for: UIControlState())
-        sendButton.translatesAutoresizingMaskIntoConstraints = false
-        sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
-        containerView.addSubview(sendButton)
-        
-        sendButton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        sendButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        sendButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
-        sendButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-        
-        containerView.addSubview(self.inputTextField)
-        
-        self.inputTextField.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 8).isActive = true
-        self.inputTextField.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        self.inputTextField.rightAnchor.constraint(equalTo: sendButton.leftAnchor).isActive = true
-        self.inputTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-        
-        let separatorLineView = UIView()
-        separatorLineView.backgroundColor = UIColor(r: 220, g: 220, b: 220)
-        separatorLineView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(separatorLineView)
-        
-        separatorLineView.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
-        separatorLineView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-        separatorLineView.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
-        separatorLineView.heightAnchor.constraint(equalToConstant: 1).isActive = true
-        
-        return containerView
+    let sendMessageButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Send", for: .normal)
+        button.titleLabel?.font = UIFont(name: "HelveticaNeue-Bold", size: 18)
+        button.titleLabel?.textColor = UIColor.white
+        button.backgroundColor = UIColor.MainColors.lightColor
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(handleNewMessage), for: .touchUpInside)
+        return button
     }()
-    
-    var containerViewBottomAnchor: NSLayoutConstraint?
-    
-    func setupInputComponents() {
-        print("ChatLog Setting up UIComponents")
-        let containerView = UIView()
-        containerView.backgroundColor = UIColor.white
-        containerView.translatesAutoresizingMaskIntoConstraints = false
-        
-        view.addSubview(containerView)
-        
-        //ios9 constraint anchors
-        //x,y,w,h
-        containerView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        
-        containerViewBottomAnchor = containerView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        containerViewBottomAnchor?.isActive = true
-        
-        containerView.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        containerView.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        
-        let sendButton = UIButton(type: .system)
-        sendButton.setTitle("Send", for: UIControlState())
-        sendButton.translatesAutoresizingMaskIntoConstraints = false
-        sendButton.addTarget(self, action: #selector(handleSend), for: .touchUpInside)
-        containerView.addSubview(sendButton)
-        //x,y,w,h
-        sendButton.rightAnchor.constraint(equalTo: containerView.rightAnchor).isActive = true
-        sendButton.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        sendButton.widthAnchor.constraint(equalToConstant: 80).isActive = true
-        sendButton.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-        
-        containerView.addSubview(inputTextField)
-        //x,y,w,h
-        inputTextField.leftAnchor.constraint(equalTo: containerView.leftAnchor, constant: 8).isActive = true
-        inputTextField.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
-        inputTextField.rightAnchor.constraint(equalTo: sendButton.leftAnchor).isActive = true
-        inputTextField.heightAnchor.constraint(equalTo: containerView.heightAnchor).isActive = true
-        
-        let separatorLineView = UIView()
-        separatorLineView.backgroundColor = UIColor(r: 220, g: 220, b: 220)
-        separatorLineView.translatesAutoresizingMaskIntoConstraints = false
-        containerView.addSubview(separatorLineView)
-        //x,y,w,h
-        separatorLineView.leftAnchor.constraint(equalTo: containerView.leftAnchor).isActive = true
-        separatorLineView.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
-        separatorLineView.widthAnchor.constraint(equalTo: containerView.widthAnchor).isActive = true
-        separatorLineView.heightAnchor.constraint(equalToConstant: 1).isActive = true
-    }
     
     /* Controller LifeCycle */
     let cellId = "cellId"
     override func viewDidLoad() {
         super.viewDidLoad()
         print("NewMessage ViewDidLoad")
+        self.initializeMainViews()
+        self.initializeMargins()
+        self.setupKeyboardObservers()
+        
+    }
+    
+    func initializeMainViews() {
+        self.view.backgroundColor = UIColor.white
         self.collectionView?.contentInset = UIEdgeInsets(top: 8, left: 0, bottom: 8, right: 0)
         self.collectionView?.alwaysBounceVertical = true
         self.collectionView?.backgroundColor = UIColor.white
@@ -127,18 +54,25 @@ class NewMessageController: UICollectionViewController, UITextFieldDelegate, UIC
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.backgroundColor = UIColor.clear
+        self.navigationController?.navigationBar.tintColor = UIColor.MainColors.lightColor
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(handleRightBarButtonClick))
-        self.initializeMargins()
     }
     
+    var sendMessageButtonBottomMargin: NSLayoutConstraint?
     func initializeMargins() {
         self.view.addSubview(self.messageTextField)
-        
+        self.view.addSubview(self.sendMessageButton)
         // TextField Margins
-        self.messageTextField.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
         self.messageTextField.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -20).isActive = true
+        self.messageTextField.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 20).isActive = true
         self.messageTextField.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 20).isActive = true
-        self.messageTextField.bottomAnchor.constraint(equalTo: self.view.centerYAnchor).isActive = true
+        
+        // SendButton Margins
+        self.sendMessageButton.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        self.sendMessageButton.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.sendMessageButton.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.sendMessageButtonBottomMargin = self.sendMessageButton.bottomAnchor.constraint(equalTo: self.view.bottomAnchor)
+        self.sendMessageButtonBottomMargin?.isActive = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -150,17 +84,12 @@ class NewMessageController: UICollectionViewController, UITextFieldDelegate, UIC
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         print("NewMessage ViewDidAppear")
-        self.inputTextField.becomeFirstResponder()
+        self.messageTextField.becomeFirstResponder()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         print("NewMessage ViewWillDisappear")
-    }
-    override var inputAccessoryView: UIView? {
-        get {
-            return inputContainerView
-        }
     }
     
     override var canBecomeFirstResponder : Bool {
