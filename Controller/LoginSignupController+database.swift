@@ -34,10 +34,10 @@ extension LoginSignupController {
             }
             let attorneyInfo = ["email":attorneyEmail,
                                 "phone":attorneyPhoneNumber,
-                                "firstName":attorneyFirstName,
-                                "lastName":attorneyLastName,
-                                "barNumber":barNumber,
-                                "isAttorney":true] as [String : Any]
+                                "first_name":attorneyFirstName,
+                                "last_name":attorneyLastName,
+                                "bar_number":barNumber,
+                                "is_attorney":true] as [String : Any]
             let ref = FIRDatabase.database().reference()
             let attorniesRef = ref.child("users").child(attorney)
             attorniesRef.updateChildValues(attorneyInfo, withCompletionBlock: { (err, ref) in
@@ -78,9 +78,9 @@ extension LoginSignupController {
             }
             let memberInfo = ["email":memberEmail,
                               "phone":memberPhoneNumber,
-                              "firstName":memberFirstName,
-                              "lastName":memberLastName,
-                              "isAttorney":false] as [String:Any]
+                              "first_name":memberFirstName,
+                              "last_name":memberLastName,
+                              "is_attorney":false] as [String:Any]
             let ref = FIRDatabase.database().reference()
             let membersRef = ref.child("users").child(member)
             membersRef.updateChildValues(memberInfo, withCompletionBlock: { (err, ref) in

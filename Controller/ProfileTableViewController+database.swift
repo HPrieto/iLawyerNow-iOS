@@ -16,13 +16,13 @@ extension ProfileTableViewController {
             self.emailLabel.text = user.email
             FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String:AnyObject] {
-                    if let firstName = dictionary["firstName"],
-                        let lastName  = dictionary["lastName"] {
+                    if let firstName = dictionary["first_name"],
+                        let lastName  = dictionary["last_name"] {
                         self.fullNameLabel.text = "\(firstName) \(lastName)"
                     } else {
                         self.fullNameLabel.text = "User"
                     }
-                    if let imageUrl = dictionary["imageURL"] as? String {
+                    if let imageUrl = dictionary["image_url"] as? String {
                         print("There is a url")
                         self.setImageFromURL(urlString: imageUrl)
                     } else {
@@ -60,7 +60,7 @@ extension ProfileTableViewController {
                 }
                 if let imageURL = metadata?.downloadURL()?.absoluteString {
                     var profileInfo = [String:Any]()
-                    profileInfo["imageURL"] = imageURL
+                    profileInfo["image_url"] = imageURL
                     if let street = self.streetAddressField.text {
                         profileInfo["street"] = street
                     }

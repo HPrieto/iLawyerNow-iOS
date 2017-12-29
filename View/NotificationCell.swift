@@ -37,15 +37,6 @@ class NotificationCell: UITableViewCell {
         return textView
     }()
     
-    let statusImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.layer.masksToBounds = true
-        imageView.isUserInteractionEnabled = true
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        return imageView
-    }()
-    
     let likesCommentsLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont(name: "HelveticaNeue", size: 12)
@@ -119,16 +110,12 @@ class NotificationCell: UITableViewCell {
                 self.timestamp.text = "· \(timestamp)"
             }
             
-            if let statusText = alert?.statusText {
+            if let statusText = alert?.post {
                 self.statusTextView.text = statusText
             }
             
             if let profileImageName = alert?.profileImageName {
                 self.profileImageView.image = UIImage(named: profileImageName)
-            }
-            
-            if let statusImageName = alert?.statusImageName {
-                self.statusImageView.image = UIImage(named: statusImageName)
             }
         }
     }

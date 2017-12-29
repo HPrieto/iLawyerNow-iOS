@@ -16,13 +16,13 @@ extension AccountTableViewController {
             FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String:Any] {
                     // Get user's first name
-                    if let firstName = dictionary["firstName"] as? String {
+                    if let firstName = dictionary["first_name"] as? String {
                         self.profileNameLabel.text = firstName
                     } else {
                         self.profileNameLabel.text = "Edit Profile"
                     }
                     // Get user's profile image
-                    if let imageURL = dictionary["imageURL"] as? String {
+                    if let imageURL = dictionary["image_url"] as? String {
                         print("ImageView url: \(imageURL)")
                         self.setImageFromURL(urlString: imageURL)
                     }

@@ -20,7 +20,7 @@ extension PaymentCardViewController {
             print("Invalid credit card")
             return
         }
-        FIRDatabase.database().reference().child("users").child(user.uid).updateChildValues(["cardNumber":creditCardNumber]) { (error, ref) in
+        FIRDatabase.database().reference().child("users").child(user.uid).updateChildValues(["card_number":creditCardNumber]) { (error, ref) in
             if error != nil {
                 print("unable to save the credit card number...")
                 return
@@ -36,7 +36,7 @@ extension PaymentCardViewController {
         }
         FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value) { (snapshot) in
             if let dictionary = snapshot.value as? [String:AnyObject] {
-                if let cardNumber = dictionary["cardNumber"] as? String {
+                if let cardNumber = dictionary["card_number"] as? String {
                     self.cardField.text = cardNumber
                 }
             }

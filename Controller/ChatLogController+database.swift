@@ -41,7 +41,7 @@ extension ChatLogController {
         let ref = FIRDatabase.database().reference().child("messages")
         let childRef = ref.childByAutoId()
         let timestamp = Int(Date().timeIntervalSince1970)
-        let values = ["text": inputTextField.text!,"fromId": user.uid, "timestamp": timestamp] as [String : Any]
+        let values = ["text": inputTextField.text!,"from_id": user.uid, "timestamp": timestamp] as [String : Any]
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil {
                 print(error!)

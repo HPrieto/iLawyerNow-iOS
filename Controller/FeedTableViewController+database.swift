@@ -12,19 +12,22 @@ import Firebase
 extension FeedTableViewController {
     /* Handle user login status */
     func checkIfUserIsLoggedIn() {
-        if FIRAuth.auth()?.currentUser?.uid == nil {
+        guard let user = FIRAuth.auth()?.currentUser else {
             perform(#selector(handleLogout), with: nil, afterDelay: 0)
-        } else {
-            let uid = FIRAuth.auth()?.currentUser?.uid
-            FIRDatabase.database().reference().child("users").child(uid!).observe(.value, with: { (snapshot) in
-                if let dictionary = snapshot.value as? [String:AnyObject] {
-                    guard let firstName = dictionary["firstName"] as? String else {
-                        return
-                    }
-                    self.navigationItem.title = "\(firstName)'s feed"
-                }
-            })
+            return
         }
+        self.setNavigationTitle(uid: user.uid)
+    }
+    
+    func setNavigationTitle(uid: String) {
+        FIRDatabase.database().reference().child("users").child(uid).observe(.value, with: { (snapshot) in
+            if let dictionary = snapshot.value as? [String:AnyObject] {
+                guard let firstName = dictionary["first_name"] as? String else {
+                    return
+                }
+                self.navigationItem.title = "\(firstName)"
+            }
+        })
     }
     
     /* Pushes to LoginSignupViewController */
@@ -41,7 +44,7 @@ extension FeedTableViewController {
             guard let dictionary = snapshot.value as? [String:AnyObject] else {
                 return
             }
-            if let imageURL = dictionary["imageURL"] as? String {
+            if let imageURL = dictionary["image_url"] as? String {
                 print("image url: \(imageURL)")
                 self.setProfileImageFromUrlString(urlString: imageURL)
             }

@@ -41,11 +41,9 @@ extension NewMessageController {
         let ref = FIRDatabase.database().reference().child("messages")
         let childRef = ref.childByAutoId()
         let timestamp = Int(Date().timeIntervalSince1970)
-        let values = ["text": messageTextField.text!,
-                      "fromId": user.uid,
-                      "timestamp": timestamp,
-                      "likes":0,
-                      "replies":0] as [String : Any]
+        let values = ["post": self.messageTextField.text!,
+                      "from_id": user.uid,
+                      "timestamp": timestamp] as [String : Any]
         childRef.updateChildValues(values) { (error, reference) in
             if error != nil {
                 print(error!)
@@ -67,7 +65,7 @@ extension NewMessageController {
             guard let dictionary = snapshot.value as? [String:AnyObject] else {
                 return
             }
-            if let imageURL = dictionary["imageURL"] as? String {
+            if let imageURL = dictionary["image_url"] as? String {
                 print("image url: \(imageURL)")
                 self.setProfileImageFromUrlString(urlString: imageURL)
             }

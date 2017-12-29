@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FIRApp.configure()
         let tabBarController = self.window!.rootViewController as! UITabBarController
         tabBarController.tabBar.unselectedItemTintColor = UIColor.MainColors.darkGrey
-        tabBarController.tabBar.tintColor = UIColor.MainColors.mainColor
+        tabBarController.tabBar.tintColor = UIColor.MainColors.lightColor
         return true
     }
 

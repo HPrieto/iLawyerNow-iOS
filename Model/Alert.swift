@@ -1,8 +1,8 @@
 //
-//  Notification.swift
+//  Alert.swift
 //  iLawyerNow
 //
-//  Created by Heriberto Prieto on 12/26/17.
+//  Created by Heriberto Prieto on 12/28/17.
 //  Copyright © 2017 Heriberto Prieto. All rights reserved.
 //
 
@@ -12,11 +12,10 @@ class Alert: SafeJsonObject {
     var firstName: String?
     var lastName: String?
     var profileImageName: String?
-    var statusText: String?
-    var statusImageName: String?
+    var post: String?
     var numLikes: NSNumber?
     var numComments: NSNumber?
-    var timestamp: String?
+    var timestamp: NSNumber?
     
     var location: Location?
     

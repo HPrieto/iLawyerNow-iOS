@@ -12,13 +12,8 @@ class NotificationsController: UITableViewController {
     
     let CELLID = "cellId"
     var alerts = [Alert]()
-    
-    let images = ["dummy_image0.jpeg",
-                  "dummy_image1.jpeg",
-                  "dummy_image2.jpeg",
-                  "dummy_image3.jpeg",
-                  "dummy_image4.jpeg"]
-    let status = ["For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.","For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.","For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.","For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.","For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine."]
+    var alertsDictionary = [String:Alert]()
+    var timer: Timer?
     
     /* Controller LifeCycle */
     override func viewDidLoad() {
@@ -37,10 +32,10 @@ class NotificationsController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let statusText = alerts[indexPath.item].statusText {
-            let statusTextHeight = self.getTextHeight(text: statusText, font: 16)
+        if let alert = self.alerts[indexPath.item].post {
+            let alertTextHeight = self.getTextHeight(text: alert, font: 16)
             let knownHeight: CGFloat = 15 + 60
-            return CGSize(width: view.frame.width, height: statusTextHeight + knownHeight).height
+            return CGSize(width: view.frame.width, height: alertTextHeight + knownHeight).height
         }
         return CGSize(width: view.frame.width, height: 500).height
     }
@@ -50,7 +45,7 @@ class NotificationsController: UITableViewController {
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
-        return 2
+        return 1
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
