@@ -93,7 +93,8 @@ class AccountTableViewController: UITableViewController, UITabBarDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("AccountTableViewController viewWillAppear")
-        self.tableView.setContentOffset(CGPoint.zero, animated: false)
+        let topOffset = CGPoint(x: 0, y: self.tableView.contentInset.top)
+        self.tableView.setContentOffset(topOffset, animated: false)
         self.setUserProfileName()
     }
     /* Get section being selected */

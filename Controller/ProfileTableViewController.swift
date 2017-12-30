@@ -42,15 +42,14 @@ class ProfileTableViewController: UITableViewController {
     }
     /* Saves updated address to database */
     func updateUserProfile() {
-        guard let user = FIRAuth.auth()?.currentUser else {
-            return
-        }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("ProfileTableViewController viewWillAppear")
-        self.tableView.setContentOffset(CGPoint.zero, animated: false)
+        let topOffset = CGPoint(x: 0, y: self.tableView.contentInset.top)
+        self.tableView.setContentOffset(topOffset, animated: false)
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)

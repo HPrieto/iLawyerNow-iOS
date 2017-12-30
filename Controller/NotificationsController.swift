@@ -19,6 +19,10 @@ class NotificationsController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.initializeViews()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         if self.userIsLoggedIn() {
             self.observeNotifications()
         }
@@ -34,7 +38,7 @@ class NotificationsController: UITableViewController {
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let alert = self.alerts[indexPath.item].post {
             let alertTextHeight = self.getTextHeight(text: alert, font: 16)
-            let knownHeight: CGFloat = 15 + 60
+            let knownHeight: CGFloat = 15 + 40
             return CGSize(width: view.frame.width, height: alertTextHeight + knownHeight).height
         }
         return CGSize(width: view.frame.width, height: 500).height
@@ -50,6 +54,19 @@ class NotificationsController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.alerts.count
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.navigationController?.navigationBar.prefersLargeTitles = false
+        let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        var newThread = [String:String]()
+        newThread["first_name"] = self.alerts[indexPath.row].firstName
+        newThread["last_name"] = self.alerts[indexPath.row].lastName
+        newThread["id"] = self.alerts[indexPath.row].fromId
+        newThread["thread_id"] = self.alerts[indexPath.row].threadId
+        let chatThread = ChatThread(dictionary: newThread)
+        chatLogController.chatThread = chatThread
+        self.navigationController?.pushViewController(chatLogController, animated: true)
     }
     
     /* TableRow Cell View */

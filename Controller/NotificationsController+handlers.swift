@@ -38,10 +38,8 @@ extension NotificationsController {
     @objc func handleReloadTable() {
         self.alerts = Array(self.alertsDictionary.values)
         self.alerts.sort(by: { (alert1, alert2) -> Bool in
-            
-            return alert1.timestamp?.int32Value > alert2.timestamp?.int32Value
+            return alert1.timestamp > alert2.timestamp
         })
-        //this will crash because of background thread, so lets call this on dispatch_async main thread
         DispatchQueue.main.async(execute: {
             self.tableView.reloadData()
         })

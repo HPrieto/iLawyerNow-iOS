@@ -22,28 +22,19 @@ extension NotificationsController {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {
             return
         }
+        print("Observing notifications")
         let newMessageRef = FIRDatabase.database().reference().child("users").child(uid)
         newMessageRef.observe(.value, with: {(snapshot) in
             guard let userInfo = snapshot.value as? [String:Any] else {
                 print("No user info found")
                 return
             }
-            self.setUserMessages(userInfo)
-            // Create new Message Object
-            //let alert = Message(dictionary: dictionary)
-            
-            // Add new message to messages map
-            //self.alerts.append(alert)
-            
-            // Reload TableView with new messages
-            DispatchQueue.main.async(execute: {
-                //self.collectionView?.reloadData()
-            })
+            self.setUserMessages(userInfo, uid: uid)
         }, withCancel: nil)
     }
     
-    func setUserMessages(_ userInfo: [String:Any]) {
-        guard let messages = userInfo["messages"] as? [String:Int] else {
+    func setUserMessages(_ userInfo: [String:Any], uid: String) {
+        guard let messages = userInfo["messages"] as? [String:Double] else {
             print("No messages for user")
             return
         }
@@ -54,17 +45,20 @@ extension NotificationsController {
                     return
                 }
                 if let fromId = messageThread["from_id"] as? String,
-                   let timestamp = messageThread["timestamp"] as? NSNumber,
                    let post = messageThread["post"] as? String,
                    let firstName = userInfo["first_name"] as? String,
-                   let lastName = userInfo["last_name"] as? String,
-                   let profileImageName = userInfo["image_url"] as? String {
+                   let lastName = userInfo["last_name"] as? String {
                     let newAlert = Alert()
+                    newAlert.threadId = mid
+                    newAlert.currentUser = uid
+                    newAlert.fromId = fromId
                     newAlert.post = post
                     newAlert.timestamp = timestamp
                     newAlert.firstName = firstName
                     newAlert.lastName = lastName
-                    newAlert.profileImageName = profileImageName
+                    if let profileImageName = messageThread["image_url"] as? String {
+                        newAlert.profileImageName = profileImageName
+                    }
                     if self.alertsDictionary[mid] != nil {
                         self.alertsDictionary[mid] = newAlert
                     } else {

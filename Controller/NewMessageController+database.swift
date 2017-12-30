@@ -35,12 +35,12 @@ extension NewMessageController {
     
     func sendMessage() {
         guard let user = FIRAuth.auth()?.currentUser else {
-            print("Unable to send message, no user logged in.")
+            print("NewMessage: Unable to send message, no user logged in.")
             return
         }
         let ref = FIRDatabase.database().reference().child("messages")
         let childRef = ref.childByAutoId()
-        let timestamp = Int(Date().timeIntervalSince1970)
+        let timestamp = Double(Date().timeIntervalSince1970)
         let values = ["post": self.messageTextField.text!,
                       "from_id": user.uid,
                       "timestamp": timestamp] as [String : Any]

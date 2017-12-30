@@ -10,27 +10,51 @@ import UIKit
 import Firebase
 
 extension ChatLogController {
-    func observeMessages() {
-        print("ChatLog Observing Messages...")
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+    func observeThread() {
+        print("ChatLog observing thread...")
+        guard let threadId = self.chatThread?.threadId else {
+            self.navigationController?.popViewController(animated: true)
             return
         }
-        let newMessageRef = FIRDatabase.database().reference().child("messages")
+        print("ThreadID: \(threadId)")
+        let newMessageRef = FIRDatabase.database().reference().child("messages").child(threadId)
         newMessageRef.observe(.childAdded, with: {(snapshot) in
             guard let dictionary = snapshot.value as? [String:AnyObject] else {
                 return
             }
-            // Create new Message Object
-            let message = Message(dictionary: dictionary)
-            
-            // Add new message to messages map
+            print("Thread: \(dictionary)")
+        }, withCancel: nil)
+    }
+    
+    func getThread() {
+        guard let threadId = self.chatThread?.threadId,
+              let uid = self.chatThread?.id else {
+            self.navigationController?.popViewController(animated: true)
+            return
+        }
+        let threadRef = FIRDatabase.database().reference().child("messages").child(threadId)
+        threadRef.observeSingleEvent(of: .value) { (snapshot) in
+            guard let dictionary = snapshot.value as? [String:AnyObject] else {
+                return
+            }
+            self.addMessagesToThread(dictionary, uid: uid)
+        }
+    }
+    
+    func addMessagesToThread(_ messageThread: [String:AnyObject], uid: String) {
+        guard let thread = messageThread["thread"] as? [String:AnyObject] else {
+            return
+        }
+        print("New Thread: \(thread)")
+        for (replyId, reply) in thread {
+            print("Reply Id: \(replyId)")
+            print("Reply:    \(reply)\n\n")
+            let message = Message(dictionary: reply as! [String:Any])
             self.messages.append(message)
-            
-            // Reload TableView with new messages
             DispatchQueue.main.async(execute: {
                 self.collectionView?.reloadData()
             })
-        }, withCancel: nil)
+        }
     }
     
     func sendMessage() {
@@ -38,10 +62,13 @@ extension ChatLogController {
             print("Unable to send message, no user logged in.")
             return
         }
-        let ref = FIRDatabase.database().reference().child("messages")
+        guard let threadId = self.chatThread?.threadId else {
+            return
+        }
+        let ref = FIRDatabase.database().reference().child("messages").child(threadId).child("thread")
         let childRef = ref.childByAutoId()
         let timestamp = Int(Date().timeIntervalSince1970)
-        let values = ["text": inputTextField.text!,"from_id": user.uid, "timestamp": timestamp] as [String : Any]
+        let values = ["post": inputTextField.text!,"from_id": user.uid, "timestamp": timestamp] as [String : Any]
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil {
                 print(error!)
@@ -49,5 +76,16 @@ extension ChatLogController {
             }
             self.inputTextField.text = nil
         }
+    }
+    
+    func userId() -> String {
+        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+            return ""
+        }
+        return uid
+    }
+    
+    func userIsLoggedIn() -> Bool {
+        return FIRAuth.auth()?.currentUser != nil
     }
 }

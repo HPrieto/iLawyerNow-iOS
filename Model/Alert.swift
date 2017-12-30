@@ -9,13 +9,16 @@
 import UIKit
 
 class Alert: SafeJsonObject {
+    var currentUser: String?
+    var threadId: String?
+    var fromId: String?
     var firstName: String?
     var lastName: String?
     var profileImageName: String?
     var post: String?
     var numLikes: NSNumber?
     var numComments: NSNumber?
-    var timestamp: NSNumber?
+    var timestamp: Double?
     
     var location: Location?
     

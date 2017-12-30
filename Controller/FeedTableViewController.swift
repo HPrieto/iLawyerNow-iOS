@@ -8,11 +8,13 @@
 
 import UIKit
 import Firebase
+import CoreLocation
 
-class FeedTableViewController: UITableViewController {
+class FeedTableViewController: UITableViewController, CLLocationManagerDelegate {
     /* Global Variables */
     var CELLID = "cellId"
     var posts = [Post]()
+    let locationManager = CLLocationManager()
     
     let images = ["dummy_image0.jpeg",
                   "dummy_image1.jpeg",
@@ -24,6 +26,7 @@ class FeedTableViewController: UITableViewController {
     /* TableViewController LifeCycle */
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.locationManager.delegate = self
         self.initFeed()
         self.checkIfUserIsLoggedIn()
         
@@ -46,10 +49,20 @@ class FeedTableViewController: UITableViewController {
         super.viewWillAppear(animated)
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
         self.setProfileImage()
+        self.locationManager.startUpdatingLocation()
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        let userLocation   = locations[0]
+        let userLatitude   = userLocation.coordinate.latitude
+        let userLongitude  = userLocation.coordinate.longitude
+        let userCoordinate = CLLocationCoordinate2DMake(userLatitude, userLongitude)
+        self.setNavigationTitle(coordinate: userCoordinate)
+        self.locationManager.stopUpdatingLocation()
     }
     
     /* Init TableViewController */
@@ -94,5 +107,22 @@ class FeedTableViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: self.CELLID, for: indexPath) as! FeedCell
         cell.post = self.posts[indexPath.row]
         return cell
+    }
+    /* Sets navigation title to user's current city */
+    func setNavigationTitle(coordinate:CLLocationCoordinate2D) {
+        var address  = ""
+        let geoCoder = CLGeocoder()
+        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        geoCoder.reverseGeocodeLocation(location, completionHandler: {(placemarks, error) -> Void in
+            if(error != nil) {
+                return
+            }
+            var placeMark: CLPlacemark!
+            placeMark = placemarks?[0]
+            if let city = placeMark.addressDictionary!["City"] as? NSString {
+                address += city as String
+            }
+            self.navigationItem.title = address
+        })
     }
 }

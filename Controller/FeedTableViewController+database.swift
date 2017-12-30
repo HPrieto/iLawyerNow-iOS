@@ -16,18 +16,6 @@ extension FeedTableViewController {
             perform(#selector(handleLogout), with: nil, afterDelay: 0)
             return
         }
-        self.setNavigationTitle(uid: user.uid)
-    }
-    
-    func setNavigationTitle(uid: String) {
-        FIRDatabase.database().reference().child("users").child(uid).observe(.value, with: { (snapshot) in
-            if let dictionary = snapshot.value as? [String:AnyObject] {
-                guard let firstName = dictionary["first_name"] as? String else {
-                    return
-                }
-                self.navigationItem.title = "\(firstName)"
-            }
-        })
     }
     
     /* Pushes to LoginSignupViewController */
@@ -39,7 +27,6 @@ extension FeedTableViewController {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {
             return
         }
-        print("Getting profile image...")
         FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             guard let dictionary = snapshot.value as? [String:AnyObject] else {
                 return

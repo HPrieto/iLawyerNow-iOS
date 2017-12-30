@@ -12,6 +12,14 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     var messages = [Message]()
     
+    var chatThread: ChatThread? {
+        didSet {
+            if let firstName = chatThread?.firstName, let lastName = chatThread?.lastName {
+                self.navigationItem.title = "\(firstName) \(lastName)"
+            }
+        }
+    }
+    
     /* ChatLog Controller Components */
     lazy var inputTextField: UITextField = {
         let textField = UITextField()
@@ -62,7 +70,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     var containerViewBottomAnchor: NSLayoutConstraint?
     
     func setupInputComponents() {
-        print("ChatLog Setting up UIComponents")
         let containerView = UIView()
         containerView.backgroundColor = UIColor.white
         containerView.translatesAutoresizingMaskIntoConstraints = false
@@ -125,6 +132,10 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("ChatLog ViewWillAppear")
+        if self.userIsLoggedIn() {
+            self.getThread()
+            self.observeThread()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -136,6 +147,51 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         super.viewWillDisappear(animated)
         print("ChatLog ViewWillDisappear")
         self.navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    /* CollectionView Override Methods */
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return self.messages.count
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! ChatMessageCell
+        let message = self.messages[indexPath.item]
+        cell.textView.text = message.post
+        setupCell(cell, message: message)
+        cell.bubbleWidthAnchor?.constant = estimateFrameForText(message.post!).width + 32
+        return cell
+    }
+    
+    fileprivate func setupCell(_ cell: ChatMessageCell, message: Message) {
+        if let profileImageUrl = self.chatThread?.profileImageUrl {
+            cell.profileImageView.loadImageUsingCacheWithUrlString(urlString: profileImageUrl)
+        }
+        
+        if message.fromId == self.userId() {
+            //outgoing blue
+            cell.bubbleView.backgroundColor = ChatMessageCell.blueColor
+            cell.textView.textColor = UIColor.white
+            cell.profileImageView.isHidden = true
+            
+            cell.bubbleViewRightAnchor?.isActive = true
+            cell.bubbleViewLeftAnchor?.isActive = false
+            
+        } else {
+            //incoming gray
+            cell.bubbleView.backgroundColor = UIColor(r: 240, g: 240, b: 240)
+            cell.textView.textColor = UIColor.black
+            cell.profileImageView.isHidden = false
+            
+            cell.bubbleViewRightAnchor?.isActive = false
+            cell.bubbleViewLeftAnchor?.isActive = true
+        }
+    }
+    
+    fileprivate func estimateFrameForText(_ text: String) -> CGRect {
+        let size = CGSize(width: 200, height: 1000)
+        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)], context: nil)
     }
     
     override var inputAccessoryView: UIView? {
