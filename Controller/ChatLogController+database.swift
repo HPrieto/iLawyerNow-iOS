@@ -16,58 +16,21 @@ extension ChatLogController {
             self.navigationController?.popViewController(animated: true)
             return
         }
-        newMessageRef = FIRDatabase.database().reference().child("messages").child(threadId)
-        newMessageRef?.observe(.childAdded, with: {(snapshot) in
-            guard let dictionary = snapshot.value as? [String:AnyObject] else {
+        FIRDatabase.database().reference().child("messages").child(threadId).child("thread").observe(.childAdded, with: {(snapshot) in
+            guard let message = snapshot.value as? [String:AnyObject] else {
+                print("Invalid message.")
                 return
             }
-            print("New Thread Added: \(dictionary)\n\n")
-            self.addObservedMessages(dictionary)
+            self.addMessageToCollection(key: snapshot.key, message: message)
         }, withCancel: nil)
     }
     
-    func getThread() {
-        guard let threadId = self.chatThread?.threadId else {
-            self.navigationController?.popViewController(animated: true)
-            return
+    func addMessageToCollection(key: String, message: [String:AnyObject]) {
+        let newMessage = Message(dictionary: message)
+        if self.messagesDictionary[key] == nil {
+            self.messages.append(newMessage)
         }
-        print("Get Thread: \(threadId)")
-        let threadRef = FIRDatabase.database().reference().child("messages").child(threadId)
-        threadRef.observeSingleEvent(of: .value) { (snapshot) in
-            guard let dictionary = snapshot.value as? [String:AnyObject] else {
-                return
-            }
-            self.addMessagesToThread(dictionary)
-        }
-    }
-    
-    func addObservedMessages(_ messageThread: [String:AnyObject]) {
-        for (replyId, observedMessage) in messageThread {
-            print("ID: \(replyId)")
-            print("Message: \(observedMessage)\n\n")
-            if let message = observedMessage as? [String:AnyObject] {
-                let newMessage = Message(dictionary: message)
-                self.addMessageToThread(message: newMessage, id: replyId)
-            }
-        }
-    }
-    
-    func addMessagesToThread(_ messageThread: [String:AnyObject]) {
-        guard let thread = messageThread["thread"] as? [String:AnyObject] else {
-            print("No thread exists.")
-            return
-        }
-        for (replyId, reply) in thread {
-            let message = Message(dictionary: reply as! [String:Any])
-            self.addMessageToThread(message: message, id: replyId)
-        }
-    }
-    
-    func addMessageToThread(message:Message,id:String) {
-        if self.messagesDictionary[id] == nil {
-            self.messages.append(message)
-        }
-        self.messagesDictionary[id] = message
+        self.messagesDictionary[key] = newMessage
         self.attemptReloadOfTable()
     }
     

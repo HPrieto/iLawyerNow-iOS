@@ -40,24 +40,21 @@ class ChatMessageCell: UICollectionViewCell {
         return imageView
     }()
     
-    let leftBorderView: UIView = {
+    let borderView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.MainColors.lightColor
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    /* Cell Component Anchors */
-    var bubbleWidthAnchor: NSLayoutConstraint?
-    var bubbleViewRightAnchor: NSLayoutConstraint?
-    var bubbleViewLeftAnchor: NSLayoutConstraint?
+    var borderViewLeftAnchor: NSLayoutConstraint?
+    var borderViewRightAnchor: NSLayoutConstraint?
     func initViews() {
         // Add components to view
-        self.addSubview(self.bubbleView)
         self.addSubview(self.textView)
+        self.addSubview(self.bubbleView)
+        self.addSubview(self.borderView)
         self.addSubview(self.profileImageView)
-        self.addSubview(self.leftBorderView)
-        
         // ProfileView Constraints
         self.profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         self.profileImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
@@ -67,22 +64,23 @@ class ChatMessageCell: UICollectionViewCell {
         // BubbleView Constraints
         self.bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         self.bubbleView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        self.bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         self.bubbleView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        self.bubbleWidthAnchor = self.bubbleView.widthAnchor.constraint(equalToConstant: 180)
-        self.bubbleWidthAnchor?.isActive = true
         self.bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         
         // TextView Constraints
         self.textView.leftAnchor.constraint(equalTo: self.bubbleView.leftAnchor, constant: 10).isActive = true
         self.textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        self.textView.rightAnchor.constraint(equalTo: self.bubbleView.rightAnchor).isActive = true
+        self.textView.rightAnchor.constraint(equalTo: self.bubbleView.rightAnchor, constant: -20).isActive = true
         self.textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         
         // BorderView Contraints
-        self.leftBorderView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 5).isActive = true
-        self.leftBorderView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        self.leftBorderView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.leftBorderView.widthAnchor.constraint(equalToConstant: 3).isActive = true
+        self.borderViewLeftAnchor = self.borderView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 5)
+        self.borderViewRightAnchor = self.borderView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10)
+        self.borderViewLeftAnchor?.isActive = true
+        self.borderView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.borderView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.borderView.widthAnchor.constraint(equalToConstant: 3).isActive = true
     }
     
     /* Cell Class Initializer methods */

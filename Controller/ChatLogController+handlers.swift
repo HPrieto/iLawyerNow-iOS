@@ -53,7 +53,6 @@ extension ChatLogController {
     @objc func handleKeyboardWillShow(_ notification: Notification) {
         let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
         let keyboardDuration = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
-        
         self.containerViewBottomAnchor?.constant = -keyboardFrame!.height
         UIView.animate(withDuration: keyboardDuration!, animations: {
             self.view.layoutIfNeeded()
@@ -63,7 +62,6 @@ extension ChatLogController {
     /* Called when keyboard is dismissed */
     @objc func handleKeyboardWillHide(_ notification: Notification) {
         let keyboardDuration = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
-        
         self.containerViewBottomAnchor?.constant = 0
         UIView.animate(withDuration: keyboardDuration!, animations: {
             self.view.layoutIfNeeded()

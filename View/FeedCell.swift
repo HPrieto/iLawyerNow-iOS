@@ -145,7 +145,7 @@ class FeedCell: UITableViewCell {
     }
     
     func setViews() {
-        self.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0)
+        self.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         self.addSubview(self.profileImageView)
         self.addSubview(self.usernameLabel)
         self.addSubview(self.statusTextView)
