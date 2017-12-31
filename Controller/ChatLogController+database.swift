@@ -10,6 +10,8 @@ import UIKit
 import Firebase
 
 extension ChatLogController {
+    
+    /* Observes database/thread in real-time */
     func observeThread() {
         print("ChatLog observing thread...")
         guard let threadId = self.chatThread?.threadId else {
@@ -21,10 +23,30 @@ extension ChatLogController {
                 print("Invalid message.")
                 return
             }
+            self.hideLoadingView()
             self.addMessageToCollection(key: snapshot.key, message: message)
         }, withCancel: nil)
     }
     
+    /* Sets initial main post the collectionView thread */
+    func setUserPostToThread() {
+        guard let threadId = self.chatThread?.threadId else {
+            self.navigationController?.popViewController(animated: true)
+            return
+        }
+        FIRDatabase.database().reference().child("messages").child(threadId).observeSingleEvent(of: .value, with: { (snapshot) in
+            guard let thread = snapshot.value as? [String:AnyObject] else {
+                return
+            }
+            var post = [String:AnyObject]()
+            post["from_id"] = thread["from_id"]
+            post["post"] = thread["post"]
+            post["timestamp"] = thread["timestamp"]
+            self.addMessageToCollection(key: snapshot.key, message: post)
+        }, withCancel: nil)
+    }
+    
+    /* Takes in map from data, adds to collectionView */
     func addMessageToCollection(key: String, message: [String:AnyObject]) {
         let newMessage = Message(dictionary: message)
         if self.messagesDictionary[key] == nil {
@@ -34,6 +56,7 @@ extension ChatLogController {
         self.attemptReloadOfTable()
     }
     
+    /* Saves new message to thread in database */
     func sendMessage() {
         guard let user = FIRAuth.auth()?.currentUser,
               let threadId = self.chatThread?.threadId else {
@@ -53,11 +76,13 @@ extension ChatLogController {
         }
     }
     
+    /* Attempts to 'safely' reload collectionview */
     fileprivate func attemptReloadOfTable() {
         self.timer?.invalidate()
         self.timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.handleReloadTable), userInfo: nil, repeats: false)
     }
     
+    /* Returns user's database reference unique id */
     func userId() -> String {
         guard let uid = FIRAuth.auth()?.currentUser?.uid else {
             return ""
@@ -65,6 +90,7 @@ extension ChatLogController {
         return uid
     }
     
+    /* True: user is logged in, False: user is logged out */
     func userIsLoggedIn() -> Bool {
         return FIRAuth.auth()?.currentUser != nil
     }

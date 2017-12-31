@@ -24,13 +24,14 @@ extension NotificationsController {
         }
         print("Observing notifications")
         let newMessageRef = FIRDatabase.database().reference().child("users").child(uid)
-        newMessageRef.observe(.value, with: {(snapshot) in
+        newMessageRef.observeSingleEvent(of: .value) { (snapshot) in
             guard let userInfo = snapshot.value as? [String:Any] else {
                 print("No user info found")
                 return
             }
+            self.hideLoadingView()
             self.setUserMessages(userInfo, uid: uid)
-        }, withCancel: nil)
+        }
     }
     
     func setUserMessages(_ userInfo: [String:Any], uid: String) {

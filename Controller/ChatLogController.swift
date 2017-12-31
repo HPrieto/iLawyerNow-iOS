@@ -72,6 +72,33 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     
     var containerViewBottomAnchor: NSLayoutConstraint?
     
+    let loadingView: UIView = {
+        let view = UIView()
+        view.alpha = 0
+        view.backgroundColor = UIColor.white
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
+    let activityIndicator: UIActivityIndicatorView = {
+        let activityIndicator = UIActivityIndicatorView()
+        activityIndicator.startAnimating()
+        activityIndicator.color = UIColor.MainColors.lightGrey
+        activityIndicator.alpha = 0
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        return activityIndicator
+    }()
+    
+    func showLoadingView() {
+        self.loadingView.alpha = 1.0
+        self.activityIndicator.alpha = 1.0
+    }
+    
+    func hideLoadingView() {
+        self.loadingView.alpha = 0.0
+        self.activityIndicator.alpha = 0.0
+    }
+    
     /* Controller LifeCycle */
     let cellId = "cellId"
     override func viewDidLoad() {
@@ -86,12 +113,14 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.backgroundColor = UIColor.white
         self.navigationController?.navigationBar.tintColor = UIColor.MainColors.lightColor
+        self.showLoadingView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("ChatLog ViewWillAppear")
         if self.userIsLoggedIn() {
+            self.setUserPostToThread()
             self.observeThread()
         }
     }
@@ -105,6 +134,24 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         super.viewWillDisappear(animated)
         print("ChatLog ViewWillDisappear")
         self.navigationController?.navigationBar.prefersLargeTitles = true
+    }
+    
+    /* Initialize LoadingView and ActivityIndicator */
+    func initializeLoadingView() {
+        self.view.addSubview(self.loadingView)
+        self.loadingView.addSubview(self.activityIndicator)
+        
+        // Loading View Constraints
+        self.loadingView.leftAnchor.constraint(equalTo: self.view.leftAnchor).isActive = true
+        self.loadingView.rightAnchor.constraint(equalTo: self.view.rightAnchor).isActive = true
+        self.loadingView.topAnchor.constraint(equalTo: self.view.topAnchor).isActive = true
+        self.loadingView.bottomAnchor.constraint(equalTo: self.view.bottomAnchor).isActive = true
+        
+        // Activity Indicator Constraints
+        self.activityIndicator.centerXAnchor.constraint(equalTo: self.loadingView.centerXAnchor).isActive = true
+        self.activityIndicator.topAnchor.constraint(equalTo: self.loadingView.topAnchor, constant: self.view.bounds.height*(2/3))
+        self.activityIndicator.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        self.activityIndicator.heightAnchor.constraint(equalToConstant: 50).isActive = true
     }
     
     /* CollectionView Override Methods */
