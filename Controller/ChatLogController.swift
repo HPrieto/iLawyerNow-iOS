@@ -160,14 +160,20 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        var height: CGFloat = 100
-        if let post = messages[indexPath.item].post {
-            height = estimateFrameForText(post).height + 10
+        if let message = self.messages[indexPath.item].post {
+            let statusTextHeight = self.getTextHeight(text: message, font: 16)
+            let knownHeight: CGFloat = 20
+            return CGSize(width: view.frame.width, height: statusTextHeight + knownHeight)
         }
-        let width = UIScreen.main.bounds.width
-        return CGSize(width: width, height: height)
+        return CGSize(width: view.frame.width, height: 500)
     }
     
+    /* Returns the height of given string with given font */
+    func getTextHeight(text: String, font: CGFloat) -> CGFloat {
+        return NSString(string: text).boundingRect(with: CGSize(width: view.frame.width, height: 1000), options: NSStringDrawingOptions.usesFontLeading.union(NSStringDrawingOptions.usesLineFragmentOrigin), attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: font)], context: nil).height
+    }
+    
+    /* Set cell at indexPath */
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! ChatMessageCell
         let message = self.messages[indexPath.item]
@@ -176,6 +182,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         return cell
     }
     
+    /* Checks if message is from current user or someone else. */
     fileprivate func setupCell(_ cell: ChatMessageCell, message: Message) {
         if let profileImageUrl = self.chatThread?.profileImageUrl {
             cell.profileImageView.loadImageUsingCacheWithUrlString(urlString: profileImageUrl)
@@ -194,12 +201,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             cell.borderView.backgroundColor = UIColor.red
             cell.profileImageView.isHidden = false
         }
-    }
-    
-    fileprivate func estimateFrameForText(_ text: String) -> CGRect {
-        let size = CGSize(width: self.view.bounds.width-20, height: 1000)
-        let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
-        return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)], context: nil)
     }
     
     func scrollToBottom() {

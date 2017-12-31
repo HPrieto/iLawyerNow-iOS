@@ -156,7 +156,7 @@ class NotificationCell: UITableViewCell {
         // Profile Image Margins
         if alert?.currentUser == alert?.fromId {
             self.profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 30).isActive = true
-            self.profileImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 20).isActive = true
+            self.profileImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 18).isActive = true
             self.profileImageView.widthAnchor.constraint(equalToConstant: 24).isActive = true
             self.profileImageView.heightAnchor.constraint(equalToConstant: 24).isActive = true
         } else {

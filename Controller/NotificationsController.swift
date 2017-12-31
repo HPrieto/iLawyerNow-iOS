@@ -10,6 +10,7 @@ import UIKit
 
 class NotificationsController: UITableViewController {
     
+    /* Global Variables */
     let CELLID = "cellId"
     var alerts = [Alert]()
     var alertsDictionary = [String:Alert]()
@@ -17,7 +18,7 @@ class NotificationsController: UITableViewController {
     
     let loadingView: UIView = {
         let view = UIView()
-        view.alpha = 0
+        view.alpha = 1
         view.backgroundColor = UIColor.white
         view.translatesAutoresizingMaskIntoConstraints = false
         return view

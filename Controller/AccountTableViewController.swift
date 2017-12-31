@@ -96,6 +96,12 @@ class AccountTableViewController: UITableViewController, UITabBarDelegate {
         let topOffset = CGPoint(x: 0, y: self.tableView.contentInset.top)
         self.tableView.setContentOffset(topOffset, animated: false)
         self.setUserProfileName()
+        self.scrollToTop(animated: false)
+    }
+    /* Scrolls TableView to top */
+    func scrollToTop(animated: Bool) {
+        let indexPath = NSIndexPath.init(row: 0, section: 0)
+        self.tableView.scrollToRow(at: indexPath as IndexPath, at: .top, animated: animated)
     }
     /* Get section being selected */
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
