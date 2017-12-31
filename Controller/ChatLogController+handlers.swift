@@ -8,6 +8,26 @@
 
 import UIKit
 
+fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l < r
+    case (nil, _?):
+        return true
+    default:
+        return false
+    }
+}
+
+fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
+    switch (lhs, rhs) {
+    case let (l?, r?):
+        return l > r
+    default:
+        return rhs < lhs
+    }
+}
+
 extension ChatLogController {
     /* User Clicked on right bar button item */
     @objc func handleRightBarButtonClick() {
@@ -17,6 +37,16 @@ extension ChatLogController {
     /* Handler for when user wants to send message */
     @objc func handleSend() {
         self.sendMessage()
+    }
+    
+    @objc func handleReloadTable() {
+        self.messages = Array(self.messagesDictionary.values)
+        self.messages.sort(by: { (message1, message2) -> Bool in
+            return message1.timestamp < message2.timestamp
+        })
+        DispatchQueue.main.async(execute: {
+            self.collectionView?.reloadData()
+        })
     }
     
     /* Called when keyboard is displayed */

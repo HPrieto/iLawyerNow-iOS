@@ -7,10 +7,13 @@
 //
 
 import UIKit
-
+import Firebase
 class ChatLogController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout {
     
     var messages = [Message]()
+    var messagesDictionary = [String:Message]()
+    var newMessageRef:FIRDatabaseReference?
+    var timer: Timer?
     
     var chatThread: ChatThread? {
         didSet {
@@ -133,7 +136,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         super.viewWillAppear(animated)
         print("ChatLog ViewWillAppear")
         if self.userIsLoggedIn() {
-            self.getThread()
+            //self.getThread()
             self.observeThread()
         }
     }
@@ -154,12 +157,20 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         return self.messages.count
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        var height: CGFloat = 100
+        if let post = messages[indexPath.item].post {
+            height = estimateFrameForText(post).height + 10
+        }
+        let width = UIScreen.main.bounds.width
+        return CGSize(width: width, height: height)
+    }
+    
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! ChatMessageCell
         let message = self.messages[indexPath.item]
         cell.textView.text = message.post
         setupCell(cell, message: message)
-        cell.bubbleWidthAnchor?.constant = estimateFrameForText(message.post!).width + 32
         return cell
     }
     
@@ -170,26 +181,19 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         
         if message.fromId == self.userId() {
             //outgoing blue
-            cell.bubbleView.backgroundColor = ChatMessageCell.blueColor
-            cell.textView.textColor = UIColor.white
+            cell.textView.textColor = UIColor.black
             cell.profileImageView.isHidden = true
-            
-            cell.bubbleViewRightAnchor?.isActive = true
-            cell.bubbleViewLeftAnchor?.isActive = false
             
         } else {
             //incoming gray
             cell.bubbleView.backgroundColor = UIColor(r: 240, g: 240, b: 240)
             cell.textView.textColor = UIColor.black
             cell.profileImageView.isHidden = false
-            
-            cell.bubbleViewRightAnchor?.isActive = false
-            cell.bubbleViewLeftAnchor?.isActive = true
         }
     }
     
     fileprivate func estimateFrameForText(_ text: String) -> CGRect {
-        let size = CGSize(width: 200, height: 1000)
+        let size = CGSize(width: 190, height: 1000)
         let options = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
         return NSString(string: text).boundingRect(with: size, options: options, attributes: [NSAttributedStringKey.font: UIFont.systemFont(ofSize: 16)], context: nil)
     }

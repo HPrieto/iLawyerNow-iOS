@@ -12,11 +12,11 @@ import Firebase
 class Message: NSObject {
     var fromId: String?
     var post: String?
-    var timestamp: NSNumber?
+    var timestamp: Double?
     
     init(dictionary: [String:Any]) {
-        self.fromId = dictionary["from_id"] as? String
         self.post = dictionary["post"] as? String
-        self.timestamp = dictionary["timestamp"] as? NSNumber
+        self.fromId = dictionary["from_id"] as? String
+        self.timestamp = dictionary["timestamp"] as? Double
     }
 }
