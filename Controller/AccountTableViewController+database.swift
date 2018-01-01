@@ -12,8 +12,8 @@ import Firebase
 extension AccountTableViewController {
     /* Retrieves user's firstname from firebase and sets it to profile cell textlabel */
     func setUserProfileName() {
-        if let user = FIRAuth.auth()?.currentUser {
-            FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        if let user = Auth.auth().currentUser {
+            Database.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String:Any] {
                     // Get user's first name
                     if let firstName = dictionary["first_name"] as? String {
@@ -35,7 +35,7 @@ extension AccountTableViewController {
     
     func logoutUser() {
         do {
-            try FIRAuth.auth()?.signOut()
+            try Auth.auth().signOut()
         } catch let logoutError {
             print(logoutError)
         }

@@ -15,7 +15,7 @@ extension NewMessageController {
         //guard let uid = FIRAuth.auth()?.currentUser?.uid else {
         //    return
         //}
-        let newMessageRef = FIRDatabase.database().reference().child("messages")
+        let newMessageRef = Database.database().reference().child("messages")
         newMessageRef.observe(.childAdded, with: {(snapshot) in
             guard let dictionary = snapshot.value as? [String:AnyObject] else {
                 return
@@ -34,11 +34,11 @@ extension NewMessageController {
     }
     
     func sendMessage() {
-        guard let user = FIRAuth.auth()?.currentUser else {
+        guard let user = Auth.auth().currentUser else {
             print("NewMessage: Unable to send message, no user logged in.")
             return
         }
-        let ref = FIRDatabase.database().reference().child("messages")
+        let ref = Database.database().reference().child("messages")
         let childRef = ref.childByAutoId()
         let timestamp = Double(Date().timeIntervalSince1970)
         let values = ["post": self.messageTextField.text!,
@@ -50,18 +50,18 @@ extension NewMessageController {
                 return
             }
             let messageAutoId = reference.key
-            let userMessagesRef = FIRDatabase.database().reference().child("users").child(user.uid).child("messages")
+            let userMessagesRef = Database.database().reference().child("users").child(user.uid).child("messages")
             userMessagesRef.updateChildValues([messageAutoId:timestamp])
             self.messageTextField.text = nil
         }
     }
     
     func setProfileImage() {
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+        guard let uid = Auth.auth().currentUser?.uid else {
             return
         }
         print("Getting profile image...")
-        FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             guard let dictionary = snapshot.value as? [String:AnyObject] else {
                 return
             }

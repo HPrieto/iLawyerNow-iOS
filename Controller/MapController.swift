@@ -129,6 +129,7 @@ class MapController: UIViewController, MKMapViewDelegate, CLLocationManagerDeleg
         let userLatitude   = userLocation.coordinate.latitude
         let userLongitude  = userLocation.coordinate.longitude
         let userCoordinate = CLLocationCoordinate2DMake(userLatitude, userLongitude)
+        print("User Coordinate: \(userCoordinate)\n\n")
     }
     /* Called after user changes location permissions */
     func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
@@ -158,8 +159,8 @@ class MapController: UIViewController, MKMapViewDelegate, CLLocationManagerDeleg
             if(error == nil) {
                 var placeMark: CLPlacemark!
                 placeMark = placemarks?[0]
-                if let city = placeMark.addressDictionary!["City"] as? NSString {
-                    address += city as String
+                if let city = placeMark.locality {
+                    address += city
                 }
             } else {
                 address = "Location Unavailable"
@@ -175,8 +176,8 @@ class MapController: UIViewController, MKMapViewDelegate, CLLocationManagerDeleg
             if(error == nil) {
                 var placeMark: CLPlacemark!
                 placeMark = placemarks?[0]
-                if let city = placeMark.addressDictionary!["City"] as? NSString {
-                    address += city as String
+                if let city = placeMark.locality {
+                    address += city
                 }
             } else {
                 address = "iLawyerNow"

@@ -12,18 +12,18 @@ import Firebase
 extension NotificationsController {
     
     func userIsLoggedIn() -> Bool {
-        if FIRAuth.auth()?.currentUser != nil {
+        if Auth.auth().currentUser != nil {
             return true
         }
         return false
     }
     
     func observeNotifications() {
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+        guard let uid = Auth.auth().currentUser?.uid else {
             return
         }
         print("Observing notifications")
-        let newMessageRef = FIRDatabase.database().reference().child("users").child(uid)
+        let newMessageRef = Database.database().reference().child("users").child(uid)
         newMessageRef.observeSingleEvent(of: .value) { (snapshot) in
             guard let userInfo = snapshot.value as? [String:Any] else {
                 print("No user info found")
@@ -40,7 +40,7 @@ extension NotificationsController {
             return
         }
         for (mid, timestamp) in messages {
-            let messagesRef = FIRDatabase.database().reference().child("messages")
+            let messagesRef = Database.database().reference().child("messages")
             messagesRef.child(mid).observeSingleEvent(of: .value, with: { (snapshot) in
                 guard let messageThread = snapshot.value as? [String:Any] else {
                     return

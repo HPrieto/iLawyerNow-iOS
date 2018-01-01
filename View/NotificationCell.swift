@@ -105,7 +105,7 @@ class NotificationCell: UITableViewCell {
                 self.usernameLabel.attributedText = attributedText
             }
             
-            if let timestamp = alert?.timestamp as? Double {
+            if let timestamp = alert?.timestamp {
                 self.timestamp.text = "\(self.getTimeLabel(timestamp: timestamp))"
             }
             

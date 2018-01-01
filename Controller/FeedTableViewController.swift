@@ -119,7 +119,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
             }
             var placeMark: CLPlacemark!
             placeMark = placemarks?[0]
-            if let city = placeMark.addressDictionary!["City"] as? NSString {
+            if let city = placeMark.locality {
                 address += city as String
             }
             self.navigationItem.title = address

@@ -8,13 +8,13 @@
 
 import UIKit
 import Firebase
+import GeoFire
 
 extension FeedTableViewController {
     /* Handle user login status */
     func checkIfUserIsLoggedIn() {
-        guard let user = FIRAuth.auth()?.currentUser else {
+        if Auth.auth().currentUser == nil {
             perform(#selector(handleLogout), with: nil, afterDelay: 0)
-            return
         }
     }
     
@@ -24,10 +24,10 @@ extension FeedTableViewController {
     }
     
     func setProfileImage() {
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+        guard let uid = Auth.auth().currentUser?.uid else {
             return
         }
-        FIRDatabase.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
+        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             guard let dictionary = snapshot.value as? [String:AnyObject] else {
                 return
             }

@@ -12,10 +12,10 @@ import Firebase
 extension PhoneViewController {
     /* Loads user's phone number */
     func setPhoneNumber() {
-        guard let user = FIRAuth.auth()?.currentUser else {
+        guard let user = Auth.auth().currentUser else {
             return
         }
-        FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value) { (snapshot) in
+        Database.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value) { (snapshot) in
             if let dictionary = snapshot.value as? [String:AnyObject] {
                 if let phoneNumber = dictionary["phone"] as? String {
                     self.phoneField.text = phoneNumber
@@ -26,7 +26,7 @@ extension PhoneViewController {
     
     /* Saves user's phone number to database */
     func saveNumber() {
-        guard let user = FIRAuth.auth()?.currentUser,
+        guard let user = Auth.auth().currentUser,
               let phone = self.phoneField.text else {
             return
         }
@@ -34,7 +34,7 @@ extension PhoneViewController {
             && phone.underestimatedCount > 15 && phone.underestimatedCount < 7 {
             return
         }
-        FIRDatabase.database().reference().child("users").child(user.uid).updateChildValues(["phone":phone])
+        Database.database().reference().child("users").child(user.uid).updateChildValues(["phone":phone])
         self.navigationController?.popViewController(animated: true)
     }
 }

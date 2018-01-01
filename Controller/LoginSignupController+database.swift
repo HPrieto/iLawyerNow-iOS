@@ -16,7 +16,7 @@ extension LoginSignupController {
             self.showErrorView(message: "Invalid signup parameters.")
             return
         }
-        FIRAuth.auth()?.createUser(withEmail: attorneyEmail, password: attorneyPassword, completion: { (user, error) in
+        Auth.auth().createUser(withEmail: attorneyEmail, password: attorneyPassword, completion: { (user, error) in
             if error != nil {
                 print(error.debugDescription)
                 if let errorMessage = error?.localizedDescription {
@@ -38,7 +38,7 @@ extension LoginSignupController {
                                 "last_name":attorneyLastName,
                                 "bar_number":barNumber,
                                 "is_attorney":true] as [String : Any]
-            let ref = FIRDatabase.database().reference()
+            let ref = Database.database().reference()
             let attorniesRef = ref.child("users").child(attorney)
             attorniesRef.updateChildValues(attorneyInfo, withCompletionBlock: { (err, ref) in
                 if err != nil {
@@ -59,7 +59,7 @@ extension LoginSignupController {
             print("Invalid member email and password fields on signup")
             return
         }
-        FIRAuth.auth()?.createUser(withEmail: memberEmail, password: memberPassword, completion: { (user, error) in
+        Auth.auth().createUser(withEmail: memberEmail, password: memberPassword, completion: { (user, error) in
             if error != nil {
                 print(error.debugDescription)
                 if let errorMessage = error?.localizedDescription {
@@ -81,7 +81,7 @@ extension LoginSignupController {
                               "first_name":memberFirstName,
                               "last_name":memberLastName,
                               "is_attorney":false] as [String:Any]
-            let ref = FIRDatabase.database().reference()
+            let ref = Database.database().reference()
             let membersRef = ref.child("users").child(member)
             membersRef.updateChildValues(memberInfo, withCompletionBlock: { (err, ref) in
                 if err != nil {
@@ -101,7 +101,7 @@ extension LoginSignupController {
             self.disableLoginButton()
             return
         }
-        FIRAuth.auth()?.signIn(withEmail: email, password: password, completion: { (user, error) in
+        Auth.auth().signIn(withEmail: email, password: password, completion: { (user, error) in
             if error != nil {
                 if let errorDescription = error?.localizedDescription {
                     self.showErrorView(message: errorDescription)

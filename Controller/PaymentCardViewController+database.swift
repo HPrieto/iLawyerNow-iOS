@@ -12,7 +12,7 @@ import Firebase
 extension PaymentCardViewController {
     func saveCreditCard() {
         self.navigationItem.rightBarButtonItem?.isEnabled = false
-        guard let user = FIRAuth.auth()?.currentUser else {
+        guard let user = Auth.auth().currentUser else {
             print("User is not signed in...")
             return
         }
@@ -20,7 +20,7 @@ extension PaymentCardViewController {
             print("Invalid credit card")
             return
         }
-        FIRDatabase.database().reference().child("users").child(user.uid).updateChildValues(["card_number":creditCardNumber]) { (error, ref) in
+        Database.database().reference().child("users").child(user.uid).updateChildValues(["card_number":creditCardNumber]) { (error, ref) in
             if error != nil {
                 print("unable to save the credit card number...")
                 return
@@ -31,10 +31,10 @@ extension PaymentCardViewController {
     }
     
     func setCardNumber() {
-        guard let user = FIRAuth.auth()?.currentUser else {
+        guard let user = Auth.auth().currentUser else {
             return
         }
-        FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value) { (snapshot) in
+        Database.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value) { (snapshot) in
             if let dictionary = snapshot.value as? [String:AnyObject] {
                 if let cardNumber = dictionary["card_number"] as? String {
                     self.cardField.text = cardNumber

@@ -18,7 +18,7 @@ extension ChatLogController {
             self.navigationController?.popViewController(animated: true)
             return
         }
-        FIRDatabase.database().reference().child("messages").child(threadId).child("thread").observe(.childAdded, with: {(snapshot) in
+        Database.database().reference().child("messages").child(threadId).child("thread").observe(.childAdded, with: {(snapshot) in
             guard let message = snapshot.value as? [String:AnyObject] else {
                 print("Invalid message.")
                 return
@@ -34,7 +34,7 @@ extension ChatLogController {
             self.navigationController?.popViewController(animated: true)
             return
         }
-        FIRDatabase.database().reference().child("messages").child(threadId).observeSingleEvent(of: .value, with: { (snapshot) in
+        Database.database().reference().child("messages").child(threadId).observeSingleEvent(of: .value, with: { (snapshot) in
             guard let thread = snapshot.value as? [String:AnyObject] else {
                 return
             }
@@ -58,12 +58,12 @@ extension ChatLogController {
     
     /* Saves new message to thread in database */
     func sendMessage() {
-        guard let user = FIRAuth.auth()?.currentUser,
+        guard let user = Auth.auth().currentUser,
               let threadId = self.chatThread?.threadId else {
             print("Unable to send message, no user logged in.")
             return
         }
-        let ref = FIRDatabase.database().reference().child("messages").child(threadId).child("thread")
+        let ref = Database.database().reference().child("messages").child(threadId).child("thread")
         let childRef = ref.childByAutoId()
         let timestamp = Int(Date().timeIntervalSince1970)
         let values = ["post": inputTextField.text!,"from_id": user.uid, "timestamp": timestamp] as [String : Any]
@@ -84,7 +84,7 @@ extension ChatLogController {
     
     /* Returns user's database reference unique id */
     func userId() -> String {
-        guard let uid = FIRAuth.auth()?.currentUser?.uid else {
+        guard let uid = Auth.auth().currentUser?.uid else {
             return ""
         }
         return uid
@@ -92,6 +92,6 @@ extension ChatLogController {
     
     /* True: user is logged in, False: user is logged out */
     func userIsLoggedIn() -> Bool {
-        return FIRAuth.auth()?.currentUser != nil
+        return Auth.auth().currentUser != nil
     }
 }

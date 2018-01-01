@@ -12,9 +12,9 @@ import Firebase
 extension ProfileTableViewController {
     /* Retrieves user's profile from database and sets to fields */
     func getUserProfile() {
-        if let user = FIRAuth.auth()?.currentUser {
+        if let user = Auth.auth().currentUser {
             self.emailLabel.text = user.email
-            FIRDatabase.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
+            Database.database().reference().child("users").child(user.uid).observeSingleEvent(of: .value, with: { (snapshot) in
                 if let dictionary = snapshot.value as? [String:AnyObject] {
                     if let firstName = dictionary["first_name"],
                         let lastName  = dictionary["last_name"] {
@@ -48,12 +48,12 @@ extension ProfileTableViewController {
     }
     
     func updateProfileWithImage(image: UIImage) {
-        guard let user = FIRAuth.auth()?.currentUser else {
+        guard let user = Auth.auth().currentUser else {
             return
         }
-        let storageRef = FIRStorage.storage().reference().child("profile_images").child("\(user.uid).png")
+        let storageRef = Storage.storage().reference().child("profile_images").child("\(user.uid).png")
         if let uploadData = UIImagePNGRepresentation(image) {
-            storageRef.put(uploadData, metadata: nil, completion: { (metadata, error) in
+            storageRef.putData(uploadData, metadata: nil, completion: { (metadata, error) in
                 if error != nil {
                     print(error.debugDescription)
                     return
@@ -81,7 +81,7 @@ extension ProfileTableViewController {
     
     /* Saves user's profile given data dictionary */
     func saveProfile(uid: String, data: [String: Any]) {
-        FIRDatabase.database().reference().child("users").child(uid).updateChildValues(data) { (error, ref) in
+        Database.database().reference().child("users").child(uid).updateChildValues(data) { (error, ref) in
             if error != nil {
                 print("Unable to update profile...")
                 return
@@ -92,7 +92,7 @@ extension ProfileTableViewController {
     
     /* Saves user's profile */
     func saveProfile() {
-        guard let user = FIRAuth.auth()?.currentUser else {
+        guard let user = Auth.auth().currentUser else {
             return
         }
         var profileInfo = [String:Any]()
