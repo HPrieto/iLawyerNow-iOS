@@ -46,23 +46,26 @@ extension ChatLogController {
         })
         DispatchQueue.main.async(execute: {
             self.collectionView?.reloadData()
+            if self.inputTextField.isFirstResponder {
+                self.scrollCollectionViewTo(position: .bottom, animated: true)
+            }
         })
     }
     
     /* Called when keyboard is displayed */
     @objc func handleKeyboardWillShow(_ notification: Notification) {
-        let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
+        //let keyboardFrame = (notification.userInfo?[UIKeyboardFrameEndUserInfoKey] as AnyObject).cgRectValue
         let keyboardDuration = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
-        self.containerViewBottomAnchor?.constant = -keyboardFrame!.height
         UIView.animate(withDuration: keyboardDuration!, animations: {
             self.view.layoutIfNeeded()
-        })
+        }) { (true) in
+            self.scrollCollectionViewTo(position: .bottom, animated: true)
+        }
     }
     
     /* Called when keyboard is dismissed */
     @objc func handleKeyboardWillHide(_ notification: Notification) {
         let keyboardDuration = (notification.userInfo?[UIKeyboardAnimationDurationUserInfoKey] as AnyObject).doubleValue
-        self.containerViewBottomAnchor?.constant = 0
         UIView.animate(withDuration: keyboardDuration!, animations: {
             self.view.layoutIfNeeded()
         })

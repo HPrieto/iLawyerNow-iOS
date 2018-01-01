@@ -128,6 +128,8 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         print("ChatLog ViewDidAppear")
+        self.setupKeyboardObservers()
+        self.inputTextField.becomeFirstResponder()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -203,11 +205,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         }
     }
     
-    func scrollToBottom() {
-        let section = 0
-        let lastCollectionItem = self.collectionView?.numberOfItems(inSection: section)
-        let collectionIndexPath:NSIndexPath = NSIndexPath.init(item: lastCollectionItem!, section: section)
-        self.collectionView?.scrollToItem(at: collectionIndexPath as IndexPath, at: .bottom, animated: true)
+    func scrollCollectionViewTo(position:UICollectionViewScrollPosition, animated:Bool) {
+        let collectionIndexPath:NSIndexPath = NSIndexPath.init(row: self.messages.count-1, section: 0)
+        self.collectionView?.scrollToItem(at: collectionIndexPath as IndexPath, at: position, animated: animated)
     }
     
     override var inputAccessoryView: UIView? {
