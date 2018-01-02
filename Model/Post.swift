@@ -9,14 +9,16 @@
 import UIKit
 
 class Post: SafeJsonObject {
+    var currentUser: String?
+    var threadId: String?
+    var fromId: String?
     var firstName: String?
     var lastName: String?
     var profileImageName: String?
-    var statusText: String?
-    var statusImageName: String?
+    var post: String?
     var numLikes: NSNumber?
     var numComments: NSNumber?
-    var timestamp: String?
+    var timestamp: Double?
     
     var location: Location?
     

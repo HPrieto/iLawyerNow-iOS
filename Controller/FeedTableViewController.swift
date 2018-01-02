@@ -12,16 +12,12 @@ import CoreLocation
 
 class FeedTableViewController: UITableViewController, CLLocationManagerDelegate {
     /* Global Variables */
+    var timer: Timer?
     var CELLID = "cellId"
     var posts = [Post]()
+    var postsDictionary = [String:Post]()
+    var usersDictionary = [String:User]()
     let locationManager = CLLocationManager()
-    
-    let images = ["dummy_image0.jpeg",
-                  "dummy_image1.jpeg",
-                  "dummy_image2.jpeg",
-                  "dummy_image3.jpeg",
-                  "dummy_image4.jpeg"]
-    let status = ["For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.","For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.","For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.","For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine.","For Ten hat aficionados, in appreciation for their exquisite taste in millinery, will be picked at random to tour the LA tunnel & drive boring machine."]
     
     /* TableViewController LifeCycle */
     override func viewDidLoad() {
@@ -29,27 +25,16 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         self.locationManager.delegate = self
         self.initFeed()
         self.checkIfUserIsLoggedIn()
-        
-        for index in 0..<images.count {
-            let post = Post()
-            let location = Location()
-            location.city = "Fontana"
-            location.state = "CA"
-            post.firstName = "Heriberto"
-            post.lastName = "Prieto"
-            post.profileImageName = self.images[index]
-            post.timestamp = "\(index)h"
-            post.statusText = self.status[index]
-            post.location = location
-            self.posts.append(post)
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
-        self.setProfileImage()
-        self.locationManager.startUpdatingLocation()
+        if self.userIsLoggedIn() {
+            self.observePosts()
+            self.setProfileImage()
+            self.locationManager.startUpdatingLocation()
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -83,7 +68,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     
     /* TableRow Heights */
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if let statusText = posts[indexPath.item].statusText {
+        if let statusText = posts[indexPath.item].post {
             let statusTextHeight = self.getTextHeight(text: statusText, font: 16)
             let knownHeight: CGFloat = 15 + 44 + 46
             return CGSize(width: view.frame.width, height: statusTextHeight + knownHeight).height
@@ -99,6 +84,13 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.navigationController?.navigationBar.prefersLargeTitles = false
         let chatLogController = ChatLogController(collectionViewLayout: UICollectionViewFlowLayout())
+        var newThread = [String:String]()
+        newThread["first_name"] = self.posts[indexPath.row].firstName
+        newThread["last_name"] = self.posts[indexPath.row].lastName
+        newThread["id"] = self.posts[indexPath.row].fromId
+        newThread["thread_id"] = self.posts[indexPath.row].threadId
+        let chatThread = ChatThread(dictionary: newThread)
+        chatLogController.chatThread = chatThread
         self.navigationController?.pushViewController(chatLogController, animated: true)
     }
     

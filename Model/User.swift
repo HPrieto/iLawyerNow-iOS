@@ -14,10 +14,10 @@ class User: NSObject {
     var lastName: String?
     var email: String?
     var id: String?
-    init(dictionary: [String: AnyObject]) {
-        self.profileImageUrl = dictionary["profileImageUrl"] as? String
-        self.firstName = dictionary["firstName"] as? String
-        self.lastName = dictionary["lastName"] as? String
+    init(dictionary: [String: Any]) {
+        self.profileImageUrl = dictionary["image_url"] as? String
+        self.firstName = dictionary["first_name"] as? String
+        self.lastName = dictionary["last_name"] as? String
         self.id = dictionary["id"] as? String
     }
 }

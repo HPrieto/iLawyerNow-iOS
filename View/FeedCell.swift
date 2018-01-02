@@ -9,7 +9,7 @@
 import UIKit
 
 class FeedCell: UITableViewCell {
-    let profileImageView: UIImageView = {
+    var profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = #imageLiteral(resourceName: "feed_profile_user")
         imageView.layer.masksToBounds = true
@@ -91,13 +91,9 @@ class FeedCell: UITableViewCell {
     var post: Post? {
         didSet {
             if let firstName = post?.firstName, let lastName = post?.lastName {
-                print("FirstName: \(firstName)")
-                print("LastName : \(lastName)")
                 let attributedText = NSMutableAttributedString(string: "\(firstName) \(lastName)", attributes: [NSAttributedStringKey.font: UIFont.boldSystemFont(ofSize: 16)])
                 
                 if let city = post?.location?.city, let state = post?.location?.state {
-                    print("City : \(city)")
-                    print("State: \(state)")
                     attributedText.append(NSAttributedString(string: "\n\(city), \(state)  •  ", attributes: [NSAttributedStringKey.font:
                         UIFont.systemFont(ofSize: 12), NSAttributedStringKey.foregroundColor:
                         UIColor.rgb(155, green: 161, blue: 161)]))
@@ -116,25 +112,36 @@ class FeedCell: UITableViewCell {
             }
             
             if let timestamp = post?.timestamp {
-                self.timestamp.text = "· \(timestamp)"
+                self.timestamp.text = "\(self.getTimeLabel(timestamp: timestamp))"
             }
             
-            if let statusText = post?.statusText {
+            if let statusText = post?.post {
                 self.statusTextView.text = statusText
             }
             
             if let profileImageName = post?.profileImageName {
-                self.profileImageView.image = UIImage(named: profileImageName)
-            }
-            
-            if let statusImageName = post?.statusImageName {
-                self.statusImageView.image = UIImage(named: statusImageName)
+                self.profileImageView.loadImageUsingCacheWithUrlString(urlString: profileImageName)
             }
             
             if let numLikes = post?.numLikes, let numComments = post?.numComments {
                 likesCommentsLabel.text = "\(numLikes) Likes \(numComments) Comments"
             } else {
                 likesCommentsLabel.text = "0 Likes 0 Comments"
+            }
+        }
+    }
+    
+    func getTimeLabel(timestamp: Double) -> String {
+        let currentTime = NSDate().timeIntervalSince1970
+        let seconds     = (currentTime - timestamp)
+        let minutes     = Int(floor(seconds/60))
+        if seconds < 60 {
+            return "\(Int(seconds))s ago"
+        } else {
+            if minutes < 60 {
+                return "\(Int(minutes))min ago"
+            } else {
+                return "\(Int(minutes/60))hrs ago"
             }
         }
     }

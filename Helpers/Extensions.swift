@@ -19,17 +19,14 @@ extension UIImageView {
             self.image = cachedImage
             return
         }
-        // Create new image if image is not cached
-        let url = URL(fileURLWithPath: urlString)
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            if error != nil {
-                print(error.debugDescription)
-                return
-            }
-            DispatchQueue.main.async {
-                if let downloadedImage = UIImage(data: data!) {
-                    imageCache.setObject(downloadedImage, forKey: urlString as AnyObject)
-                    // do something with the image
+        guard let url = URL(string: urlString) else {
+            return
+        }
+        let data = try? Data(contentsOf: url)
+        DispatchQueue.main.async {
+            if let imageData = data {
+                if let downloadedImage = UIImage(data: imageData) {
+                    imageCache.setObject(downloadedImage, forKey: url as AnyObject)
                     self.image = downloadedImage
                 }
             }
