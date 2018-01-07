@@ -31,7 +31,7 @@ extension ProfileTableViewController: UIImagePickerControllerDelegate, UINavigat
         }
         
         if let selectedImage = selectedImageFromPicker {
-            self.addPhotoButton.setImage(selectedImage, for: .normal)
+            self.addPhotoImageView.image = selectedImage
         }
         self.navigationItem.rightBarButtonItem?.isEnabled = true
         dismiss(animated: true, completion: nil)

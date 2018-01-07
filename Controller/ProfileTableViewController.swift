@@ -11,7 +11,7 @@ import Firebase
 
 class ProfileTableViewController: UITableViewController {
     /* UI Components */
-    @IBOutlet weak var addPhotoButton: UIButton!
+    @IBOutlet weak var addPhotoImageView: UIImageView!
     @IBOutlet weak var fullNameLabel: UILabel!
     @IBOutlet weak var emailLabel: UILabel!
     @IBOutlet weak var streetAddressField: UITextField!
@@ -25,11 +25,15 @@ class ProfileTableViewController: UITableViewController {
         // Set NavigationBarButton Items
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(rightBarButtonItemClicked))
         self.navigationItem.rightBarButtonItem?.isEnabled = false
-        self.addPhotoButton.layer.masksToBounds = true
-        self.addPhotoButton.layer.cornerRadius = self.addPhotoButton.bounds.width / 2
-        self.addPhotoButton.isEnabled = true
-        self.addPhotoButton.isUserInteractionEnabled = true
-        self.addPhotoButton.addTarget(self, action: #selector(handleAddPhotoButtonClick), for: .touchUpInside)
+        self.addPhotoImageView.layer.masksToBounds = true
+        self.addPhotoImageView.layer.cornerRadius = self.addPhotoImageView.bounds.width / 2
+        self.addPhotoImageView.isUserInteractionEnabled = true
+        self.addPhotoImageView.isUserInteractionEnabled = true
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleAddPhotoButtonClick))
+        addPhotoImageView.addGestureRecognizer(tapGestureRecognizer)
+        
+        
         self.getUserProfile()
         self.addTextFieldHandlers()
     }

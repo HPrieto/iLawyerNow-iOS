@@ -30,7 +30,9 @@ extension FeedTableViewController {
             guard let messageData = snapshot.value as? [String:Any] else {
                 return
             }
-            self.setUserPosts(mid: snapshot.key, messageData: messageData)
+            DispatchQueue.main.async {
+                self.setUserPosts(mid: snapshot.key, messageData: messageData)
+            }
         }
     }
     
@@ -52,7 +54,8 @@ extension FeedTableViewController {
     
     func setMessage(mid: String, messageData: [String:Any], user: User) {
         print("\n\nMessageData: \(messageData)\n\n")
-        if let fromId = messageData["from_id"] as? String,
+        if  let userId = Auth.auth().currentUser?.uid,
+            let fromId = messageData["from_id"] as? String,
             let timestamp = messageData["timestamp"] as? Double,
             let post = messageData["post"] as? String {
             let newPost = Post()
@@ -63,9 +66,27 @@ extension FeedTableViewController {
             newPost.timestamp = timestamp
             newPost.firstName = user.firstName
             newPost.lastName = user.lastName
-            if let profileImageName = user.profileImageUrl as? String {
+            
+            // Profile image if available
+            if let profileImageName = user.profileImageUrl {
                 newPost.profileImageName = profileImageName
             }
+            
+            if let likes = messageData["likes"] as? [String:Any] {
+                newPost.numLikes = likes.count
+                if likes[userId] != nil {
+                    newPost.userLiked = true
+                } else {
+                    newPost.userLiked = false
+                }
+            } else {
+                newPost.numLikes = 0
+            }
+            
+            if let comments = messageData["thread"] as? [String:Any] {
+                newPost.numComments = comments.count
+            }
+            
             if self.postsDictionary[mid] != nil {
                 self.postsDictionary[mid] = newPost
             } else {
@@ -94,28 +115,8 @@ extension FeedTableViewController {
                 return
             }
             if let imageURL = dictionary["image_url"] as? String {
-                print("image url: \(imageURL)")
-                self.setProfileImageFromUrlString(urlString: imageURL)
+                self.profileImageView.loadImageUsingCacheWithUrlString(urlString: imageURL)
             }
         }, withCancel: nil)
-    }
-    
-    /* Gets and sets image from urlstring */
-    func setProfileImageFromUrlString(urlString: String) {
-        guard let url = URL(string: urlString) else {
-            return
-        }
-        let data = try? Data(contentsOf: url)
-        DispatchQueue.main.async {
-            if let imageData = data {
-                let image = UIImage(data: imageData)
-                let imageView = UIImageView(image: image)
-                imageView.layer.cornerRadius = 15
-                imageView.layer.masksToBounds = true
-                imageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-                imageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-                self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: imageView)
-            }
-        }
     }
 }

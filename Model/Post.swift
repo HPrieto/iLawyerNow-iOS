@@ -16,8 +16,9 @@ class Post: SafeJsonObject {
     var lastName: String?
     var profileImageName: String?
     var post: String?
-    var numLikes: NSNumber?
-    var numComments: NSNumber?
+    var numLikes: Int?
+    var userLiked: Bool = false
+    var numComments: Int?
     var timestamp: Double?
     
     var location: Location?

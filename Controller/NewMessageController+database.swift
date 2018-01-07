@@ -67,7 +67,15 @@ extension NewMessageController {
             }
             if let imageURL = dictionary["image_url"] as? String {
                 print("image url: \(imageURL)")
-                self.setProfileImageFromUrlString(urlString: imageURL)
+                let imageView = UIImageView()
+                imageView.loadImageUsingCacheWithUrlString(urlString: imageURL)
+                imageView.layer.cornerRadius = 15
+                imageView.layer.masksToBounds = true
+                imageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+                imageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+                self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: imageView)
+            } else {
+                self.navigationItem.leftBarButtonItem = nil
             }
         }, withCancel: nil)
     }

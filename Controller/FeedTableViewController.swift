@@ -19,12 +19,26 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     var usersDictionary = [String:User]()
     let locationManager = CLLocationManager()
     
+    var profileImageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 15
+        imageView.layer.masksToBounds = true
+        imageView.backgroundColor = UIColor.white
+        imageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
+        imageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        return imageView
+    }()
+    
     /* TableViewController LifeCycle */
     override func viewDidLoad() {
         super.viewDidLoad()
         self.locationManager.delegate = self
         self.initFeed()
-        self.checkIfUserIsLoggedIn()
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: self.profileImageView)
+        if !self.userIsLoggedIn() {
+            perform(#selector(handleLogout), with: nil, afterDelay: 0)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -70,7 +84,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if let statusText = posts[indexPath.item].post {
             let statusTextHeight = self.getTextHeight(text: statusText, font: 16)
-            let knownHeight: CGFloat = 15 + 44 + 46
+            let knownHeight: CGFloat = 15 + 44 + 30
             return CGSize(width: view.frame.width, height: statusTextHeight + knownHeight).height
         }
         return CGSize(width: view.frame.width, height: 500).height

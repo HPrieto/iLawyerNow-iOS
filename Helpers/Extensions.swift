@@ -16,8 +16,11 @@ extension UIImageView {
         // Check for cached image
         if let cachedImage = imageCache.object(forKey: urlString as AnyObject) as? UIImage {
             // do something with the image
+            print("Getting image from cache.")
             self.image = cachedImage
             return
+        } else {
+            print("Getting from internet.")
         }
         guard let url = URL(string: urlString) else {
             return
@@ -26,7 +29,7 @@ extension UIImageView {
         DispatchQueue.main.async {
             if let imageData = data {
                 if let downloadedImage = UIImage(data: imageData) {
-                    imageCache.setObject(downloadedImage, forKey: url as AnyObject)
+                    imageCache.setObject(downloadedImage, forKey: urlString as AnyObject)
                     self.image = downloadedImage
                 }
             }

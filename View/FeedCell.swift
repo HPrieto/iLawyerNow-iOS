@@ -33,6 +33,8 @@ class FeedCell: UITableViewCell {
         textView.backgroundColor = UIColor.clear
         textView.isScrollEnabled = false
         textView.isEditable = false
+        textView.isSelectable = false
+        textView.isUserInteractionEnabled = false
         textView.translatesAutoresizingMaskIntoConstraints = false
         return textView
     }()
@@ -72,6 +74,13 @@ class FeedCell: UITableViewCell {
         label.textColor = UIColor.rgb(155, green: 161, blue: 171)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
+    }()
+    
+    let separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.MainColors.accentColor
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
     }()
     
     let likeButton = FeedCell.buttonForTitle("Like", imageName: "like")
@@ -123,11 +132,28 @@ class FeedCell: UITableViewCell {
                 self.profileImageView.loadImageUsingCacheWithUrlString(urlString: profileImageName)
             }
             
-            if let numLikes = post?.numLikes, let numComments = post?.numComments {
-                likesCommentsLabel.text = "\(numLikes) Likes \(numComments) Comments"
-            } else {
-                likesCommentsLabel.text = "0 Likes 0 Comments"
+            if let numLikes = post?.numLikes {
+                if numLikes == 0 {
+                    self.likesLabel.text = ""
+                } else {
+                    self.likesLabel.text = "\(numLikes)"
+                }
             }
+            
+            if let numComments = post?.numComments {
+                if numComments == 0 {
+                    self.commentsLabel.text = ""
+                } else {
+                    self.commentsLabel.text = "\(numComments)"
+                }
+            }
+            
+            if let userLiked = post?.userLiked {
+                if userLiked {
+                    self.likeView.setBackgroundImage(UIImage(named: "comment_liked"), for: .normal)
+                }
+            }
+            
         }
     }
     
@@ -141,7 +167,17 @@ class FeedCell: UITableViewCell {
             if minutes < 60 {
                 return "\(Int(minutes))min ago"
             } else {
-                return "\(Int(minutes/60))hrs ago"
+                let hours = minutes/60
+                if hours < 24 {
+                    return "\(Int(hours))hrs ago"
+                } else {
+                    let days = hours/24
+                    if days == 1 {
+                        return "\(Int(days)) day ago"
+                    } else {
+                        return "\(Int(days)) days ago"
+                    }
+                }
             }
         }
     }
@@ -159,6 +195,8 @@ class FeedCell: UITableViewCell {
         self.addSubview(self.timestamp)
         self.addSubview(self.commentButton)
         self.addSubview(self.dividerLineView)
+        self.addSubview(self.separatorView)
+        
         // Profile Image Margins
         self.profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 10).isActive = true
         self.profileImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 15).isActive = true
@@ -179,17 +217,24 @@ class FeedCell: UITableViewCell {
         self.statusTextView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10).isActive = true
         self.statusTextView.topAnchor.constraint(equalTo: self.usernameLabel.bottomAnchor, constant: -3).isActive = true
         
+        // Separator View
+        self.separatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        self.separatorView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        self.separatorView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        self.separatorView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        
         // Divider LineView Margins
         self.addSubview(self.actionView)
         self.actionView.addSubview(self.commentView)
         self.actionView.addSubview(self.shareView)
         self.actionView.addSubview(self.likeView)
-        self.actionView.addSubview(self.messageView)
+        self.actionView.addSubview(self.contactView)
+        
         let iconDimensions:CGFloat = 16.0
         self.actionView.topAnchor.constraint(equalTo: self.statusTextView.bottomAnchor, constant: -4).isActive = true
         self.actionView.leftAnchor.constraint(equalTo: self.usernameLabel.leftAnchor).isActive = true
         self.actionView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -25).isActive = true
-        self.actionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -9).isActive = true
+        self.actionView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -5).isActive = true
         
         self.commentView.leftAnchor.constraint(equalTo: self.actionView.leftAnchor).isActive = true
         self.commentView.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
@@ -206,10 +251,10 @@ class FeedCell: UITableViewCell {
         self.likeView.widthAnchor.constraint(equalToConstant: iconDimensions).isActive = true
         self.likeView.heightAnchor.constraint(equalToConstant: iconDimensions).isActive = true
         
-        self.messageView.leftAnchor.constraint(equalTo: self.actionView.leftAnchor, constant: (self.bounds.width-60)*(3/4)).isActive = true
-        self.messageView.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
-        self.messageView.widthAnchor.constraint(equalToConstant: iconDimensions).isActive = true
-        self.messageView.heightAnchor.constraint(equalToConstant: iconDimensions).isActive = true
+        self.contactView.leftAnchor.constraint(equalTo: self.actionView.leftAnchor, constant: (self.bounds.width-60)*(3/4)).isActive = true
+        self.contactView.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
+        self.contactView.widthAnchor.constraint(equalToConstant: iconDimensions).isActive = true
+        self.contactView.heightAnchor.constraint(equalToConstant: iconDimensions).isActive = true
         
         self.actionView.addSubview(self.commentsLabel)
         self.commentsLabel.leftAnchor.constraint(equalTo: self.commentView.rightAnchor, constant: 5).isActive = true
@@ -239,7 +284,7 @@ class FeedCell: UITableViewCell {
     
     let commentsLabel: UILabel = {
         let label = UILabel()
-        label.text = "2"
+        label.text = ""
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 14)
         label.textColor = UIColor.lightGray
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -255,34 +300,36 @@ class FeedCell: UITableViewCell {
     
     let sharesLabel: UILabel = {
         let label = UILabel()
-        label.text = "5"
+        label.text = ""
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 14)
         label.textColor = UIColor.lightGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    let likeView: UIButton = {
+    lazy var likeView: UIButton = {
         let button = UIButton()
         button.setTitleShadowColor(UIColor.MainColors.darkGrey, for: .normal)
         button.setBackgroundImage(UIImage(named: "heart_icon"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(handleLike), for: .touchUpInside)
         return button
     }()
     
     let likesLabel: UILabel = {
         let label = UILabel()
-        label.text = "10"
+        label.text = ""
         label.font = UIFont(name: "HelveticaNeue-Medium", size: 14)
         label.textColor = UIColor.lightGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    let messageView: UIButton = {
+    lazy var contactView: UIButton = {
         let button = UIButton()
         button.setBackgroundImage(UIImage(named: "message_icon"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(handleDirectMessage), for: .touchUpInside)
         return button
     }()
     

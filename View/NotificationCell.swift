@@ -135,10 +135,27 @@ class NotificationCell: UITableViewCell {
             if minutes < 60 {
                 return "\(Int(minutes))min ago"
             } else {
-                return "\(Int(minutes/60))hrs ago"
+                let hours = minutes/60
+                if hours < 24 {
+                    return "\(Int(hours))hrs ago"
+                } else {
+                    let days = hours/24
+                    if days == 1 {
+                        return "\(Int(days)) day ago"
+                    } else {
+                        return "\(Int(days)) days ago"
+                    }
+                }
             }
         }
     }
+    
+    let separatorView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.MainColors.accentColor
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -146,13 +163,13 @@ class NotificationCell: UITableViewCell {
     }
     
     func setViews() {
-        self.separatorInset = UIEdgeInsetsMake(0, 0, 0, 0)
         self.addSubview(self.profileImageView)
         self.addSubview(self.usernameLabel)
         self.addSubview(self.statusTextView)
         self.addSubview(self.timestamp)
         self.addSubview(self.commentButton)
         self.addSubview(self.dividerLineView)
+        self.addSubview(self.separatorView)
         // Profile Image Margins
         if alert?.currentUser == alert?.fromId {
             self.profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 30).isActive = true
@@ -180,6 +197,12 @@ class NotificationCell: UITableViewCell {
         self.statusTextView.leftAnchor.constraint(equalTo: self.usernameLabel.leftAnchor, constant: -5).isActive = true
         self.statusTextView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10).isActive = true
         self.statusTextView.topAnchor.constraint(equalTo: self.usernameLabel.bottomAnchor, constant: -3).isActive = true
+        
+        // Separator View
+        self.separatorView.heightAnchor.constraint(equalToConstant: 1).isActive = true
+        self.separatorView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        self.separatorView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        self.separatorView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

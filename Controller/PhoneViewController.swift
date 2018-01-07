@@ -72,7 +72,7 @@ class PhoneViewController: UIViewController {
     /* Set UIComponent Anchors */
     func setComponentAnchors() {
         // Set CardView Anchors
-        self.phoneView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 60).isActive = true
+        self.phoneView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: self.view.bounds.height*(1/4)).isActive = true
         self.phoneView.leftAnchor.constraint(equalTo: self.view.leftAnchor, constant: 15).isActive = true
         self.phoneView.rightAnchor.constraint(equalTo: self.view.rightAnchor, constant: -15).isActive = true
         self.phoneView.heightAnchor.constraint(equalToConstant: 60).isActive = true

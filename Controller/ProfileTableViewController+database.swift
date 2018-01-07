@@ -24,7 +24,7 @@ extension ProfileTableViewController {
                     }
                     if let imageUrl = dictionary["image_url"] as? String {
                         print("There is a url")
-                        self.setImageFromURL(urlString: imageUrl)
+                        self.addPhotoImageView.loadImageUsingCacheWithUrlString(urlString: imageUrl)
                     } else {
                         print("There is no url")
                     }
@@ -128,22 +128,6 @@ extension ProfileTableViewController {
             } else {
                 print("User did not select an image to upload...")
                 self.saveProfile()
-            }
-        }
-    }
-    
-    /* Gets and sets image from urlstring */
-    func setImageFromURL(urlString: String) {
-        print("Setting image from url...")
-        print(urlString)
-        guard let url = URL(string: urlString) else {
-            return
-        }
-        DispatchQueue.main.async {
-            let data = try? Data(contentsOf: url)
-            if let imageData = data {
-                let image = UIImage(data: imageData)
-                self.addPhotoButton.setImage(image, for: .normal)
             }
         }
     }
