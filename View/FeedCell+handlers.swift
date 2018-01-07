@@ -19,7 +19,8 @@ extension FeedCell {
         }
     }
     
-    @objc func handleDirectMessage() {
-        print("Message Directly.")
+    @objc func handleContactAdded() {
+        print("Adding user to contacts.")
+        self.addUserToContacts()
     }
 }

@@ -267,6 +267,9 @@ class FeedCell: UITableViewCell {
         self.actionView.addSubview(self.likesLabel)
         self.likesLabel.leftAnchor.constraint(equalTo: self.likeView.rightAnchor, constant: 5).isActive = true
         self.likesLabel.centerYAnchor.constraint(equalTo: self.actionView.centerYAnchor).isActive = true
+        
+        // Check if user is in contacts list
+        self.checkContacts()
     }
     
     let actionView: UIView = {
@@ -327,9 +330,9 @@ class FeedCell: UITableViewCell {
     
     lazy var contactView: UIButton = {
         let button = UIButton()
-        button.setBackgroundImage(UIImage(named: "message_icon"), for: .normal)
+        button.setBackgroundImage(UIImage(named: "add_contact"), for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(handleDirectMessage), for: .touchUpInside)
+        button.addTarget(self, action: #selector(handleContactAdded), for: .touchUpInside)
         return button
     }()
     

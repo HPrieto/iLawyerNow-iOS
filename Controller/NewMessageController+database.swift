@@ -34,7 +34,8 @@ extension NewMessageController {
     }
     
     func sendMessage() {
-        guard let user = Auth.auth().currentUser else {
+        guard let user = Auth.auth().currentUser,
+        let name = self.name else {
             print("NewMessage: Unable to send message, no user logged in.")
             return
         }
@@ -43,7 +44,8 @@ extension NewMessageController {
         let timestamp = Double(Date().timeIntervalSince1970)
         let values = ["post": self.messageTextField.text!,
                       "from_id": user.uid,
-                      "timestamp": timestamp] as [String : Any]
+                      "timestamp": timestamp,
+                      "name": name] as [String : Any]
         childRef.updateChildValues(values) { (error, reference) in
             if error != nil {
                 print(error!)
@@ -66,7 +68,6 @@ extension NewMessageController {
                 return
             }
             if let imageURL = dictionary["image_url"] as? String {
-                print("image url: \(imageURL)")
                 let imageView = UIImageView()
                 imageView.loadImageUsingCacheWithUrlString(urlString: imageURL)
                 imageView.layer.cornerRadius = 15
@@ -76,6 +77,10 @@ extension NewMessageController {
                 self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: imageView)
             } else {
                 self.navigationItem.leftBarButtonItem = nil
+            }
+            if let firstName = dictionary["first_name"] as? String,
+                let lastName = dictionary["last_name"] as? String {
+                self.name = "\(firstName) \(lastName)"
             }
         }, withCancel: nil)
     }

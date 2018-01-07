@@ -40,6 +40,14 @@ class ChatMessageCell: UICollectionViewCell {
         return imageView
     }()
     
+    let nameLabel: UILabel = {
+        let label = UILabel()
+        label.backgroundColor = UIColor.clear
+        label.font = UIFont(name: "HelveticaNeue", size: 14)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     let borderView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.MainColors.lightColor
@@ -52,9 +60,11 @@ class ChatMessageCell: UICollectionViewCell {
     func initViews() {
         // Add components to view
         self.addSubview(self.textView)
+        self.addSubview(self.nameLabel)
         self.addSubview(self.bubbleView)
         self.addSubview(self.borderView)
         self.addSubview(self.profileImageView)
+        
         // ProfileView Constraints
         self.profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
         self.profileImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
@@ -70,7 +80,7 @@ class ChatMessageCell: UICollectionViewCell {
         
         // TextView Constraints
         self.textView.leftAnchor.constraint(equalTo: self.bubbleView.leftAnchor, constant: 10).isActive = true
-        self.textView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.textView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10).isActive = true
         self.textView.rightAnchor.constraint(equalTo: self.bubbleView.rightAnchor, constant: -20).isActive = true
         self.textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         
@@ -81,6 +91,11 @@ class ChatMessageCell: UICollectionViewCell {
         self.borderView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
         self.borderView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
         self.borderView.widthAnchor.constraint(equalToConstant: 3).isActive = true
+        
+        // NameLabel Constraints
+        self.nameLabel.leftAnchor.constraint(equalTo: self.textView.leftAnchor, constant: 5).isActive = true
+        self.nameLabel.rightAnchor.constraint(equalTo: self.textView.rightAnchor, constant: -5).isActive = true
+        self.nameLabel.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
     }
     
     /* Cell Class Initializer methods */

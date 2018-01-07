@@ -32,6 +32,7 @@ extension ProfileTableViewController: UIImagePickerControllerDelegate, UINavigat
         
         if let selectedImage = selectedImageFromPicker {
             self.addPhotoImageView.image = selectedImage
+            self.addPhotoImageView.contentMode = .scaleAspectFill
         }
         self.navigationItem.rightBarButtonItem?.isEnabled = true
         dismiss(animated: true, completion: nil)

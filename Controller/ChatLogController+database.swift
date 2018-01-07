@@ -42,6 +42,7 @@ extension ChatLogController {
             post["from_id"] = thread["from_id"]
             post["post"] = thread["post"]
             post["timestamp"] = thread["timestamp"]
+            post["name"] = thread["name"]
             self.addMessageToCollection(key: snapshot.key, message: post)
         }, withCancel: nil)
     }
@@ -59,14 +60,16 @@ extension ChatLogController {
     /* Saves new message to thread in database */
     func sendMessage() {
         guard let user = Auth.auth().currentUser,
-              let threadId = self.chatThread?.threadId else {
+              let threadId = self.chatThread?.threadId,
+              let firstName = self.chatThread?.firstName,
+              let lastName = self.chatThread?.lastName else {
             print("Unable to send message, no user logged in.")
             return
         }
         let ref = Database.database().reference().child("messages").child(threadId).child("thread")
         let childRef = ref.childByAutoId()
         let timestamp = Int(Date().timeIntervalSince1970)
-        let values = ["post": inputTextField.text!,"from_id": user.uid, "timestamp": timestamp] as [String : Any]
+        let values = ["post": inputTextField.text!,"from_id": user.uid, "timestamp": timestamp, "name": "\(firstName) \(lastName)"] as [String : Any]
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil {
                 print(error!)

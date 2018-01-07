@@ -190,6 +190,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             cell.profileImageView.loadImageUsingCacheWithUrlString(urlString: profileImageUrl)
         }
         if message.fromId == self.userId() {
+            cell.nameLabel.text = "ME"
+            cell.nameLabel.textAlignment = .right
+            cell.nameLabel.textColor = UIColor.MainColors.lightColor
             cell.textView.textAlignment = .right
             cell.borderViewRightAnchor?.isActive = true
             cell.borderViewLeftAnchor?.isActive = false
@@ -197,6 +200,9 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             cell.textView.textColor = UIColor.black
             cell.profileImageView.isHidden = true
         } else {
+            cell.nameLabel.text = message.name
+            cell.nameLabel.textAlignment = .left
+            cell.nameLabel.textColor = UIColor.red
             cell.textView.textAlignment = .left
             cell.borderViewRightAnchor?.isActive = false
             cell.borderViewLeftAnchor?.isActive = true

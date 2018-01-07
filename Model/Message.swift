@@ -13,8 +13,10 @@ class Message: NSObject {
     var fromId: String?
     var post: String?
     var timestamp: Double?
+    var name: String?
     
     init(dictionary: [String:Any]) {
+        self.name = dictionary["name"] as? String
         self.post = dictionary["post"] as? String
         self.fromId = dictionary["from_id"] as? String
         self.timestamp = dictionary["timestamp"] as? Double

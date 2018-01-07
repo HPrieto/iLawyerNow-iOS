@@ -11,6 +11,7 @@ import UIKit
 class NewMessageController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout {
     
     var messages = [Message]()
+    var name: String?
     
     /* NewMessage Controller Components */
     let messageTextField: UITextField = {

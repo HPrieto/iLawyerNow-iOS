@@ -25,6 +25,7 @@ extension ProfileTableViewController {
                     if let imageUrl = dictionary["image_url"] as? String {
                         print("There is a url")
                         self.addPhotoImageView.loadImageUsingCacheWithUrlString(urlString: imageUrl)
+                        self.addPhotoImageView.contentMode = .scaleAspectFill
                     } else {
                         print("There is no url")
                     }

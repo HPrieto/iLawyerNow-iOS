@@ -20,6 +20,7 @@ class Post: SafeJsonObject {
     var userLiked: Bool = false
     var numComments: Int?
     var timestamp: Double?
+    var isContact: Bool?
     
     var location: Location?
     
