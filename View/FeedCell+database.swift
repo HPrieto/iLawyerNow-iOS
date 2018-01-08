@@ -54,7 +54,7 @@ extension FeedCell {
             if error != nil {
                 return
             }
-            self.contactView.setBackgroundImage(UIImage(named: "contact_added"), for: .normal)
+            self.contactView.setBackgroundImage(UIImage(named: "contacted_added"), for: .normal)
             self.post?.isContact = true
         }
     }

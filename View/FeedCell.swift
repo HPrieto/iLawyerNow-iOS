@@ -148,6 +148,12 @@ class FeedCell: UITableViewCell {
                 }
             }
             
+            if post?.isContact != nil && post?.isContact == true {
+                self.contactView.setBackgroundImage(UIImage(named: "contacted_added"), for: .normal)
+            } else {
+                self.contactView.setBackgroundImage(UIImage(named: "add_contact"), for: .normal)
+            }
+            
             if let userLiked = post?.userLiked {
                 if userLiked {
                     self.likeView.setBackgroundImage(UIImage(named: "comment_liked"), for: .normal)

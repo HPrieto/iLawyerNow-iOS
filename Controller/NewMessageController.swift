@@ -80,6 +80,7 @@ class NewMessageController: UICollectionViewController, UITextFieldDelegate, UIC
         super.viewWillAppear(animated)
         print("NewMessage ViewWillAppear")
         self.setProfileImage()
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {

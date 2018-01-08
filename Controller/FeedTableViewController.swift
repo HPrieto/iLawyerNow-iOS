@@ -17,6 +17,7 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     var posts = [Post]()
     var postsDictionary = [String:Post]()
     var usersDictionary = [String:User]()
+    var usersContacts = [String:Double]()
     let locationManager = CLLocationManager()
     
     var profileImageView: UIImageView = {

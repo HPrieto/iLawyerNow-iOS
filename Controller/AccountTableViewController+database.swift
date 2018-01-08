@@ -26,11 +26,16 @@ extension AccountTableViewController {
                     // Get user's profile image
                     if let imageURL = dictionary["image_url"] as? String {
                         self.profileNameImage.loadImageUsingCacheWithUrlString(urlString: imageURL)
+                    } else {
+                        self.profileNameImage.image = UIImage(named: "profile_icon")
                     }
+                } else {
+                    self.profileNameImage.image = UIImage(named: "profile_icon")
                 }
             })
         } else {
             self.profileNameLabel.text = "Edit Profile"
+            self.profileNameImage.image = UIImage(named: "profile_icon")
         }
     }
     

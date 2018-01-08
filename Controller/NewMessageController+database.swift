@@ -10,32 +10,9 @@ import UIKit
 import Firebase
 
 extension NewMessageController {
-    func observeMessages() {
-        print("NewMessage Observing Messages...")
-        //guard let uid = FIRAuth.auth()?.currentUser?.uid else {
-        //    return
-        //}
-        let newMessageRef = Database.database().reference().child("messages")
-        newMessageRef.observe(.childAdded, with: {(snapshot) in
-            guard let dictionary = snapshot.value as? [String:AnyObject] else {
-                return
-            }
-            // Create new Message Object
-            let message = Message(dictionary: dictionary)
-            
-            // Add new message to messages map
-            self.messages.append(message)
-            
-            // Reload TableView with new messages
-            DispatchQueue.main.async(execute: {
-                self.collectionView?.reloadData()
-            })
-        }, withCancel: nil)
-    }
-    
     func sendMessage() {
         guard let user = Auth.auth().currentUser,
-        let name = self.name else {
+        let sendersName = self.name else {
             print("NewMessage: Unable to send message, no user logged in.")
             return
         }
@@ -45,7 +22,7 @@ extension NewMessageController {
         let values = ["post": self.messageTextField.text!,
                       "from_id": user.uid,
                       "timestamp": timestamp,
-                      "name": name] as [String : Any]
+                      "name": sendersName] as [String : Any]
         childRef.updateChildValues(values) { (error, reference) in
             if error != nil {
                 print(error!)
@@ -58,6 +35,7 @@ extension NewMessageController {
         }
     }
     
+    /*  */
     func setProfileImage() {
         guard let uid = Auth.auth().currentUser?.uid else {
             return
@@ -81,27 +59,10 @@ extension NewMessageController {
             if let firstName = dictionary["first_name"] as? String,
                 let lastName = dictionary["last_name"] as? String {
                 self.name = "\(firstName) \(lastName)"
+            } else {
+                print("Could not get user's first and last name.")
             }
         }, withCancel: nil)
-    }
-    
-    /* Gets and sets image from urlstring */
-    func setProfileImageFromUrlString(urlString: String) {
-        guard let url = URL(string: urlString) else {
-            return
-        }
-        let data = try? Data(contentsOf: url)
-        DispatchQueue.main.async {
-            if let imageData = data {
-                let image = UIImage(data: imageData)
-                let imageView = UIImageView(image: image)
-                imageView.layer.cornerRadius = 15
-                imageView.layer.masksToBounds = true
-                imageView.heightAnchor.constraint(equalToConstant: 30).isActive = true
-                imageView.widthAnchor.constraint(equalToConstant: 30).isActive = true
-                self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: imageView)
-            }
-        }
     }
 }
 

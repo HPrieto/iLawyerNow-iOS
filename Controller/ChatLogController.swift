@@ -13,6 +13,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     var messages = [Message]()
     var messagesDictionary = [String:Message]()
     var timer: Timer?
+    var name: String?
     
     var chatThread: ChatThread? {
         didSet {
@@ -121,6 +122,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         print("ChatLog ViewWillAppear")
         if self.userIsLoggedIn() {
             self.setUserPostToThread()
+            self.setName()
             self.observeThread()
         }
     }
@@ -179,7 +181,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! ChatMessageCell
         let message = self.messages[indexPath.item]
-        cell.textView.text = message.post
         setupCell(cell, message: message)
         return cell
     }
@@ -189,6 +190,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         if let profileImageUrl = self.chatThread?.profileImageUrl {
             cell.profileImageView.loadImageUsingCacheWithUrlString(urlString: profileImageUrl)
         }
+        cell.textView.text = message.post
         if message.fromId == self.userId() {
             cell.nameLabel.text = "ME"
             cell.nameLabel.textAlignment = .right

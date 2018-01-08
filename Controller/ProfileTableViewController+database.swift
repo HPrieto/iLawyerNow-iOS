@@ -27,7 +27,7 @@ extension ProfileTableViewController {
                         self.addPhotoImageView.loadImageUsingCacheWithUrlString(urlString: imageUrl)
                         self.addPhotoImageView.contentMode = .scaleAspectFill
                     } else {
-                        print("There is no url")
+                        self.addPhotoImageView.image = UIImage(named: "add_photo_icon")
                     }
                     if let street = dictionary["street"] as? String {
                         self.streetAddressField.text = street
@@ -41,10 +41,10 @@ extension ProfileTableViewController {
                     if let zip = dictionary["zip"] as? String {
                         self.zipCodeField.text = zip
                     }
+                } else {
+                    self.addPhotoImageView.image = UIImage(named: "add_photo_icon")
                 }
             })
-        } else {
-            
         }
     }
     

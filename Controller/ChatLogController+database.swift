@@ -24,6 +24,7 @@ extension ChatLogController {
                 return
             }
             self.hideLoadingView()
+            print("New Message Observed: \(message)\n\n")
             self.addMessageToCollection(key: snapshot.key, message: message)
         }, withCancel: nil)
     }
@@ -61,21 +62,36 @@ extension ChatLogController {
     func sendMessage() {
         guard let user = Auth.auth().currentUser,
               let threadId = self.chatThread?.threadId,
-              let firstName = self.chatThread?.firstName,
-              let lastName = self.chatThread?.lastName else {
+              let senderName = self.name else {
             print("Unable to send message, no user logged in.")
             return
         }
         let ref = Database.database().reference().child("messages").child(threadId).child("thread")
         let childRef = ref.childByAutoId()
         let timestamp = Int(Date().timeIntervalSince1970)
-        let values = ["post": inputTextField.text!,"from_id": user.uid, "timestamp": timestamp, "name": "\(firstName) \(lastName)"] as [String : Any]
+        let values = ["post": inputTextField.text!,"from_id": user.uid, "timestamp": timestamp, "name": senderName] as [String : Any]
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil {
                 print(error!)
                 return
             }
             self.inputTextField.text = nil
+        }
+    }
+    
+    /* Sets user's first and last name to global variable */
+    func setName() {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value) { (snapshot) in
+            if let userInfo = snapshot.value as? [String:Any] {
+                guard let firstName = userInfo["first_name"] as? String,
+                    let lastName = userInfo["last_name"] as? String else {
+                        return
+                }
+                self.name = "\(firstName) \(lastName)"
+            }
         }
     }
     

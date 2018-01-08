@@ -72,6 +72,7 @@ extension FeedTableViewController {
                 newPost.profileImageName = profileImageName
             }
             
+            // Check how many and who liked the post
             if let likes = messageData["likes"] as? [String:Any] {
                 newPost.numLikes = likes.count
                 if likes[userId] != nil {
@@ -83,8 +84,16 @@ extension FeedTableViewController {
                 newPost.numLikes = 0
             }
             
+            // Check how many comments are on this thread
             if let comments = messageData["thread"] as? [String:Any] {
                 newPost.numComments = comments.count
+            }
+            
+            // Check if this fromUser is in user's contacts list.
+            if self.usersContacts[fromId] != nil {
+                newPost.isContact = true
+            } else {
+                newPost.isContact = false
             }
             
             if self.postsDictionary[mid] != nil {
@@ -108,14 +117,24 @@ extension FeedTableViewController {
     
     func setProfileImage() {
         guard let uid = Auth.auth().currentUser?.uid else {
+            self.profileImageView.image = nil
             return
         }
         Database.database().reference().child("users").child(uid).observeSingleEvent(of: .value, with: { (snapshot) in
             guard let dictionary = snapshot.value as? [String:AnyObject] else {
+                self.profileImageView.image = nil
                 return
             }
             if let imageURL = dictionary["image_url"] as? String {
                 self.profileImageView.loadImageUsingCacheWithUrlString(urlString: imageURL)
+            } else {
+                self.profileImageView.image = nil
+            }
+            
+            if let usersContacts = dictionary["contacts"] as? [String:Any] {
+                for (contactId, timestamp) in usersContacts {
+                    self.usersContacts[contactId] = timestamp as? Double
+                }
             }
         }, withCancel: nil)
     }
