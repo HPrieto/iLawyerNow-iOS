@@ -72,6 +72,7 @@ class NotificationsController: UITableViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if self.userIsLoggedIn() {
+            self.removeOldNotifications()
             self.observeNotifications()
         }
     }

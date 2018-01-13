@@ -18,6 +18,31 @@ extension NotificationsController {
         return false
     }
     
+    func removeOldNotifications() {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            return
+        }
+        for (key, value) in self.alertsDictionary {
+            guard let fromId = value.fromId else {
+                return
+            }
+            if fromId != uid {
+                self.alertsDictionary.removeValue(forKey: key)
+                self.alerts.remove(at: self.alertIndex(alert: value))
+            }
+        }
+        self.tableView.reloadData()
+    }
+    
+    func alertIndex(alert: Alert) -> Int {
+        for index in 0...self.alerts.count {
+            if self.alerts[index].threadId == alert.threadId {
+                return index
+            }
+        }
+        return -1
+    }
+    
     func observeNotifications() {
         guard let uid = Auth.auth().currentUser?.uid else {
             return
