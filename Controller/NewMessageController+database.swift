@@ -19,10 +19,13 @@ extension NewMessageController {
         let ref = Database.database().reference().child("messages")
         let childRef = ref.childByAutoId()
         let timestamp = Double(Date().timeIntervalSince1970)
-        let values = ["post": self.messageTextField.text!,
+        var values = ["post": self.messageTextField.text!,
                       "from_id": user.uid,
                       "timestamp": timestamp,
                       "name": sendersName] as [String : Any]
+        if self.profileImageUrl != nil {
+            values["image_url"] = self.profileImageUrl
+        }
         childRef.updateChildValues(values) { (error, reference) in
             if error != nil {
                 print(error!)
@@ -46,6 +49,7 @@ extension NewMessageController {
                 return
             }
             if let imageURL = dictionary["image_url"] as? String {
+                self.profileImageUrl = imageURL
                 let imageView = UIImageView()
                 imageView.loadImageUsingCacheWithUrlString(urlString: imageURL)
                 imageView.layer.cornerRadius = 15

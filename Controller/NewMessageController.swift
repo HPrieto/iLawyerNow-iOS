@@ -10,6 +10,7 @@ import UIKit
 
 class NewMessageController: UICollectionViewController, UITextFieldDelegate, UICollectionViewDelegateFlowLayout {
     
+    var profileImageUrl: String?
     var messages = [Message]()
     var name: String?
     

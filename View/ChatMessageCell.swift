@@ -32,7 +32,7 @@ class ChatMessageCell: UICollectionViewCell {
     
     let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "dummy_image1.jpg")
+        imageView.image = UIImage(named: "feed_profile_user")
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.layer.cornerRadius = 16
         imageView.layer.masksToBounds = true
@@ -48,28 +48,46 @@ class ChatMessageCell: UICollectionViewCell {
         return label
     }()
     
-    let borderView: UIView = {
+    let rightBorderView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.MainColors.lightColor
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
-    var borderViewLeftAnchor: NSLayoutConstraint?
-    var borderViewRightAnchor: NSLayoutConstraint?
+    let leftBorderView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.gray
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
+    
     func initViews() {
         // Add components to view
         self.addSubview(self.textView)
         self.addSubview(self.nameLabel)
         self.addSubview(self.bubbleView)
-        self.addSubview(self.borderView)
-        self.addSubview(self.profileImageView)
+        self.addSubview(self.rightBorderView)
         
-        // ProfileView Constraints
-        self.profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
-        self.profileImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
-        self.profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
+        if self.profileImageView.isHidden == true {
+            self.textView.leftAnchor.constraint(equalTo: self.bubbleView.leftAnchor, constant: 10).isActive = true
+        } else {
+            // ProfileView Constraints
+            self.addSubview(self.profileImageView)
+            self.profileImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 8).isActive = true
+            self.profileImageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+            self.profileImageView.widthAnchor.constraint(equalToConstant: 32).isActive = true
+            self.profileImageView.heightAnchor.constraint(equalToConstant: 32).isActive = true
+            
+            // Left BorderView Contraints
+            self.addSubview(self.leftBorderView)
+            self.leftBorderView.widthAnchor.constraint(equalToConstant: 3).isActive = true
+            self.leftBorderView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+            self.leftBorderView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+            self.leftBorderView.leftAnchor.constraint(equalTo: self.profileImageView.rightAnchor, constant: 10).isActive = true
+            
+            self.textView.leftAnchor.constraint(equalTo: self.leftBorderView.rightAnchor, constant: 10).isActive = true
+        }
         
         // BubbleView Constraints
         self.bubbleView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
@@ -79,18 +97,15 @@ class ChatMessageCell: UICollectionViewCell {
         self.bubbleView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         
         // TextView Constraints
-        self.textView.leftAnchor.constraint(equalTo: self.bubbleView.leftAnchor, constant: 10).isActive = true
         self.textView.topAnchor.constraint(equalTo: self.topAnchor, constant: 10).isActive = true
         self.textView.rightAnchor.constraint(equalTo: self.bubbleView.rightAnchor, constant: -20).isActive = true
         self.textView.heightAnchor.constraint(equalTo: self.heightAnchor).isActive = true
         
-        // BorderView Contraints
-        self.borderViewLeftAnchor = self.borderView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 5)
-        self.borderViewRightAnchor = self.borderView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10)
-        self.borderViewLeftAnchor?.isActive = true
-        self.borderView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
-        self.borderView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.borderView.widthAnchor.constraint(equalToConstant: 3).isActive = true
+        // Right BorderView Contraints
+        self.rightBorderView.widthAnchor.constraint(equalToConstant: 3).isActive = true
+        self.rightBorderView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.rightBorderView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        self.rightBorderView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -10).isActive = true
         
         // NameLabel Constraints
         self.nameLabel.leftAnchor.constraint(equalTo: self.textView.leftAnchor, constant: 5).isActive = true

@@ -14,6 +14,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
     var messagesDictionary = [String:Message]()
     var timer: Timer?
     var name: String?
+    var profileImageUrl: String?
     
     var chatThread: ChatThread? {
         didSet {
@@ -196,20 +197,21 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
             cell.nameLabel.textAlignment = .right
             cell.nameLabel.textColor = UIColor.MainColors.lightColor
             cell.textView.textAlignment = .right
-            cell.borderViewRightAnchor?.isActive = true
-            cell.borderViewLeftAnchor?.isActive = false
-            cell.borderView.backgroundColor = UIColor.MainColors.lightColor
+            cell.rightBorderView.alpha = 1
+            cell.leftBorderView.alpha = 0
             cell.textView.textColor = UIColor.black
             cell.profileImageView.isHidden = true
         } else {
             cell.nameLabel.text = message.name
             cell.nameLabel.textAlignment = .left
-            cell.nameLabel.textColor = UIColor.red
+            cell.nameLabel.textColor = UIColor.gray
             cell.textView.textAlignment = .left
-            cell.borderViewRightAnchor?.isActive = false
-            cell.borderViewLeftAnchor?.isActive = true
-            cell.borderView.backgroundColor = UIColor.red
+            cell.rightBorderView.alpha = 0
+            cell.leftBorderView.alpha = 1
             cell.profileImageView.isHidden = false
+            if let userImageUrl = message.profileImageUrl {
+                cell.profileImageView.loadImageUsingCacheWithUrlString(urlString: userImageUrl)
+            }
         }
     }
     

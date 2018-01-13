@@ -13,7 +13,6 @@ extension ChatLogController {
     
     /* Observes database/thread in real-time */
     func observeThread() {
-        print("ChatLog observing thread...")
         guard let threadId = self.chatThread?.threadId else {
             self.navigationController?.popViewController(animated: true)
             return
@@ -24,7 +23,6 @@ extension ChatLogController {
                 return
             }
             self.hideLoadingView()
-            print("New Message Observed: \(message)\n\n")
             self.addMessageToCollection(key: snapshot.key, message: message)
         }, withCancel: nil)
     }
@@ -44,6 +42,9 @@ extension ChatLogController {
             post["post"] = thread["post"]
             post["timestamp"] = thread["timestamp"]
             post["name"] = thread["name"]
+            if let messageProfileImageUrl = thread["image_url"] {
+                post["image_url"] = messageProfileImageUrl
+            }
             self.addMessageToCollection(key: snapshot.key, message: post)
         }, withCancel: nil)
     }
@@ -60,6 +61,10 @@ extension ChatLogController {
     
     /* Saves new message to thread in database */
     func sendMessage() {
+        if (inputTextField.text?.underestimatedCount)! < 1 {
+            print("Message is too short.")
+            return
+        }
         guard let user = Auth.auth().currentUser,
               let threadId = self.chatThread?.threadId,
               let senderName = self.name else {
@@ -69,7 +74,12 @@ extension ChatLogController {
         let ref = Database.database().reference().child("messages").child(threadId).child("thread")
         let childRef = ref.childByAutoId()
         let timestamp = Int(Date().timeIntervalSince1970)
-        let values = ["post": inputTextField.text!,"from_id": user.uid, "timestamp": timestamp, "name": senderName] as [String : Any]
+        var values = ["post": inputTextField.text!,"from_id": user.uid, "timestamp": timestamp, "name": senderName] as [String : Any]
+        if self.profileImageUrl != nil {
+            values["image_url"] = self.profileImageUrl
+        } else {
+            print("User has no profile picture.")
+        }
         childRef.updateChildValues(values) { (error, ref) in
             if error != nil {
                 print(error!)
@@ -91,6 +101,9 @@ extension ChatLogController {
                         return
                 }
                 self.name = "\(firstName) \(lastName)"
+                if let userProfileUrl = userInfo["image_url"] as? String {
+                    self.profileImageUrl = userProfileUrl
+                }
             }
         }
     }
