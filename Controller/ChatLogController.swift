@@ -111,7 +111,6 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         self.collectionView?.backgroundColor = UIColor.white
         self.collectionView?.register(ChatMessageCell.self, forCellWithReuseIdentifier: self.cellId)
         self.collectionView?.keyboardDismissMode = .interactive
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(handleRightBarButtonClick))
         self.navigationController?.navigationBar.isTranslucent = false
         self.navigationController?.navigationBar.backgroundColor = UIColor.white
         self.navigationController?.navigationBar.tintColor = UIColor.MainColors.lightColor
@@ -204,7 +203,7 @@ class ChatLogController: UICollectionViewController, UITextFieldDelegate, UIColl
         } else {
             cell.nameLabel.text = message.name
             cell.nameLabel.textAlignment = .left
-            cell.nameLabel.textColor = UIColor.gray
+            cell.nameLabel.textColor = UIColor.MainColors.darkGrey
             cell.textView.textAlignment = .left
             cell.rightBorderView.alpha = 0
             cell.leftBorderView.alpha = 1

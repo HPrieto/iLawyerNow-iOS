@@ -26,17 +26,15 @@ class ContactsCell: UITableViewCell {
         return imageView
     }()
     
-    let nameLabel:UILabel = {
+    var nameLabel:UILabel = {
         let label = UILabel()
-        label.text = "Heriberto Prieto"
         label.font = UIFont(name: "AvenirNext-DemiBold", size: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
-    let addressLabel:UILabel = {
+    var addressLabel:UILabel = {
         let label = UILabel()
-        label.text = "Fontana, CA"
         label.font = UIFont(name: "AvenirNext-Medium", size: 14)
         label.textColor = UIColor.gray
         label.translatesAutoresizingMaskIntoConstraints = false

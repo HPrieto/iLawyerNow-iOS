@@ -46,11 +46,10 @@ extension FeedCell {
     func addUserToContacts() {
         print("User added to contacts.")
         guard let uid = Auth.auth().currentUser?.uid,
-            let fromId = self.post?.fromId,
-            let timestamp = self.post?.timestamp else {
+            let fromId = self.post?.fromId else {
                 return
         }
-        Database.database().reference().child("users").child(uid).child("contacts").child(fromId).setValue(timestamp) { (error, ref) in
+        Database.database().reference().child("users").child(uid).child("contacts").child(fromId).setValue(uid) { (error, ref) in
             if error != nil {
                 return
             }

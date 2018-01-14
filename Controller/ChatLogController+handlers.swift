@@ -29,11 +29,6 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 }
 
 extension ChatLogController {
-    /* User Clicked on right bar button item */
-    @objc func handleRightBarButtonClick() {
-        self.navigationController?.popViewController(animated: true)
-    }
-    
     /* Handler for when user wants to send message */
     @objc func handleSend() {
         self.sendMessage()

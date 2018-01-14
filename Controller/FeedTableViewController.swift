@@ -17,8 +17,9 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
     var posts = [Post]()
     var postsDictionary = [String:Post]()
     var usersDictionary = [String:User]()
-    var usersContacts = [String:Double]()
+    var usersContacts = [String:String]()
     let locationManager = CLLocationManager()
+    var userTable: String?
     
     var profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -37,18 +38,18 @@ class FeedTableViewController: UITableViewController, CLLocationManagerDelegate 
         self.locationManager.delegate = self
         self.initFeed()
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: self.profileImageView)
-        if !self.userIsLoggedIn() {
-            perform(#selector(handleLogout), with: nil, afterDelay: 0)
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.tableView.setContentOffset(CGPoint.zero, animated: false)
         if self.userIsLoggedIn() {
+            self.checkForNewUserTable()
             self.observePosts()
             self.setProfileImage()
             self.locationManager.startUpdatingLocation()
+        } else {
+            perform(#selector(handleLogout), with: nil, afterDelay: 0)
         }
     }
     

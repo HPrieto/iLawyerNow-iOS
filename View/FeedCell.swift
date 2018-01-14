@@ -21,7 +21,6 @@ class FeedCell: UITableViewCell {
     let usernameLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 2
-        label.text = "Heriberto Prieto"
         label.font = UIFont(name: "HelveticaNeue", size: 16)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -157,6 +156,8 @@ class FeedCell: UITableViewCell {
             if let userLiked = post?.userLiked {
                 if userLiked {
                     self.likeView.setBackgroundImage(UIImage(named: "comment_liked"), for: .normal)
+                } else {
+                    self.likeView.setBackgroundImage(UIImage(named: "heart_icon"), for: .normal)
                 }
             }
             

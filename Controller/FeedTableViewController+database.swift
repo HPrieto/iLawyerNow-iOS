@@ -24,7 +24,39 @@ extension FeedTableViewController {
         return false
     }
     
+    func checkForNewUserTable() {
+        if let uid = Auth.auth().currentUser?.uid {
+            if let usersTable = self.userTable {
+                if usersTable != uid {
+                    self.userTable = uid
+                    self.clearTable()
+                }
+            } else {
+                self.userTable = uid
+                self.clearTable()
+            }
+        }
+    }
+    
+    func clearTable() {
+        print("Clearing table")
+        self.usersContacts.removeAll()
+        self.posts.removeAll()
+        self.postsDictionary.removeAll()
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
+        }
+    }
+    
     func observePosts() {
+        if self.userTable != Auth.auth().currentUser?.uid {
+            print("Reloading a new table.")
+            self.posts.removeAll()
+            self.postsDictionary.removeAll()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
+        }
         let newMessageRef = Database.database().reference().child("messages")
         newMessageRef.observe(.childAdded) { (snapshot) in
             guard let messageData = snapshot.value as? [String:Any] else {
@@ -53,11 +85,12 @@ extension FeedTableViewController {
     }
     
     func setMessage(mid: String, messageData: [String:Any], user: User) {
-        print("\n\nMessageData: \(messageData)\n\n")
-        if  let userId = Auth.auth().currentUser?.uid,
-            let fromId = messageData["from_id"] as? String,
-            let timestamp = messageData["timestamp"] as? Double,
-            let post = messageData["post"] as? String {
+        if let userId = Auth.auth().currentUser?.uid,
+        let fromId = messageData["from_id"] as? String,
+        let timestamp = messageData["timestamp"] as? Double,
+        let post = messageData["post"] as? String {
+            
+            // Create new post object
             let newPost = Post()
             newPost.threadId = mid
             newPost.currentUser = user.id
@@ -73,6 +106,7 @@ extension FeedTableViewController {
             }
             
             // Check how many and who liked the post
+            newPost.userLiked = false
             if let likes = messageData["likes"] as? [String:Any] {
                 newPost.numLikes = likes.count
                 if likes[userId] != nil {
@@ -98,17 +132,23 @@ extension FeedTableViewController {
             
             if self.postsDictionary[mid] != nil {
                 self.postsDictionary[mid] = newPost
+                self.posts[self.getPostIndex(mid)] = newPost
             } else {
                 self.postsDictionary[mid] = newPost
                 self.posts.append(newPost)
             }
             self.attemptReloadOfTable()
-        } else {
-            print("Nothing: \(messageData)\n\n")
         }
     }
     
-    
+    func getPostIndex(_ mid: String) -> Int {
+        for index in 0...self.posts.count {
+            if self.posts[index].threadId == mid {
+                return index
+            }
+        }
+        return -1
+    }
     
     fileprivate func attemptReloadOfTable() {
         self.timer?.invalidate()
@@ -130,10 +170,15 @@ extension FeedTableViewController {
             } else {
                 self.profileImageView.image = nil
             }
-            
-            if let usersContacts = dictionary["contacts"] as? [String:Any] {
-                for (contactId, timestamp) in usersContacts {
-                    self.usersContacts[contactId] = timestamp as? Double
+            if let usersTable = self.userTable {
+                if uid != usersTable {
+                    self.clearTable()
+                    self.userTable = uid
+                }
+            }
+            if let usersContacts = dictionary["contacts"] as? [String:String] {
+                for (contactId, owner) in usersContacts {
+                    self.usersContacts[contactId] = owner as String
                 }
             }
         }, withCancel: nil)
